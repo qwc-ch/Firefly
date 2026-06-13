@@ -16,6 +16,7 @@ import type {
 	WidgetComponentConfig,
 } from "@/types/config";
 import UmamiStats from "../widget/UmamiStats.astro";
+import Weather from "../widget/Weather.astro";
 
 interface Props {
 	class?: string;
@@ -51,6 +52,7 @@ const componentMap = {
 	calendar: Calendar,
 	music: Music,
 	siteInfo: SiteInfo,
+	weather: Weather,
 };
 
 // 获取侧边栏位置
