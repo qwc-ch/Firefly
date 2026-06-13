@@ -28,7 +28,7 @@ WelcomeToast 是我自己加的一个小组件，效果就是访客第一次打�
 
 | 文件 | 路径 |
 |------|------|
-| 组件本身 | `src/components/WelcomeToast.astro` |
+| 组件本身 | `src/components/widget/WelcomeToast.astro` |
 | 在布局中引用 | `src/layouts/MainGridLayout.astro` |
 
 ---
@@ -147,7 +147,7 @@ if (document.readyState === 'loading') {
 MainGridLayout 是 Firefly 的主布局，导航栏、壁纸、侧边栏、Footer 都在这里面。WelcomeToast 在第 7 行被 import，然后放在了第 858 行：
 
 ```typescript
-import WelcomeToast from "@components/WelcomeToast.astro";
+import WelcomeToast from "@components/widget/WelcomeToast.astro";
 ```
 
 具体位置是在 `#swup-container` 里面、`<slot />` 后面：
