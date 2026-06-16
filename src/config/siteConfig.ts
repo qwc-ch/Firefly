@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
 	subtitle: "欢迎来到我的小破站",
 
 	// 站点 URL
-	site_url: "https://blog.520781.xyz",
+	site_url: "https://blog.amamo.top/",
 
 	// 站点描述
 	description:
