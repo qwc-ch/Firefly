@@ -45,5 +45,11 @@ export const profileConfig: ProfileConfig = {
 			url: "/rss/",
 			showName: false,
 		},
+		{
+			name: "bilbil",
+			icon: "fa7-brands:bilibili",
+			url: "https://b23.tv/E4s6Spg",
+			showName: false,
+		},
 	],
 };
