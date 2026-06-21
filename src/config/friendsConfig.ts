@@ -178,6 +178,15 @@ export const friendsConfig: FriendLink[] = [
 		weight: 14, // 权重，数字越大排序越靠
 		enabled: true, // 是否启用
 	},
+	{
+		title: "Sigrika-善良耙耙柑🍊",
+		imgurl: "https://qwq.sigrika.cc/assets/images/avatar.gif",
+		desc: "记录我的二次元之旅",
+		siteurl: "https://qwq.sigrika.cc/",
+		tags: ["Blog"],
+		weight: 18, // 权重，数字越大排序越靠
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
