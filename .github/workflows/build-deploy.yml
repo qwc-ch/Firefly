@@ -1,7 +1,7 @@
 # 构建项目并将产物推送到 build 分支，然后部署到 Cloudflare Workers
 name: Build to Branch
 
-# 当推送到 master 分支时触发，也支持手动触发
+# 当推送到 main 分支时触发，也支持手动触发
 on:
   push:
     branches: [main]
