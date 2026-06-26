@@ -13,7 +13,7 @@ lang: 'zh-CN'
 
 ## 为什么要搞这个
 
-每次手动构建、再部署，累不累啊？反正我累了。目标是：推送代码到 `master` 分支后，GitHub Actions 自动帮你搞定三件事：
+每次手动构建、再部署，累不累啊？反正我累了。目标是：推送代码到 `main` 分支后，GitHub Actions 自动帮你搞定三件事：
 
 1. 构建 Astro 项目（让它在 CI 里卷）
 2. 把构建产物推送到 `build` 分支（留个备份）
@@ -24,19 +24,19 @@ lang: 'zh-CN'
 ## 整体流程
 
 ```
-push master → checkout → 安装依赖 → pnpm build → 推送 dist 到 build 分支 → wrangler deploy
+push main → checkout → 安装依赖 → pnpm build → 推送 dist 到 build 分支 → wrangler deploy
 ```
 
 ## 实现思路
 
 ### 1. 触发条件
 
-监听 `master` 分支的 push 事件，同时支持手动触发（`workflow_dispatch`）。手动触发的好处是：万一自动部署翻车了，你可以点一下重试，不用再 push 一个空提交。
+监听 `main` 分支的 push 事件，同时支持手动触发（`workflow_dispatch`）。手动触发的好处是：万一自动部署翻车了，你可以点一下重试，不用再 push 一个空提交。
 
 ```yaml
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 ```
 
@@ -100,10 +100,10 @@ GitHub Actions 的 Ubuntu 镜像里没有 pnpm，得自己装。顺序有讲究�
 # 构建项目并将产物推送到 build 分支，然后部署到 Cloudflare Workers
 name: Build to Branch
 
-# 当推送到 master 分支时触发，也支持手动触发
+# 当推送到 main 分支时触发，也支持手动触发
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 # 需要写入权限来推送 build 分支

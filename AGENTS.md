@@ -46,7 +46,7 @@ Available pages: friends, sponsor, guestbook, bangumi, gallery. Bangumi data fet
 - **Tabs** for indent, **double quotes**, `organizeImports` on save (via `assist.actions.source.organizeImports`).
 - Ignores: `src/**/*.css`, `src/public/**/*`, `dist/`, `node_modules/`, `src/constants/icons.ts` (auto-generated).
 - Overrides for `.svelte`/`.astro`/`.vue`: `noUnusedVariables`/`noUnusedImports`/`useConst`/`useImportType` disabled.
-- CI: `pnpm exec biome ci ./src --reporter=github` (runs on `main` branch; build/deploy CI runs on `master`).
+- CI: `pnpm exec biome ci ./src --reporter=github` (all workflows run on `main` branch).
 
 ## Testing
 
@@ -59,7 +59,7 @@ No test framework. Verification: `pnpm check && pnpm build`.
 ## CI / Deploy
 
 - Build check (matrix: node 22, 23): `pnpm astro check` and `pnpm astro build` separately.
-- Biome CI: runs on `main` branch. Build/deploy CI: runs on `master` branch.
+- Biome CI: runs on `main` branch. Build/deploy CI: runs on `main` branch.
 - Vercel: `pnpm build`, output `dist/`, framework `astro`. Security headers in `vercel.json`.
 - Cloudflare: `wrangler.toml` serves `dist/` as static assets.
 - GitHub Pages: deploy workflow pushes `dist/` via `actions/upload-pages-artifact`.
