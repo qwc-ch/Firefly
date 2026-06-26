@@ -153,6 +153,46 @@ export const ru: Translation = {
 	[Key.bangumiUpdatedAt]: "Время сборки",
 	[Key.bangumiDataStatic]: "Статические данные",
 
+	// Отслеживание аниме
+	[Key.anime]: "Аниме",
+	[Key.animeSubtitle]:
+		"Мой список отслеживания аниме, данные из Bilibili и TMDB",
+	[Key.animeTotal]: "Всего",
+	[Key.animeAverageRating]: "Средний рейтинг",
+	[Key.animeSearch]: "Поиск аниме...",
+	[Key.animeAllTypes]: "Все",
+	[Key.animeTV]: "TV Аниме",
+	[Key.animeMovie]: "Фильм",
+	[Key.animeRatingDesc]: "По рейтингу ↓",
+	[Key.animeRatingAsc]: "По рейтингу ↑",
+	[Key.animeDateDesc]: "Сначала новые",
+	[Key.animeDateAsc]: "Сначала старые",
+	[Key.animeNoResults]: "Аниме не найдено",
+	[Key.animeLastUpdated]: "Данные обновлены",
+	[Key.animeSource]: "Источник",
+	[Key.animeEpStatus]: "Прогресс",
+	[Key.animeViewDetails]: "Подробнее",
+	[Key.animeNotConfigured]: "Источник данных не настроен",
+	[Key.animeNotConfiguredDesc]:
+		"Настройте Bilibili UID или TMDB API Key в src/config/siteConfig.ts",
+	[Key.animeBilibiliAvg]: "Bilibili ср.",
+	[Key.animeTmdbAvg]: "TMDB ср.",
+	[Key.animeDualSynced]: "Два источника",
+	[Key.animeNoOverview]: "Нет описания",
+	[Key.animeClose]: "Закрыть",
+	[Key.animeSynopsis]: "Описание",
+	[Key.animeWatchNow]: "Смотреть",
+	[Key.animeViewTmdb]: "Подробнее на TMDB",
+	[Key.animeAllWithCount]: "Все ({count})",
+	[Key.animeTVWithCount]: "ТВ ({count})",
+	[Key.animeMovieWithCount]: "Фильм ({count})",
+	[Key.animeTypeAnime]: "Аниме",
+	[Key.animeTypeMovie]: "Фильм",
+	[Key.animeTypeDocumentary]: "Документальный",
+	[Key.animeTypeChinese]: "Китайское аниме",
+	[Key.animeTypeDrama]: "Сериал",
+	[Key.animeTypeConcert]: "Концерт",
+
 	// Пагинация
 	[Key.paginationFirst]: "Первая",
 	[Key.paginationPrev]: "Предыдущая",
@@ -352,4 +392,11 @@ export const ru: Translation = {
 	[Key.passwordError]: "Неверный пароль, попробуйте снова.",
 	[Key.passwordProtectedRss]:
 		"Эта статья зашифрована. Пожалуйста, посетите сайт для просмотра.",
+
+	// Фоновый видеоплеер
+	[Key.videoPlay]: "Воспроизвести фоновое видео",
+	[Key.videoPause]: "Пауза фонового видео",
+	[Key.videoPrev]: "Предыдущее видео",
+	[Key.videoNext]: "Следующее видео",
+	[Key.videoLoadError]: "Не удалось загрузить видео",
 };

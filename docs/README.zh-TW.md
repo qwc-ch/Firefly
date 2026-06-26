@@ -8,7 +8,7 @@
 > 
 > ![Node.js >= 22](https://img.shields.io/badge/node.js-%3E%3D22-brightgreen) 
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue)
-![Astro](https://img.shields.io/badge/Astro-6.4.4-orange)
+![Astro](https://img.shields.io/badge/Astro-7.0.2-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
 >
 > [![Stars](https://img.shields.io/github/stars/CuteLeaf/Firefly?style=social)](https://github.com/CuteLeaf/Firefly/stargazers)
@@ -21,7 +21,7 @@
 > 
 > ![GitHub License](https://img.shields.io/github/license/CuteLeaf/Firefly)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/CuteLeaf/Firefly)
-[![愛發電贊助](https://img.shields.io/badge/愛發電-贊助作者-ff69b4.svg)](https://ifdian.net/a/cuteleaf)
+[![愛發電打賞](https://img.shields.io/badge/愛發電-打賞作者-ff69b4.svg)](https://ifdian.net/a/cuteleaf)
 
 </div>
 
@@ -43,8 +43,20 @@
 
 🔧 高度可配置: 大部分功能模組均可透過配置檔案自訂
 
-<img alt="firefly" src="./images/1.webp" />
-<img alt="Lighthouse" src="./images/Lighthouse.png" />
+<table width="100%" align="center">
+  <tr>
+    <td colspan="3" align="center">
+      <img src="./images/1.webp" >
+      <br>橫幅模式</td>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./images/3.webp" width="300"><br>透明模式</td>
+    <td align="center"><img src="./images/2.webp" width="300"><br>全螢幕桌布模式</td>
+    <td align="center"><img src="./images/4.webp" width="300"><br>純色模式</td>
+  </tr>
+</table>
+<img alt="Lighthouse" src="./docs/images/Lighthouse.png" />
 
 >[!TIP]
 >
@@ -191,7 +203,7 @@ src/
 │   ├── plantumlConfig.ts         # PlantUML 圖表配置
 │   ├── profileConfig.ts          # 使用者資料配置
 │   ├── sidebarConfig.ts          # 側邊欄版面配置
-│   └── sponsorConfig.ts          # 贊助配置
+│   └── sponsorConfig.ts          # 打賞配置
 ```
 
 

@@ -1,17 +1,19 @@
 export type BackgroundWallpaperConfig = {
 	mode: "banner" | "fullscreen" | "overlay" | "none"; // 壁纸模式：banner横幅模式、fullscreen全屏壁纸、overlay全屏透明覆盖模式或none纯色背景
 	switchable?: boolean; // 是否允许用户通过导航栏切换壁纸模式，默认true
+	playerEnable?: boolean; // 是否启用背景视频播放，默认false
 	src:
 		| string
 		| string[]
 		| {
 				desktop?: string | string[];
 				mobile?: string | string[];
+				playerUrl?: string | string[]; // 背景视频播放地址，支持单个视频路径或数组（多视频列表循环）
 		  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-
 	// 横幅壁纸和全屏壁纸共享配置
 	common?: {
 		dimOpacity?: number; // 横幅文字遮罩暗度，0-1之间，值越大越暗，默认0.15
+		playerMode?: "order" | "random"; // 多视频播放模式："order" 顺序循环（默认），"random" 随机切换
 		homeText?: {
 			enable: boolean; // 是否在首页显示自定义文字（全局开关）
 			switchable?: boolean; // 是否允许用户通过控制面板切换横幅标题显示
@@ -51,6 +53,13 @@ export type BackgroundWallpaperConfig = {
 			height?: string; // 渐变高度，默认 "30vh"
 			switchable?: boolean; // 是否允许用户通过控制面板切换渐变过渡
 		};
+		// 壁纸轮播配置，横幅壁纸和全屏壁纸共享
+		carousel?: {
+			enable: boolean; // 是否启用壁纸轮播
+			interval?: number; // 轮播间隔时间，单位毫秒
+			transitionEffect?: "fade" | "zoom" | "slide" | "kenburns"; // 过渡效果: 'fade' 渐变 | 'zoom' 缩放 | 'slide' 滑动 | 'kenburns' 旋转木马
+			switchable?: boolean; // 是否允许用户通过控制面板切换壁纸轮播
+		};
 	};
 
 	// Banner模式特有配置
@@ -75,11 +84,6 @@ export type BackgroundWallpaperConfig = {
 			| "right center"
 			| "right bottom"
 			| string; // 壁纸位置，支持CSS object-position的所有值，包括百分比和像素值
-		carousel?: {
-			enable: boolean; // 是否启用横幅图片轮播
-			interval?: number; // 轮播间隔时间，单位毫秒
-			switchable?: boolean; // 是否允许用户通过控制面板切换横幅轮播
-		};
 	};
 	// 全屏透明覆盖模式特有配置
 	overlay?: {

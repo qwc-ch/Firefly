@@ -80,14 +80,18 @@ export type SiteConfig = {
 	// 页面开关配置
 	pages: {
 		friends: boolean; // 友链页面开关
-		sponsor: boolean; // 赞助页面开关
+		sponsor: boolean; // 打赏页面开关
 		guestbook: boolean; // 留言板页面开关
 		bangumi: boolean;
 		gallery: boolean; // 相册页面开关
+		anime: boolean; // 追番页面开关
 	};
 
 	// 分类导航栏开关
 	categoryBar?: boolean;
+
+	// 归档页是否折叠非最新年份文章
+	foldArticle?: boolean;
 
 	// 文章列表布局配置
 	postListLayout: {
@@ -109,7 +113,7 @@ export type SiteConfig = {
 	post: {
 		// 提醒框（Admonitions）配置
 		rehypeCallouts: {
-			theme: "github" | "obsidian" | "vitepress";
+			theme: "github" | "obsidian" | "vitepress" | "docusaurus";
 			enablePythonMarkdownAdmonitions?: boolean;
 		};
 		// 控制"上次编辑时间"卡片显示的开关
@@ -129,6 +133,17 @@ export type SiteConfig = {
 		apiUrl?: string; // Bangumi API 地址
 		subjectBaseUrl?: string; // 条目详情页地址
 		categoryOrder?: ("anime" | "game" | "book" | "music" | "real")[]; // 条目类型排序顺序
+	};
+
+	// 追番配置（Bilibili + TMDB）
+	anime?: {
+		bilibili?: {
+			uid: string; // Bilibili 用户 UID
+		};
+		tmdb?: {
+			apiKey: string; // TMDB API Key
+			listId: string; // TMDB 列表 ID
+		};
 	};
 
 	// 分页配置

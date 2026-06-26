@@ -153,6 +153,45 @@ export const ja: Translation = {
 	[Key.bangumiUpdatedAt]: "ビルド時間",
 	[Key.bangumiDataStatic]: "静的データ",
 
+	// 追番（アニメ追跡）
+	[Key.anime]: "追番",
+	[Key.animeSubtitle]: "私のアニメ追跡リスト、Bilibili と TMDB からデータ取得",
+	[Key.animeTotal]: "合計",
+	[Key.animeAverageRating]: "平均評価",
+	[Key.animeSearch]: "アニメを検索...",
+	[Key.animeAllTypes]: "すべて",
+	[Key.animeTV]: "TV アニメ",
+	[Key.animeMovie]: "映画",
+	[Key.animeRatingDesc]: "評価が高い順",
+	[Key.animeRatingAsc]: "評価が低い順",
+	[Key.animeDateDesc]: "新しい順",
+	[Key.animeDateAsc]: "古い順",
+	[Key.animeNoResults]: "一致するアニメが見つかりません",
+	[Key.animeLastUpdated]: "データ更新",
+	[Key.animeSource]: "データソース",
+	[Key.animeEpStatus]: "進捗",
+	[Key.animeViewDetails]: "詳細を見る",
+	[Key.animeNotConfigured]: "アニメデータソースが未設定",
+	[Key.animeNotConfiguredDesc]:
+		"src/config/siteConfig.ts で Bilibili UID または TMDB API Key を設定してください",
+	[Key.animeBilibiliAvg]: "Bilibili 平均",
+	[Key.animeTmdbAvg]: "TMDB 平均",
+	[Key.animeDualSynced]: "デュアル同期済み",
+	[Key.animeNoOverview]: "あらすじなし",
+	[Key.animeClose]: "閉じる",
+	[Key.animeSynopsis]: "あらすじ",
+	[Key.animeWatchNow]: "今すぐ視聴",
+	[Key.animeViewTmdb]: "TMDB 詳細を見る",
+	[Key.animeAllWithCount]: "すべて ({count})",
+	[Key.animeTVWithCount]: "TV ({count})",
+	[Key.animeMovieWithCount]: "映画 ({count})",
+	[Key.animeTypeAnime]: "アニメ",
+	[Key.animeTypeMovie]: "映画",
+	[Key.animeTypeDocumentary]: "ドキュメンタリー",
+	[Key.animeTypeChinese]: "中国アニメ",
+	[Key.animeTypeDrama]: "ドラマ",
+	[Key.animeTypeConcert]: "コンサート",
+
 	// ページネーション
 	[Key.paginationFirst]: "最初",
 	[Key.paginationPrev]: "前へ",
@@ -350,4 +389,11 @@ export const ja: Translation = {
 	[Key.passwordError]: "パスワードが間違っています。もう一度お試しください。",
 	[Key.passwordProtectedRss]:
 		"この記事は暗号化されています。ウェブサイトにアクセスしてご覧ください。",
+
+	// 背景動画プレイヤー
+	[Key.videoPlay]: "背景動画を再生",
+	[Key.videoPause]: "背景動画を一時停止",
+	[Key.videoPrev]: "前の動画",
+	[Key.videoNext]: "次の動画",
+	[Key.videoLoadError]: "動画の読み込みに失敗しました",
 };

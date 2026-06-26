@@ -8,7 +8,7 @@
 > 
 > ![Node.js >= 22](https://img.shields.io/badge/node.js-%3E%3D22-brightgreen) 
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue)
-![Astro](https://img.shields.io/badge/Astro-6.4.4-orange)
+![Astro](https://img.shields.io/badge/Astro-7.0.2-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
 >
 > [![Stars](https://img.shields.io/github/stars/CuteLeaf/Firefly?style=social)](https://github.com/CuteLeaf/Firefly/stargazers)
@@ -43,8 +43,20 @@
 
 🔧 Высокая настраиваемость: Большинство функций можно настроить через конфигурационные файлы
 
-<img alt="firefly" src="./images/1.webp" />
-<img alt="Lighthouse" src="./images/Lighthouse.png" />
+<table width="100%" align="center">
+  <tr>
+    <td colspan="3" align="center">
+      <img src="./images/1.webp" >
+      <br>Режим баннера</td>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./images/3.webp" width="300"><br>Режим оверлея</td>
+    <td align="center"><img src="./images/2.webp" width="300"><br>Режим полноэкранных обоев</td>
+    <td align="center"><img src="./images/4.webp" width="300"><br>Режим сплошного цвета</td>
+  </tr>
+</table>
+<img alt="Lighthouse" src="./docs/images/Lighthouse.png" />
 
 >[!TIP]
 >
@@ -214,7 +226,7 @@ comment: true    # Включить комментарии
 
 Помимо поддержки [GitHub Flavored Markdown](https://github.github.com/gfm/) по умолчанию в Astro, есть несколько дополнительных функций Markdown:
 
-- Предупреждающие блоки (Admonitions) - Поддержка тем GitHub, Obsidian и VitePress ([Предпросмотр и использование](https://firefly.cuteleaf.cn/posts/markdown-extended/))
+- Предупреждающие блоки (Admonitions) - Поддержка тем GitHub, Obsidian, VitePress и Docusaurus ([Предпросмотр и использование](https://firefly.cuteleaf.cn/posts/markdown-extended/))
 - Карточки репозиториев GitHub ([Предпросмотр и использование](https://firefly.cuteleaf.cn/posts/markdown-extended/))
 - Улучшенные блоки кода на основе Expressive Code ([Предпросмотр](http://firefly.cuteleaf.cn/posts/code-examples/) / [Документация](https://expressive-code.com/))
 
