@@ -127,6 +127,13 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 	icon: "material-symbols:docs",
 	// });
 
+	// 管理后台
+	links.push({
+		name: "管理",
+		url: "/config/",
+		icon: "material-symbols:settings",
+	});
+
 	return { links } as NavBarConfig;
 };
 

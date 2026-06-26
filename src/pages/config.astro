@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="博客管理后台">
+  <div id="admin-root">
+    <div id="admin-app"></div>
+  </div>
+</Layout>
+
+<script>
+  import { mount } from 'svelte';
+  import AdminApp from '@/components/admin/AdminApp.svelte';
+
+  const target = document.getElementById('admin-app');
+  if (target) {
+    mount(AdminApp, { target });
+  }
+</script>
