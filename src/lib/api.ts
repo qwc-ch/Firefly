@@ -87,9 +87,14 @@ export interface ImageItem {
 	lastModified: string;
 }
 
+function enc(slug: string) {
+	return encodeURIComponent(slug);
+}
+
 export const postsApi = {
 	list: () => request("/api/posts") as Promise<PostMeta[]>,
-	get: (slug: string) => request(`/api/posts/${slug}`) as Promise<PostContent>,
+	get: (slug: string) =>
+		request(`/api/posts/${enc(slug)}`) as Promise<PostContent>,
 	create: (data: {
 		slug: string;
 		frontmatter: Record<string, unknown>;
@@ -99,11 +104,12 @@ export const postsApi = {
 		slug: string,
 		data: { frontmatter: Record<string, unknown>; content: string },
 	) =>
-		request(`/api/posts/${slug}`, {
+		request(`/api/posts/${enc(slug)}`, {
 			method: "PUT",
 			body: JSON.stringify(data),
 		}),
-	delete: (slug: string) => request(`/api/posts/${slug}`, { method: "DELETE" }),
+	delete: (slug: string) =>
+		request(`/api/posts/${enc(slug)}`, { method: "DELETE" }),
 };
 
 export const imagesApi = {

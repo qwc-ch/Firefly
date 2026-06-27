@@ -1,4 +1,5 @@
 <script lang="ts">
+import { friendsConfig } from "@/config/friendsConfig";
 import { getIconSvg } from "@/constants/icons";
 import { siteConfigApi } from "@/lib/api";
 
@@ -18,7 +19,11 @@ async function loadConfig() {
 	loading = true;
 	try {
 		const data = await siteConfigApi.get();
-		config = data.config;
+		const cfg = data.config;
+		if (!cfg.friends) {
+			cfg.friends = friendsConfig.map((f) => ({ ...f }));
+		}
+		config = cfg;
 		sha = data.sha;
 	} catch (err: unknown) {
 		message = err instanceof Error ? err.message : "加载失败";
@@ -337,6 +342,118 @@ function getNested(path: string): unknown {
           </div>
         {/if}
       </div>
+
+      <!-- ========== 友链管理 ========== -->
+      <div class="section">
+        <button class="section-header" onclick={() => toggleSection('friends')}>
+          <span class="section-dot" style="background: var(--primary)"></span>
+          <span class="section-title">友链管理</span>
+          <span class="friend-count">{((config.friends as Array<unknown>)?.length || 0)} 个友链</span>
+          <i class="icon section-arrow" class:open={openSections.has('friends')} style="font-size:18px">{@html getIconSvg("material-symbols:chevron-right")}</i>
+        </button>
+        {#if openSections.has('friends')}
+          <div class="section-body">
+            {#each (config.friends as Array<Record<string, unknown>>) || [] as friend, i (friend.title as string || '')}
+              <div class="friend-card" class:friend-disabled={!friend.enabled}>
+                <div class="friend-card-header">
+                  <img class="friend-avatar" src={String(friend.imgurl || '')} alt={String(friend.title || '')} />
+                  <div class="friend-info">
+                    <span class="friend-title">{String(friend.title || '')}</span>
+                    <span class="friend-desc">{String(friend.desc || '')}</span>
+                  </div>
+                  <label class="toggle" ontouchstart={(e) => e.stopPropagation()}>
+                    <input type="checkbox" checked={!!friend.enabled} onchange={(e) => {
+                      const arr = (config.friends as Array<Record<string, unknown>>) || [];
+                      arr[i].enabled = (e.target as HTMLInputElement).checked;
+                      config = { ...config, friends: arr };
+                    }} />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="friend-card-body">
+	<div class="friend-field-row">
+					<label class="friend-field" style="flex:1; min-width:0">
+						<span>标题</span>
+						<input class="friend-input" value={String(friend.title || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].title = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+					</label>
+					<label class="friend-field" style="flex:0 0 auto">
+						<span>权重</span>
+						<input class="friend-input friend-input-sm" type="number" value={Number(friend.weight ?? 10)} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].weight = Number((e.target as HTMLInputElement).value); config = { ...config, friends: arr }; }} />
+					</label>
+				</div>
+                  <label class="friend-field">
+                    <span>头像 URL</span>
+                    <input class="friend-input" value={String(friend.imgurl || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].imgurl = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                  </label>
+                  <label class="friend-field">
+                    <span>站点 URL</span>
+                    <input class="friend-input" value={String(friend.siteurl || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].siteurl = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                  </label>
+                  <label class="friend-field">
+                    <span>描述</span>
+                    <input class="friend-input" value={String(friend.desc || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].desc = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                  </label>
+                  <label class="friend-field">
+                    <span>标签（逗号分隔）</span>
+                    <input class="friend-input" value={((friend.tags as string[]) || []).join(', ')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim()).filter(Boolean); config = { ...config, friends: arr }; }} />
+                  </label>
+                  <div class="friend-actions">
+                    <button class="friend-btn friend-btn-danger" onclick={() => {
+                      const arr = (config.friends as Array<Record<string, unknown>>) || [];
+                      arr.splice(i, 1);
+                      config = { ...config, friends: arr };
+                    }}>删除</button>
+                  </div>
+                </div>
+              </div>
+            {/each}
+
+            <div class="friend-add-area">
+              <button class="btn-add-friend" onclick={() => {
+                const arr = (config.friends as Array<Record<string, unknown>>) || [];
+                arr.push({ title: '', imgurl: '', desc: '', siteurl: '', tags: [], weight: 10, enabled: true });
+                config = { ...config, friends: arr };
+              }}>
+                <i class="icon" style="font-size:16px">{@html getIconSvg("material-symbols:add")}</i>
+                <span>添加友链</span>
+              </button>
+            </div>
+
+            <div class="friend-page-config">
+              <div class="friend-page-title">友链页面配置</div>
+              <label class="friend-field">
+                <span>页面标题（留空使用默认）</span>
+                <input class="friend-input" value={String(config.friendsPage?.title || '')} oninput={(e) => setNested('friendsPage.title', (e.target as HTMLInputElement).value)} />
+              </label>
+              <label class="friend-field">
+                <span>页面描述（留空使用默认）</span>
+                <input class="friend-input" value={String(config.friendsPage?.description || '')} oninput={(e) => setNested('friendsPage.description', (e.target as HTMLInputElement).value)} />
+              </label>
+              <div class="friend-check-row">
+                <label class="toggle">
+                  <input type="checkbox" checked={config.friendsPage?.showCustomContent ?? true} onchange={(e) => setNested('friendsPage.showCustomContent', (e.target as HTMLInputElement).checked)} />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="friend-check-label">显示自定义内容</span>
+              </div>
+              <div class="friend-check-row">
+                <label class="toggle">
+                  <input type="checkbox" checked={config.friendsPage?.showComment ?? true} onchange={(e) => setNested('friendsPage.showComment', (e.target as HTMLInputElement).checked)} />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="friend-check-label">显示评论区</span>
+              </div>
+              <div class="friend-check-row">
+                <label class="toggle">
+                  <input type="checkbox" checked={config.friendsPage?.randomizeSort ?? false} onchange={(e) => setNested('friendsPage.randomizeSort', (e.target as HTMLInputElement).checked)} />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="friend-check-label">随机排序（忽略权重）</span>
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
     </div>
   {/if}
 </div>
@@ -469,5 +586,179 @@ function getNested(path: string): unknown {
   }
   .toggle input:checked + .toggle-slider { background: var(--primary); }
   .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  /* Friend links */
+  .friend-count {
+    font-size: 12px;
+    color: var(--content-meta);
+    margin-right: 8px;
+  }
+
+  .friend-card {
+    background: var(--muted);
+    border: 1px solid var(--line-divider);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .friend-card.friend-disabled {
+    opacity: 0.5;
+  }
+
+  .friend-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-divider);
+  }
+
+  .friend-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .friend-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .friend-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--deep-text);
+  }
+  .friend-desc {
+    font-size: 12px;
+    color: var(--content-meta);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .friend-card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .friend-field-row {
+    display: flex;
+    gap: 10px;
+  }
+  .friend-field-row .friend-field {
+    flex: 1;
+  }
+
+  .friend-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--content-meta);
+    font-weight: 500;
+  }
+
+  .friend-input {
+    padding: 7px 10px;
+    border: 1px solid var(--line-divider);
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    color: var(--deep-text);
+    font-size: 13px;
+    outline: none;
+  }
+  .friend-input:focus {
+    border-color: var(--primary);
+  }
+  .friend-input-sm {
+    width: 4.5rem;
+  }
+  .friend-input-sm::-webkit-inner-spin-button,
+  .friend-input-sm::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .friend-input-sm[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .friend-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .friend-btn {
+    padding: 5px 12px;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--content-meta);
+  }
+  .friend-btn:hover {
+    background: var(--btn-plain-bg-hover);
+  }
+  .friend-btn-danger {
+    color: var(--admonitions-color-caution);
+  }
+  .friend-btn-danger:hover {
+    background: var(--admonitions-color-caution);
+    color: white;
+  }
+
+  .friend-add-area {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+  }
+
+  .btn-add-friend {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border: 1px dashed var(--line-divider);
+    border-radius: var(--radius-xl);
+    background: transparent;
+    color: var(--content-meta);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-add-friend:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .friend-page-config {
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-divider);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .friend-page-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--deep-text);
+  }
+  .friend-check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .friend-check-label {
+    font-size: 13px;
+    color: var(--deep-text);
+  }
 
 </style>
