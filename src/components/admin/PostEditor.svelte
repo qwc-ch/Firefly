@@ -4,7 +4,7 @@ import { marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import "highlight.js/styles/github-dark.css";
 import { getIconSvg } from "@/constants/icons";
-import { getImageUrl, type PostContent, postsApi } from "@/lib/api";
+import { type PostContent, postsApi } from "@/lib/api";
 
 marked.use(
 	markedHighlight({
@@ -236,7 +236,7 @@ function uploadFile(file: File): Promise<string> {
 			if (xhr.status >= 200 && xhr.status < 300) {
 				try {
 					const result = JSON.parse(xhr.responseText);
-					resolve(result.key);
+					resolve(result.url);
 				} catch {
 					reject(new Error("解析响应失败"));
 				}
@@ -261,8 +261,7 @@ async function handleFileUpload(file: File) {
 		return;
 	}
 	try {
-		const key = await uploadFile(file);
-		const url = getImageUrl(key);
+		const url = await uploadFile(file);
 		const alt = file.name.replace(/\.[^.]+$/, "");
 		const ta = textareaRef;
 		if (ta) {

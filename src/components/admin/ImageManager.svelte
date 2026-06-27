@@ -1,6 +1,6 @@
 <script lang="ts">
 import { getIconSvg } from "@/constants/icons";
-import { getImageUrl, type ImageItem, imagesApi } from "@/lib/api";
+import { type ImageItem, imagesApi } from "@/lib/api";
 
 let images = $state<ImageItem[]>([]);
 let loading = $state(true);
@@ -67,8 +67,7 @@ async function handleDelete(key: string) {
 	}
 }
 
-function copyUrl(key: string) {
-	const url = getImageUrl(key);
+function copyUrl(url: string) {
 	navigator.clipboard.writeText(url);
 	message = "链接已复制";
 	messageType = "success";
@@ -123,12 +122,12 @@ function formatSize(bytes: number): string {
         <div class="image-card">
           <div class="image-thumb">
             <img
-              src={getImageUrl(img.key)}
+              src={img.url}
               alt={img.key}
               loading="lazy"
             />
             <div class="image-overlay">
-              <button class="overlay-btn" onclick={() => copyUrl(img.key)} title="复制链接">
+              <button class="overlay-btn" onclick={() => copyUrl(img.url)} title="复制链接">
                 <i class="icon" style="font-size:16px">{@html getIconSvg("material-symbols:content-copy")}</i>
               </button>
               <button class="overlay-btn overlay-btn-danger" onclick={() => handleDelete(img.key)} title="删除">

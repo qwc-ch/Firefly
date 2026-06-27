@@ -83,8 +83,7 @@ export interface PostContent extends PostMeta {
 export interface ImageItem {
 	key: string;
 	size: number;
-	etag: string;
-	lastModified: string;
+	url: string;
 }
 
 function enc(slug: string) {
@@ -113,10 +112,7 @@ export const postsApi = {
 };
 
 export const imagesApi = {
-	list: (prefix?: string) =>
-		request(`/api/images${prefix ? `?prefix=${prefix}` : ""}`) as Promise<
-			ImageItem[]
-		>,
+	list: () => request("/api/images") as Promise<ImageItem[]>,
 	upload: async (file: File) => {
 		const form = new FormData();
 		form.append("file", file);
@@ -138,7 +134,3 @@ export const siteConfigApi = {
 			body: JSON.stringify({ config, sha, message }),
 		}),
 };
-
-export function getImageUrl(key: string): string {
-	return `${API_BASE}/img/${key}`;
-}
