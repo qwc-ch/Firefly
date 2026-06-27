@@ -1,6 +1,6 @@
 <script lang="ts">
 import { getIconSvg } from "@/constants/icons";
-import { clearAuth, isAuthenticated, type PostMeta, postsApi } from "@/lib/api";
+import { clearAuth, type PostMeta, postsApi } from "@/lib/api";
 import { getStoredTheme, setTheme } from "@/utils/setting-utils";
 import ConfigEditor from "./ConfigEditor.svelte";
 import ImageManager from "./ImageManager.svelte";
@@ -41,7 +41,22 @@ const MOBILE = [
 
 let currentView = $state<"list" | "editor" | "images" | "config">("list");
 let editingSlug = $state<string | null>(null);
-let loggedIn = $state(isAuthenticated());
+let loggedIn = $state<boolean | null>(null);
+
+$effect(() => {
+	checkAuth();
+});
+
+async function checkAuth() {
+	try {
+		const res = await fetch("https://api.520781.xyz/api/posts", {
+			signal: AbortSignal.timeout(5000),
+		});
+		loggedIn = res.ok;
+	} catch {
+		loggedIn = !!localStorage.getItem("firefly_admin_token");
+	}
+}
 let menuOpen = $state(false);
 let scrolled = $state(false);
 let hidden = $state(false);
@@ -139,7 +154,11 @@ function handleSaved() {
 }
 </script>
 
-{#if !loggedIn}
+{#if loggedIn === null}
+  <div class="loading-page">
+    <i class="icon" style="font-size:32px">{@html getIconSvg("svg-spinners:bars-rotate-fade")}</i>
+  </div>
+{:else if !loggedIn}
   <LoginForm onLogin={handleLogin} />
 {:else}
   <div class="wallpaper-fixed">
@@ -270,6 +289,13 @@ function handleSaved() {
 {/if}
 
 <style>
+  .loading-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--page-bg);
+  }
   .wallpaper-fixed { position: fixed; inset: 0; z-index: 0; overflow: hidden; will-change: transform; }
   .wp-slide {
     position: absolute; inset: 0; opacity: 0;

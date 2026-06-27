@@ -1,36 +1,52 @@
 const API_BASE = "https://api.520781.xyz";
+const TOKEN_KEY = "firefly_admin_token";
 
-function getAuth(): string {
+function getToken(): string {
 	if (typeof window === "undefined") return "";
-	const saved = localStorage.getItem("firefly_admin_auth");
-	if (saved) return saved;
-	return "";
+	return localStorage.getItem(TOKEN_KEY) || "";
 }
 
-export function setAuth(username: string, password: string) {
-	const auth = btoa(`${username}:${password}`);
-	localStorage.setItem("firefly_admin_auth", auth);
+function setToken(token: string) {
+	localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearAuth() {
-	localStorage.removeItem("firefly_admin_auth");
+	localStorage.removeItem(TOKEN_KEY);
 }
 
 export function isAuthenticated(): boolean {
-	return !!getAuth();
+	return !!getToken();
+}
+
+export async function login(username: string, password: string): Promise<void> {
+	const auth = btoa(`${username}:${password}`);
+	const res = await fetch(`${API_BASE}/api/auth/login`, {
+		method: "POST",
+		headers: { Authorization: `Basic ${auth}` },
+	});
+
+	if (res.status === 429) {
+		throw new Error("登录尝试过于频繁，请 15 分钟后重试");
+	}
+	if (!res.ok) {
+		throw new Error("用户名或密码错误");
+	}
+
+	const data = (await res.json()) as { token: string; expires_in: number };
+	setToken(data.token);
 }
 
 async function request(
 	path: string,
 	options: RequestInit = {},
 ): Promise<unknown> {
-	const auth = getAuth();
+	const token = getToken();
 	const headers: Record<string, string> = {
 		...(options.headers as Record<string, string>),
 	};
 
-	if (auth) {
-		headers.Authorization = `Basic ${auth}`;
+	if (token) {
+		headers.Authorization = `Bearer ${token}`;
 	}
 
 	if (!(options.body instanceof FormData)) {
@@ -41,6 +57,10 @@ async function request(
 		...options,
 		headers,
 	});
+
+	if (res.status === 429) {
+		throw new Error("请求过于频繁，请稍后重试");
+	}
 
 	if (res.status === 401) {
 		clearAuth();

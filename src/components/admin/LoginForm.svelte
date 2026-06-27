@@ -1,6 +1,6 @@
 <script lang="ts">
 import { getIconSvg } from "@/constants/icons";
-import { setAuth } from "@/lib/api";
+import { login } from "@/lib/api";
 
 interface Props {
 	onLogin: () => void;
@@ -19,18 +19,10 @@ async function handleSubmit(e: Event) {
 	loading = true;
 
 	try {
-		setAuth(username, password);
-		const res = await fetch("https://api.520781.xyz/api/posts", {
-			headers: { Authorization: `Basic ${btoa(`${username}:${password}`)}` },
-		});
-		if (res.status === 401) {
-			error = "用户名或密码错误";
-			loading = false;
-			return;
-		}
+		await login(username, password);
 		onLogin();
-	} catch (err) {
-		error = "连接失败，请检查网络";
+	} catch (err: unknown) {
+		error = err instanceof Error ? err.message : "连接失败，请检查网络";
 		loading = false;
 	}
 }

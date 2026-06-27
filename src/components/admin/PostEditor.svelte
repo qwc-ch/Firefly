@@ -215,7 +215,7 @@ function handleTable() {
 
 function getAuthToken(): string {
 	if (typeof window === "undefined") return "";
-	return localStorage.getItem("firefly_admin_auth") || "";
+	return localStorage.getItem("firefly_admin_token") || "";
 }
 
 function uploadFile(file: File): Promise<string> {
@@ -250,7 +250,7 @@ function uploadFile(file: File): Promise<string> {
 			reject(new Error("网络错误"));
 		};
 		xhr.open("POST", "https://api.520781.xyz/api/images/upload");
-		xhr.setRequestHeader("Authorization", `Basic ${getAuthToken()}`);
+		xhr.setRequestHeader("Authorization", `Bearer ${getAuthToken()}`);
 		xhr.send(form);
 	});
 }
