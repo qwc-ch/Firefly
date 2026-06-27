@@ -333,28 +333,6 @@ function handleImageRemove() {
   .page {
     max-width: 780px;
     margin: 0 auto;
-    padding: 24px;
-  }
-
-  .message {
-    padding: 10px 16px;
-    border-radius: var(--radius-xl);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-  }
-  .message-error {
-    background: var(--admonitions-color-caution);
-    color: white;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 80px 0;
-    color: var(--content-meta);
-    font-size: 14px;
   }
 
   .form-grid {
@@ -363,70 +341,10 @@ function handleImageRemove() {
     gap: 20px;
   }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .form-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--deep-text);
-  }
-
-  .form-input {
-    padding: 9px 14px;
-    border: 1px solid var(--line-divider);
-    border-radius: var(--radius-xl);
-    background: var(--muted);
-    color: var(--deep-text);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 150ms;
-  }
-  .form-input:focus {
-    border-color: var(--primary);
-  }
-  .form-input:disabled {
-    opacity: 0.5;
-  }
-
-  .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-  }
-
   .form-code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     line-height: 1.6;
-  }
-
-  .form-check-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .form-checkbox {
-    accent-color: var(--primary);
-    width: 16px;
-    height: 16px;
-  }
-
-  .form-check-label {
-    font-size: 13px;
-    color: var(--deep-text);
-    margin-right: 8px;
   }
 
   .image-row {
@@ -459,54 +377,6 @@ function handleImageRemove() {
     border: 1px solid var(--line-divider);
   }
 
-  .hidden {
-    display: none;
-  }
-
-  .form-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-divider);
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 20px;
-    background: var(--primary);
-    color: white;
-    font-weight: 600;
-    font-size: 13px;
-    border: none;
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-    transition: opacity 150ms;
-  }
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-primary:disabled { opacity: 0.5; }
-
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 20px;
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-    font-weight: 500;
-    font-size: 13px;
-    border: none;
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-    transition: background 150ms;
-  }
-  .btn-secondary:hover {
-    background: var(--btn-regular-bg-hover);
-  }
-
   .btn-danger {
     display: inline-flex;
     align-items: center;
@@ -535,8 +405,4 @@ function handleImageRemove() {
     padding: 0;
   }
 
-  @media (max-width: 767px) {
-    .page { padding: 16px; }
-    .form-row { grid-template-columns: 1fr; }
-  }
 </style>

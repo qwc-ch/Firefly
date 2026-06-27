@@ -1,10 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import "@/styles/admin.css";
+import MusicPlayer from "@/components/features/MusicPlayer.astro";
 ---
 
 <Layout title="博客管理后台">
   <div id="admin-root">
     <div id="admin-app"></div>
+    <div id="admin-music-player" class="music-nav-panel closed">
+      <MusicPlayer id="admin-player" />
+    </div>
   </div>
 </Layout>
 

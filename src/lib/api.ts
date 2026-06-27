@@ -82,13 +82,6 @@ export interface ImageItem {
 	lastModified: string;
 }
 
-export interface ConfigItem {
-	key: string;
-	value: string;
-	updated_at: string;
-	_editing?: boolean;
-}
-
 export const postsApi = {
 	list: () => request("/api/posts") as Promise<PostMeta[]>,
 	get: (slug: string) => request(`/api/posts/${slug}`) as Promise<PostContent>,
@@ -120,17 +113,6 @@ export const imagesApi = {
 	},
 	delete: (key: string) =>
 		request(`/api/images/${encodeURIComponent(key)}`, { method: "DELETE" }),
-};
-
-export const configApi = {
-	getAll: () => request("/api/config") as Promise<Record<string, string>>,
-	set: (key: string, value: string) =>
-		request("/api/config", {
-			method: "POST",
-			body: JSON.stringify({ key, value }),
-		}),
-	delete: (key: string) =>
-		request(`/api/config/${encodeURIComponent(key)}`, { method: "DELETE" }),
 };
 
 export const siteConfigApi = {

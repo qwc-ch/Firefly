@@ -342,15 +342,7 @@ function getNested(path: string): unknown {
 </div>
 
 <style>
-  .page { padding: 24px; max-width: 780px; margin: 0 auto; }
-
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .page-title { font-size: 20px; font-weight: 700; color: var(--deep-text); margin: 0; }
+  .page { max-width: 780px; margin: 0 auto; }
 
   .btn-save {
     display: inline-flex;
@@ -367,24 +359,6 @@ function getNested(path: string): unknown {
   }
   .btn-save:hover { opacity: 0.9; }
   .btn-save:disabled { opacity: 0.5; }
-
-  .message {
-    padding: 10px 16px;
-    border-radius: var(--radius-xl);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-  }
-  .message-error { background: var(--admonitions-color-caution); color: white; }
-
-  .empty-state {
-    text-align: center;
-    padding: 80px 0;
-    color: var(--content-meta);
-    font-size: 14px;
-  }
 
   .sections { display: flex; flex-direction: column; gap: 8px; }
 
@@ -496,7 +470,4 @@ function getNested(path: string): unknown {
   .toggle input:checked + .toggle-slider { background: var(--primary); }
   .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
 
-  @media (max-width: 767px) {
-    .page { padding: 12px; }
-  }
 </style>

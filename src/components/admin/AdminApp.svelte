@@ -1,13 +1,26 @@
 <script lang="ts">
-import { DARK_MODE, LIGHT_MODE } from "@/constants/constants";
 import { getIconSvg } from "@/constants/icons";
-import { clearAuth, isAuthenticated } from "@/lib/api";
+import { clearAuth, isAuthenticated, type PostMeta, postsApi } from "@/lib/api";
 import { getStoredTheme, setTheme } from "@/utils/setting-utils";
 import ConfigEditor from "./ConfigEditor.svelte";
 import ImageManager from "./ImageManager.svelte";
 import LoginForm from "./LoginForm.svelte";
 import PostEditor from "./PostEditor.svelte";
 import PostList from "./PostList.svelte";
+
+const DARK_MODE = "dark";
+const LIGHT_MODE = "light";
+
+let isDark = $state(getStoredTheme() === DARK_MODE);
+
+function updateTheme() {
+	setTheme(isDark ? DARK_MODE : LIGHT_MODE);
+}
+
+function toggleTheme() {
+	isDark = !isDark;
+	updateTheme();
+}
 
 const DESKTOP = [
 	"/assets/wallpaper/desktop/d1.avif",
@@ -35,7 +48,9 @@ let hidden = $state(false);
 let lastScrollY = 0;
 let currentSlide = $state(0);
 let isMobile = $state(false);
-let isDark = $state(false);
+let searchQuery = $state("");
+let refreshKey = $state(0);
+let mobileSearchOpen = $state(false);
 
 let images = $derived(isMobile ? MOBILE : DESKTOP);
 
@@ -48,25 +63,48 @@ function updateScroll() {
 function updateIsMobile() {
 	isMobile = window.innerWidth <= 767;
 }
-function updateTheme() {
-	isDark = document.documentElement.classList.contains("dark");
+
+function toggleMusic() {
+	const el = document.getElementById("admin-music-player");
+	if (el) el.classList.toggle("closed");
 }
-function toggleTheme() {
-	setTheme(isDark ? LIGHT_MODE : DARK_MODE);
-	updateTheme();
+
+function closeMusic() {
+	const el = document.getElementById("admin-music-player");
+	if (el && !el.classList.contains("closed")) el.classList.add("closed");
 }
 
 $effect(() => {
 	updateIsMobile();
 	updateScroll();
-	updateTheme();
 	window.addEventListener("scroll", updateScroll, { passive: true });
 	window.addEventListener("resize", updateIsMobile);
-	window.addEventListener("theme-change", updateTheme);
+	const handleThemeChange = (e: CustomEvent) => {
+		isDark = e.detail.theme === DARK_MODE;
+	};
+	window.addEventListener("theme-change", handleThemeChange as EventListener);
+	const handleClickOutside = (e: MouseEvent) => {
+		const panel = document.getElementById("admin-music-player");
+		const btns = document.querySelectorAll(".music-toggle-btn");
+		if (panel && !panel.classList.contains("closed")) {
+			let hit = false;
+			btns.forEach((b) => {
+				if (b.contains(e.target as Node)) hit = true;
+			});
+			if (!hit && !panel.contains(e.target as Node)) {
+				panel.classList.add("closed");
+			}
+		}
+	};
+	window.addEventListener("click", handleClickOutside);
 	return () => {
 		window.removeEventListener("scroll", updateScroll);
 		window.removeEventListener("resize", updateIsMobile);
-		window.removeEventListener("theme-change", updateTheme);
+		window.removeEventListener(
+			"theme-change",
+			handleThemeChange as EventListener,
+		);
+		window.removeEventListener("click", handleClickOutside);
 	};
 });
 
@@ -91,7 +129,13 @@ function navigate(
 	currentView = view;
 	editingSlug = slug ?? null;
 	menuOpen = false;
+	closeMusic();
 	window.scrollTo(0, 0);
+}
+
+function handleSaved() {
+	refreshKey++;
+	navigate("list");
 }
 </script>
 
@@ -122,12 +166,15 @@ function navigate(
           <button class="nav-btn" class:active={currentView === 'config'} onclick={() => navigate('config')}>站点配置</button>
         </nav>
         <div class="navbar-right">
-          <button class="nav-icon" onclick={toggleTheme} title={isDark ? "切换亮色" : "切换暗色"}>
-            {#if isDark}
-              <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:wb-sunny-outline-rounded")}</i>
-            {:else}
-              <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:dark-mode-outline-rounded")}</i>
-            {/if}
+          <div class="navbar-search">
+            {@html getIconSvg("material-symbols:search")}
+            <input type="text" bind:value={searchQuery} class="search-input" placeholder="搜索文章..." />
+          </div>
+          <button class="nav-icon" onclick={toggleTheme} title="切换主题">
+            <i class="icon" style="font-size:18px">{@html isDark ? getIconSvg("material-symbols:dark-mode") : getIconSvg("material-symbols:light-mode")}</i>
+          </button>
+          <button class="nav-icon music-toggle-btn" onclick={toggleMusic} title="音乐播放器">
+            <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:music-note-rounded")}</i>
           </button>
           <a href="/" class="nav-icon" title="返回首页">
             <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:home")}</i>
@@ -142,19 +189,21 @@ function navigate(
       </div>
     </header>
 
-    <!-- Mobile: brand left + hamburger right -->
+    <!-- Mobile: brand + search + right -->
     <div class="mobile-topbar" class:scrolled class:hidden>
       <a href="/" class="mobile-brand">
         <img src="/assets/images/firefly.png" alt="" class="mobile-logo" />
         <span class="mobile-brand-text">Firefly Admin</span>
       </a>
+      <button class="mobile-search-btn" class:active={mobileSearchOpen} onclick={() => mobileSearchOpen = !mobileSearchOpen} aria-label="搜索">
+        {@html getIconSvg("material-symbols:search")}
+      </button>
       <div class="mobile-topbar-right">
         <button class="mobile-theme-btn" onclick={toggleTheme}>
-          {#if isDark}
-            <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:wb-sunny-outline-rounded")}</i>
-          {:else}
-            <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:dark-mode-outline-rounded")}</i>
-          {/if}
+          <i class="icon" style="font-size:18px">{@html isDark ? getIconSvg("material-symbols:dark-mode") : getIconSvg("material-symbols:light-mode")}</i>
+        </button>
+        <button class="mobile-theme-btn music-toggle-btn" onclick={toggleMusic}>
+          <i class="icon" style="font-size:18px">{@html getIconSvg("material-symbols:music-note-rounded")}</i>
         </button>
         <button class="mobile-hamburger" onclick={() => menuOpen = !menuOpen}>
           <i class="icon" style="font-size:22px">{@html getIconSvg("material-symbols:menu")}</i>
@@ -193,12 +242,23 @@ function navigate(
       </div>
     {/if}
 
+    {#if mobileSearchOpen}
+      <button class="search-overlay" onclick={() => mobileSearchOpen = false}></button>
+      <div class="mobile-search-panel" role="dialog" aria-label="搜索">
+        <div class="mobile-search-inner">
+          {@html getIconSvg("material-symbols:search")}
+          <input type="text" bind:value={searchQuery} class="mobile-search-input" placeholder="搜索文章..." autofocus />
+        </div>
+      </div>
+    {/if}
+
     <main class="main-content">
       <div class="content-card">
-        {#if currentView === 'list'}
-          <PostList onEdit={(slug) => navigate('editor', slug)} onNew={() => navigate('editor')} />
-        {:else if currentView === 'editor'}
-          <PostEditor slug={editingSlug} onBack={() => navigate('list')} onSaved={() => navigate('list')} />
+        <div style="display: {currentView === 'list' ? 'block' : 'none'}">
+          <PostList searchQuery={searchQuery} refreshKey={refreshKey} onEdit={(slug) => navigate('editor', slug)} onNew={() => navigate('editor')} onDeleted={handleSaved} />
+        </div>
+        {#if currentView === 'editor'}
+          <PostEditor slug={editingSlug} onBack={() => navigate('list')} onSaved={handleSaved} />
         {:else if currentView === 'images'}
           <ImageManager />
         {:else if currentView === 'config'}
@@ -210,13 +270,15 @@ function navigate(
 {/if}
 
 <style>
-  .wallpaper-fixed { position: fixed; inset: 0; z-index: 0; }
+  .wallpaper-fixed { position: fixed; inset: 0; z-index: 0; overflow: hidden; will-change: transform; }
   .wp-slide {
     position: absolute; inset: 0; opacity: 0;
     transition: opacity 1.2s ease-in-out; z-index: 1;
+    will-change: transform;
+    transform: translateZ(0);
   }
   .wp-slide.active { opacity: 1; z-index: 2; }
-  .wp-slide img { width: 100%; height: 100%; object-fit: cover; }
+  .wp-slide img { width: 100%; height: 100%; object-fit: cover; will-change: transform; transform: translateZ(0); }
   .wp-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 3; }
 
   .admin-layout { position: relative; z-index: 10; min-height: 100vh; }
@@ -266,6 +328,47 @@ function navigate(
 
   .navbar-right { display: flex; align-items: center; gap: 4px; margin-left: auto; }
 
+  .navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .navbar-search svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+  }
+  .navbar-search .search-input {
+    width: 8rem;
+    padding: 5px 10px 5px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-xl);
+    background: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    transition: width 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .navbar-search .search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+  .navbar-search .search-input:focus {
+    width: 12rem;
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.35);
+  }
+  .navbar.scrolled .navbar-search svg { color: var(--content-meta); }
+  .navbar.scrolled .navbar-search .search-input {
+    border-color: var(--line-divider);
+    background: var(--muted);
+    color: var(--deep-text);
+  }
+  .navbar.scrolled .navbar-search .search-input::placeholder { color: var(--content-meta); }
+  .navbar.scrolled .navbar-search .search-input:focus {
+    border-color: var(--primary);
+    background: var(--card-bg);
+  }
+
   .nav-icon {
     display: flex; align-items: center; justify-content: center;
     width: 36px; height: 36px; border-radius: var(--radius-xl);
@@ -292,8 +395,8 @@ function navigate(
   /* ===== Mobile Topbar ===== */
   .mobile-topbar {
     display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 85;
-    align-items: center; justify-content: space-between;
-    height: 52px; padding: 0 16px;
+    align-items: center; gap: 8px;
+    height: 52px; padding: 0 12px;
     background: transparent;
     transition: background 0.3s, backdrop-filter 0.3s, transform 0.3s;
   }
@@ -314,7 +417,71 @@ function navigate(
   .mobile-logo { width: 28px; height: 28px; border-radius: 6px; }
   .mobile-brand-text { font-size: 14px; font-weight: 700; }
 
-  .mobile-topbar-right { display: flex; align-items: center; gap: 4px; }
+  .mobile-topbar-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+  .mobile-search-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.2); color: white;
+    border: none; cursor: pointer; flex-shrink: 0; margin-left: auto;
+    transition: background 0.2s, color 0.2s;
+  }
+  .mobile-search-btn svg {
+    width: 18px; height: 18px; fill: currentColor;
+  }
+  .mobile-search-btn:hover { background: rgba(255, 255, 255, 0.3); }
+  .mobile-search-btn.active {
+    background: rgba(255, 255, 255, 0.9); color: #333;
+  }
+  .mobile-topbar.scrolled .mobile-search-btn {
+    background: var(--btn-regular-bg); color: var(--btn-content);
+  }
+  .mobile-topbar.scrolled .mobile-search-btn.active {
+    background: var(--primary); color: white;
+  }
+
+  .search-overlay {
+    display: none; position: fixed; inset: 0; z-index: 86;
+    background: rgba(0, 0, 0, 0.3); border: none; cursor: pointer;
+  }
+  .mobile-search-panel {
+    display: none; position: fixed; top: 60px; left: 12px; right: 12px; z-index: 87;
+    background: rgba(255, 255, 255, 0.92); border-radius: var(--radius-large);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 12px; animation: searchSlideIn 0.2s ease;
+    backdrop-filter: blur(20px);
+  }
+  :root.dark .mobile-search-panel {
+    background: rgba(24, 24, 24, 0.95);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  @keyframes searchSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mobile-search-inner {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mobile-search-inner svg {
+    width: 20px; height: 20px; fill: var(--content-meta); flex-shrink: 0;
+  }
+  .mobile-search-inner .mobile-search-input {
+    flex: 1; min-width: 0;
+    padding: 8px 12px; border: 1px solid var(--line-divider);
+    border-radius: var(--radius-xl); background: var(--muted);
+    color: var(--deep-text); font-size: 14px; outline: none;
+  }
+  .mobile-search-inner .mobile-search-input::placeholder { color: var(--content-meta); }
+  .mobile-search-inner .mobile-search-input:focus {
+    border-color: var(--primary); background: var(--card-bg);
+  }
+
+  @media (max-width: 767px) {
+    .search-overlay { display: block; }
+    .mobile-search-panel { display: block; }
+  }
 
   .mobile-theme-btn {
     display: flex; align-items: center; justify-content: center;
@@ -404,5 +571,22 @@ function navigate(
   @media (max-width: 767px) {
     .main-content { padding-top: calc(4.5rem + 1rem); }
     .content-card { padding: 0 1rem 2rem; }
+  }
+
+  .nav-icon.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+  .navbar.scrolled .nav-icon.active {
+    background: var(--btn-regular-bg);
+    color: var(--primary);
+  }
+  .mobile-theme-btn.active {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+  .mobile-topbar.scrolled .mobile-theme-btn.active {
+    background: var(--btn-regular-bg);
+    color: var(--primary);
   }
 </style>

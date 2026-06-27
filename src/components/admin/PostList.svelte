@@ -3,19 +3,26 @@ import { getIconSvg } from "@/constants/icons";
 import { type PostMeta, postsApi } from "@/lib/api";
 
 interface Props {
+	searchQuery: string;
+	refreshKey: number;
 	onEdit: (slug: string) => void;
 	onNew: () => void;
+	onDeleted: () => void;
 }
 
-let { onEdit, onNew }: Props = $props();
+let { searchQuery, refreshKey, onEdit, onNew, onDeleted }: Props = $props();
 
 let posts = $state<PostMeta[]>([]);
 let filtered = $state<PostMeta[]>([]);
 let loading = $state(true);
-let search = $state("");
 let message = $state("");
 
 $effect(() => {
+	loadPosts();
+});
+
+$effect(() => {
+	refreshKey;
 	loadPosts();
 });
 
@@ -32,7 +39,7 @@ async function loadPosts() {
 }
 
 $effect(() => {
-	const q = search.toLowerCase();
+	const q = searchQuery.toLowerCase();
 	filtered = posts.filter(
 		(p) =>
 			p.title.toLowerCase().includes(q) ||
@@ -47,7 +54,7 @@ async function handleDelete(slug: string) {
 	try {
 		await postsApi.delete(slug);
 		message = "文章已删除";
-		await loadPosts();
+		onDeleted();
 		setTimeout(() => (message = ""), 3000);
 	} catch (err: unknown) {
 		message = err instanceof Error ? err.message : "删除失败";
@@ -83,16 +90,6 @@ function getCats(category: string): string[] {
   {#if message}
     <div class="message message-success">{message}</div>
   {/if}
-
-  <div class="search-box">
-    <i class="icon search-icon" style="font-size:18px">{@html getIconSvg("material-symbols:search")}</i>
-    <input
-      type="text"
-      bind:value={search}
-      class="search-input"
-      placeholder="搜索文章标题、Slug、分类、标签..."
-    />
-  </div>
 
   {#if loading}
     <div class="empty-state">加载中...</div>
@@ -165,111 +162,6 @@ function getCats(category: string): string[] {
 </button>
 
 <style>
-  .page {
-    padding: 24px;
-  }
-
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .page-title-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .page-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--deep-text);
-    margin: 0;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px 10px;
-    border-radius: var(--radius-full);
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: var(--primary);
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    border: none;
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-    transition: opacity 150ms;
-  }
-  .btn-primary:hover { opacity: 0.9; }
-
-  .message {
-    padding: 10px 16px;
-    border-radius: var(--radius-xl);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-  .message-success {
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-  }
-
-  .search-box {
-    position: relative;
-    margin-bottom: 16px;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--content-meta);
-    opacity: 0.5;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 10px 14px 10px 40px;
-    border: 1px solid var(--line-divider);
-    border-radius: var(--radius-xl);
-    background: var(--card-bg);
-    color: var(--deep-text);
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 150ms;
-  }
-  .search-input:focus {
-    border-color: var(--primary);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 80px 0;
-    color: var(--content-meta);
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-
   .post-list {
     display: flex;
     flex-direction: column;
@@ -420,11 +312,6 @@ function getCats(category: string): string[] {
     /* Hide desktop new button on mobile */
     .btn-primary {
       display: none;
-    }
-
-    .search-input {
-      padding: 12px 14px 12px 42px;
-      font-size: 16px;
     }
 
     .post-card {

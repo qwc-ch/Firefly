@@ -140,32 +140,11 @@ async function handleSubmit(e: Event) {
     gap: 16px;
   }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .form-label {
+  .login-form .form-label {
     font-size: 12px;
-    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--content-meta);
-  }
-
-  .form-input {
-    padding: 10px 14px;
-    border: 1px solid var(--line-divider);
-    border-radius: var(--radius-xl);
-    background: var(--muted);
-    color: var(--deep-text);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 150ms;
-  }
-  .form-input:focus {
-    border-color: var(--primary);
   }
 
   .form-error {
