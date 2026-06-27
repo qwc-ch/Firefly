@@ -69,6 +69,11 @@ export interface PostMeta {
 	pinned: boolean;
 	author: string;
 	comment: boolean;
+	licenseName?: string;
+	licenseUrl?: string;
+	sourceLink?: string;
+	password?: string;
+	passwordHint?: string;
 }
 
 export interface PostContent extends PostMeta {
