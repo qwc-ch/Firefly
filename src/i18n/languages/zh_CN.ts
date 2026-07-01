@@ -380,6 +380,14 @@ export const zh_CN: Translation = {
 	[Key.passwordError]: "密码错误，请重试。",
 	[Key.passwordProtectedRss]: "本文已加密保护，请访问网站查看。",
 
+	// AI摘要
+	[Key.aiSummary]: "AI 摘要",
+	[Key.aiSummaryReading]: "正在阅读文章...",
+	[Key.aiSummaryError]: "AI 正在开小差，请稍后刷新重试。",
+	[Key.aiSummaryThinking]: "思考过程",
+	[Key.aiSummaryReference]: "引用",
+	[Key.aiSummaryMoreAsk]: "继续问 AI",
+
 	// 背景视频播放器
 	[Key.videoPlay]: "播放背景视频",
 	[Key.videoPause]: "暂停背景视频",

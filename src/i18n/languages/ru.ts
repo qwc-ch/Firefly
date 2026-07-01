@@ -393,6 +393,14 @@ export const ru: Translation = {
 	[Key.passwordProtectedRss]:
 		"Эта статья зашифрована. Пожалуйста, посетите сайт для просмотра.",
 
+	// AI Резюме
+	[Key.aiSummary]: "AI Резюме",
+	[Key.aiSummaryReading]: "Чтение статьи...",
+	[Key.aiSummaryError]: "AI временно недоступен, пожалуйста, обновите позже.",
+	[Key.aiSummaryThinking]: "Процесс мышления",
+	[Key.aiSummaryReference]: "Ссылка",
+	[Key.aiSummaryMoreAsk]: "Спросить AI",
+
 	// Фоновый видеоплеер
 	[Key.videoPlay]: "Воспроизвести фоновое видео",
 	[Key.videoPause]: "Пауза фонового видео",

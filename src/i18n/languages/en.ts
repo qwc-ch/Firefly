@@ -391,6 +391,14 @@ export const en: Translation = {
 	[Key.passwordProtectedRss]:
 		"This article is encrypted. Please visit the website to view it.",
 
+	// AI Summary
+	[Key.aiSummary]: "AI Summary",
+	[Key.aiSummaryReading]: "Reading article...",
+	[Key.aiSummaryError]: "AI is taking a break, please refresh later.",
+	[Key.aiSummaryThinking]: "Thinking Process",
+	[Key.aiSummaryReference]: "Ref",
+	[Key.aiSummaryMoreAsk]: "Ask AI More",
+
 	// Background video player
 	[Key.videoPlay]: "Play background video",
 	[Key.videoPause]: "Pause background video",

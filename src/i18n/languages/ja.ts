@@ -390,6 +390,14 @@ export const ja: Translation = {
 	[Key.passwordProtectedRss]:
 		"この記事は暗号化されています。ウェブサイトにアクセスしてご覧ください。",
 
+	// AI概要
+	[Key.aiSummary]: "AI 概要",
+	[Key.aiSummaryReading]: "記事を読み込み中...",
+	[Key.aiSummaryError]: "AI が現在利用できません。後で更新してください。",
+	[Key.aiSummaryThinking]: "思考過程",
+	[Key.aiSummaryReference]: "参照",
+	[Key.aiSummaryMoreAsk]: "AIにもっと質問",
+
 	// 背景動画プレイヤー
 	[Key.videoPlay]: "背景動画を再生",
 	[Key.videoPause]: "背景動画を一時停止",

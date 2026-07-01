@@ -376,6 +376,14 @@ enum I18nKey {
 	passwordError = "passwordError",
 	passwordProtectedRss = "passwordProtectedRss",
 
+	// AI摘要
+	aiSummary = "aiSummary",
+	aiSummaryReading = "aiSummaryReading",
+	aiSummaryError = "aiSummaryError",
+	aiSummaryThinking = "aiSummaryThinking",
+	aiSummaryReference = "aiSummaryReference",
+	aiSummaryMoreAsk = "aiSummaryMoreAsk",
+
 	// 背景视频播放器
 	videoPlay = "videoPlay",
 	videoPause = "videoPause",
