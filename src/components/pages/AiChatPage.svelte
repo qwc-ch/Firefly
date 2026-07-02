@@ -70,7 +70,17 @@ onMount(() => {
 		loadConversations();
 	}
 
+	const retryTimer = setInterval(() => {
+		if (token && !user) {
+			loadUser();
+			loadConversations();
+		} else {
+			clearInterval(retryTimer);
+		}
+	}, 5000);
+
 	initPagefind();
+	return () => clearInterval(retryTimer);
 });
 
 async function initPagefind() {
@@ -111,7 +121,7 @@ async function loadUser() {
 		if (res.ok) {
 			const data = await res.json();
 			user = data.user;
-		} else {
+		} else if (res.status === 401) {
 			token = "";
 			localStorage.removeItem("firefly-chat-token");
 		}
@@ -130,7 +140,6 @@ async function loadConversations() {
 
 async function selectConversation(conv: Conversation) {
 	currentConv = conv;
-	deletingId = null;
 	try {
 		const res = await api(`/conversations/${conv.id}`);
 		if (res.ok) {
@@ -142,7 +151,6 @@ async function selectConversation(conv: Conversation) {
 }
 
 async function newConversation() {
-	deletingId = null;
 	const res = await api("/conversations", {
 		method: "POST",
 		body: JSON.stringify({ title: "新对话" }),
@@ -316,7 +324,6 @@ async function sendMessage() {
 }
 
 let searchDebounce: ReturnType<typeof setTimeout>;
-let deletingId = $state<string | null>(null);
 
 async function searchArticles() {
 	const q = searchQuery.trim();
@@ -431,19 +438,9 @@ function handleKeydown(e: KeyboardEvent) {
             >
               <span class="truncate flex-1">{conv.title}</span>
               <span
-                onclick={(e) => {
-                  e.stopPropagation();
-                  if (deletingId === conv.id) {
-                    deletingId = null;
-                    deleteConv(conv.id);
-                  } else {
-                    deletingId = conv.id;
-                    setTimeout(() => { if (deletingId === conv.id) deletingId = null; }, 3000);
-                  }
-                }}
-                class="shrink-0 cursor-pointer {deletingId === conv.id ? 'text-red-500 font-bold' : 'text-black/30 dark:text-white/30 hover:text-red-500'}"
+                onclick={(e) => { e.stopPropagation(); deleteConv(conv.id); }}
+                class="shrink-0 cursor-pointer text-black/30 dark:text-white/30 hover:text-red-500"
               >
-                {deletingId === conv.id ? '确认?' : ''}
                 <Icon icon="material-symbols:delete" size="sm" />
               </span>
             </button>
