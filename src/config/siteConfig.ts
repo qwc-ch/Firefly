@@ -110,7 +110,7 @@ export const siteConfig: SiteConfig = {
 			tags: [
 				"Blog",
 			],
-			weight: 100,
+			weight: 1,
 			enabled: true,
 			},
 			{
