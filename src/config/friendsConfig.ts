@@ -187,6 +187,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 18, // 权重，数字越大排序越靠
 		enabled: true, // 是否启用
 	},
+	{
+		title: "董健颖",
+		imgurl:
+			"https://weavatar.com/api/avatar/e3e6c5e34c0111ab1a16acb37cec03f01907406e60b49477c089001f5ed083b8?s=50&t=1781771969751?s=640",
+		desc: "这是我的个人博客，记录我的学习和生活点滴，分享我的学习经验和见解。希望在这里能与志同道合的朋友们交流和成长！",
+		siteurl: "https://dongjianying.xyz",
+		tags: ["Blog"],
+		weight: 20, // 权重，数字越大排序越靠
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
