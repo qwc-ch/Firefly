@@ -1,6 +1,7 @@
 <script lang="ts">
 import { onMount } from "svelte";
 import Icon from "@/components/common/Icon.svelte";
+import { aiSummaryConfig } from "@/config";
 
 const API_BASE = "https://i.520781.xyz";
 
@@ -48,6 +49,8 @@ let searchResults = $state<
 >([]);
 let searchOpen = $state(false);
 let pagefindReady = $state(false);
+let modelIdx = $state(aiSummaryConfig.defaultModel);
+let modelMenuOpen = $state(false);
 
 onMount(() => {
 	showSidebar = window.innerWidth >= 768;
@@ -127,6 +130,7 @@ async function loadConversations() {
 
 async function selectConversation(conv: Conversation) {
 	currentConv = conv;
+	deletingId = null;
 	try {
 		const res = await api(`/conversations/${conv.id}`);
 		if (res.ok) {
@@ -138,6 +142,7 @@ async function selectConversation(conv: Conversation) {
 }
 
 async function newConversation() {
+	deletingId = null;
 	const res = await api("/conversations", {
 		method: "POST",
 		body: JSON.stringify({ title: "新对话" }),
@@ -191,6 +196,7 @@ async function sendMessage() {
 			body: JSON.stringify({
 				conversationId: convId,
 				message: text,
+				modelIdx,
 				articleContext: searchQuery
 					? searchResults.map((r) => `${r.title}: ${r.excerpt}`).join("\n")
 					: "",
@@ -294,29 +300,44 @@ async function sendMessage() {
 	streamContent = "";
 }
 
+let searchDebounce: ReturnType<typeof setTimeout>;
+let deletingId = $state<string | null>(null);
+
 async function searchArticles() {
-	if (!searchQuery.trim() || !window.pagefind) return;
+	const q = searchQuery.trim();
+	if (!q) {
+		searchOpen = false;
+		searchResults = [];
+		return;
+	}
 	searchOpen = true;
-	try {
-		const result = await window.pagefind.search(searchQuery);
-		if (result.results.length > 0) {
-			searchResults = await Promise.all(
-				result.results.slice(0, 5).map(async (r: PagefindResult) => {
-					const data = await r.data();
-					return {
-						id: r.id,
-						title: data.meta.title || "无标题",
-						excerpt: data.excerpt?.replace(/<[^>]*>/g, "") || "",
-						url: data.url || "#",
-					};
-				}),
-			);
-		} else {
+	clearTimeout(searchDebounce);
+	searchDebounce = setTimeout(async () => {
+		if (!window.pagefind) {
+			searchResults = [];
+			return;
+		}
+		try {
+			const result = await window.pagefind.search(q);
+			if (result.results.length > 0) {
+				searchResults = await Promise.all(
+					result.results.slice(0, 5).map(async (r: PagefindResult) => {
+						const data = await r.data();
+						return {
+							id: r.id,
+							title: data.meta.title || "无标题",
+							excerpt: data.excerpt?.replace(/<[^>]*>/g, "") || "",
+							url: data.url || "#",
+						};
+					}),
+				);
+			} else {
+				searchResults = [];
+			}
+		} catch {
 			searchResults = [];
 		}
-	} catch {
-		searchResults = [];
-	}
+	}, 300);
 }
 
 function insertArticleContext(article: {
@@ -395,13 +416,46 @@ function handleKeydown(e: KeyboardEvent) {
             >
               <span class="truncate flex-1">{conv.title}</span>
               <span
-                onclick={(e) => { e.stopPropagation(); deleteConv(conv.id); }}
-                class="opacity-0 group-hover:opacity-100 hover:text-red-500 shrink-0 cursor-pointer"
+                onclick={(e) => {
+                  e.stopPropagation();
+                  if (deletingId === conv.id) {
+                    deletingId = null;
+                    deleteConv(conv.id);
+                  } else {
+                    deletingId = conv.id;
+                    setTimeout(() => { if (deletingId === conv.id) deletingId = null; }, 3000);
+                  }
+                }}
+                class="opacity-0 group-hover:opacity-100 shrink-0 cursor-pointer {deletingId === conv.id ? 'text-red-500 font-bold' : 'hover:text-red-500'}"
               >
+                {deletingId === conv.id ? '确认?' : ''}
                 <Icon icon="material-symbols:delete" size="sm" />
               </span>
             </button>
           {/each}
+        </div>
+
+        <div class="px-3 py-2 border-t border-(--line-divider) relative">
+          <button
+            onclick={() => modelMenuOpen = !modelMenuOpen}
+            class="flex items-center gap-1 w-full text-xs text-black/60 dark:text-white/60 hover:text-(--primary) transition-colors"
+          >
+            <Icon icon="material-symbols:settings" size="sm" />
+            <span class="flex-1 text-left">{aiSummaryConfig.models[modelIdx]?.name}</span>
+            <Icon icon="material-symbols:chevron-right" size="sm" class="transition-transform {modelMenuOpen ? 'rotate-90' : ''}" />
+          </button>
+          {#if modelMenuOpen}
+            <div class="absolute bottom-full left-0 right-0 mb-1 bg-(--card-bg) border border-(--line-divider) rounded-lg shadow-lg z-10 overflow-hidden">
+              {#each aiSummaryConfig.models as model, idx}
+                <button
+                  onclick={() => { modelIdx = idx; modelMenuOpen = false; }}
+                  class="block w-full text-left px-3 py-2 text-xs transition-colors {idx === modelIdx ? 'bg-(--primary)/10 text-(--primary) font-bold' : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70'}"
+                >
+                  {model.name}
+                </button>
+              {/each}
+            </div>
+          {/if}
         </div>
 
         <div class="p-3 border-t border-(--line-divider)">
@@ -417,7 +471,9 @@ function handleKeydown(e: KeyboardEvent) {
             </div>
             {#if searchOpen}
               <div class="absolute bottom-full left-0 right-0 mb-1 bg-(--card-bg) border border-(--line-divider) rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
-                {#if searchResults.length > 0}
+                {#if !pagefindReady}
+                  <div class="px-3 py-2 text-xs text-black/40 dark:text-white/40">搜索功能加载中...</div>
+                {:else if searchResults.length > 0}
                   {#each searchResults as article}
                     <button
                       onclick={() => insertArticleContext(article)}
@@ -438,8 +494,8 @@ function handleKeydown(e: KeyboardEvent) {
     {/if}
 
     <div class="flex-1 flex flex-col min-w-0">
-      {#if currentConv}
-        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+        {#if currentConv}
           {#each messages as msg}
             <div class="flex {msg.role === 'user' ? 'justify-end' : 'justify-start'}">
               <div
@@ -457,47 +513,44 @@ function handleKeydown(e: KeyboardEvent) {
               </div>
             </div>
           {/if}
-          <div id="chat-bottom"></div>
-        </div>
+        {:else}
+          <div class="flex flex-col items-center justify-center h-full gap-4 text-black/50 dark:text-white/50">
+            <div class="w-16 h-16 rounded-full bg-(--primary)/10 flex items-center justify-center text-(--primary)">
+              <Icon icon="material-symbols:forum" class="text-2xl" />
+            </div>
+            <p class="text-lg font-bold">欢迎来到流萤AI</p>
+            <p class="text-sm">在下方输入消息开始聊天</p>
+          </div>
+        {/if}
+        <div id="chat-bottom"></div>
+      </div>
 
-        <div class="p-4 border-t border-(--line-divider)">
-          <div class="flex gap-2">
-            <button
-              onclick={() => showSidebar = !showSidebar}
-              class="md:hidden px-2 text-sm text-black/50 dark:text-white/50"
-            >
-              <Icon icon="material-symbols:menu" size="lg" />
-            </button>
-            <textarea
-              bind:value={inputText}
-              onkeydown={handleKeydown}
-              placeholder="输入消息... (Enter 发送)"
-              rows="1"
-              class="flex-1 px-4 py-2 text-sm rounded-xl bg-(--btn-regular-bg) text-(--btn-content) border border-(--line-divider) focus:outline-none focus:border-(--primary) resize-none"
-            ></textarea>
-            <button
-              onclick={sendMessage}
-              disabled={!inputText.trim() || streaming}
-              class="px-4 py-2 bg-(--primary) text-white rounded-xl font-bold disabled:opacity-50 hover:opacity-90 transition-colors shrink-0"
-            >
-              {streaming ? "..." : "发送"}
-            </button>
-          </div>
-        </div>
-      {:else}
-        <div class="flex-1 flex flex-col items-center justify-center gap-4 text-black/50 dark:text-white/50">
-          <div class="w-16 h-16 rounded-full bg-(--primary)/10 flex items-center justify-center text-(--primary)">
-            <Icon icon="material-symbols:article" class="text-2xl" />
-          </div>
-          <p class="text-lg font-bold">选择一个对话或创建新对话</p>
+      <div class="p-4 border-t border-(--line-divider)">
+        <div class="flex gap-2">
           <button
-            onclick={newConversation}
-            class="px-6 py-3 bg-(--primary) text-white rounded-lg font-bold hover:opacity-90 transition-colors"
+            onclick={() => showSidebar = !showSidebar}
+            class="md:hidden px-2 text-sm text-black/50 dark:text-white/50"
           >
-            + 开始新对话
+            <Icon icon="material-symbols:menu" size="lg" />
+          </button>
+          <textarea
+            bind:value={inputText}
+            onkeydown={handleKeydown}
+            placeholder="输入消息... (Enter 发送)"
+            rows="1"
+            class="flex-1 px-4 py-2 text-sm rounded-xl bg-(--btn-regular-bg) text-(--btn-content) border border-(--line-divider) focus:outline-none focus:border-(--primary) resize-none"
+          ></textarea>
+          <button
+            onclick={sendMessage}
+            disabled={!inputText.trim() || streaming}
+            class="px-4 py-2 bg-(--primary) text-white rounded-xl font-bold disabled:opacity-50 hover:opacity-90 transition-colors shrink-0"
+          >
+            {streaming ? "..." : "发送"}
           </button>
         </div>
-      {/if}
+      </div>
     </div>
+  </div>
+{/if}
   </div>
 {/if}
