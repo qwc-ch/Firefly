@@ -39,6 +39,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 留言板
 	links.push(LinkPresets.Guestbook);
 
+	// AI聊天
+	links.push(LinkPresets.Chat);
+
 	// 我的及其子菜单
 	links.push({
 		name: "我的",
@@ -207,6 +210,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/anime/",
 		icon: "material-symbols:live-tv",
 		pageKey: "anime",
+	},
+	Chat: {
+		name: "AI聊天",
+		url: "/chat/",
+		icon: "material-symbols:smart-toy",
+		pageKey: "chat",
 	},
 };
 

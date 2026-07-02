@@ -1,0 +1,13 @@
+---
+import AiChatPage from "@components/pages/AiChatPage.svelte";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
+const title = "AI 聊天";
+const description = "与小萤 AI 聊天";
+---
+
+<MainGridLayout title={title} description={description}>
+    <div class="min-h-[80vh]">
+        <AiChatPage client:load />
+    </div>
+</MainGridLayout>

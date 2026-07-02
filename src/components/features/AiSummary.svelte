@@ -2,6 +2,7 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { onMount } from "svelte";
+import Icon from "@/components/common/Icon.svelte";
 import { aiSummaryConfig } from "@/config/aiSummaryConfig";
 
 interface TocItem {
@@ -236,7 +237,6 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
 <div bind:this={summaryBox} class="card-base p-4 sm:p-5 mb-6">
   <div class="flex items-center justify-between border-b border-(--line-divider) pb-3 mb-3">
     <div class="flex items-center gap-2">
-      <span class="text-(--primary) text-lg">✨</span>
       <h3 class="font-bold text-(--primary) uppercase tracking-wider text-sm">{i18n(I18nKey.aiSummary)}</h3>
       {#if stats}
         <span class="ml-2 text-[10px] font-mono text-black/30 dark:text-white/30 bg-black/5 dark:bg-white/10 px-1.5 py-0.5 rounded-sm hidden sm:inline-block">{stats}</span>
@@ -248,9 +248,8 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
         onclick={() => isMenuOpen = !isMenuOpen}
         class="flex items-center gap-1 text-xs font-bold text-black/50 dark:text-white/50 hover:text-(--primary) transition-colors bg-(--enter-btn-bg) px-2 py-1 rounded-lg"
       >
-        <span class="text-xs">⚙️</span>
         {aiSummaryConfig.models[modelIdx]?.name}
-        <span class="text-xs">{isMenuOpen ? "▲" : "▼"}</span>
+        <Icon icon="material-symbols:settings" size="sm" />
       </button>
 
       {#if isMenuOpen}
@@ -278,7 +277,7 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
 
     {#if error}
       <div class="text-red-500 font-bold flex items-center gap-2">
-        ⚠️ {i18n(I18nKey.aiSummaryError)}
+        {i18n(I18nKey.aiSummaryError)}
       </div>
     {/if}
 
@@ -288,9 +287,8 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
           onclick={() => showThinking = !showThinking}
           class="flex items-center gap-1 text-[11px] font-mono text-(--primary) font-bold uppercase tracking-wider mb-1"
         >
-          <span>🧠</span>
           {i18n(I18nKey.aiSummaryThinking)}
-          <span class="text-xs">{showThinking ? "▼" : "▶"}</span>
+          <Icon icon="material-symbols:chevron-right" size="sm" />
         </button>
         {#if showThinking}
           <div class="text-xs font-mono text-black/40 dark:text-white/40 whitespace-pre-wrap mt-2 max-h-40 overflow-y-auto break-all">
@@ -305,7 +303,7 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
         {#each result as item, idx (idx)}
           <div class="mb-4 last:mb-0">
             <div class="flex items-start gap-2">
-              <span class="shrink-0 w-1.5 h-1.5 rounded-full bg-(--primary)/30 mt-2"></span>
+              <Icon icon="material-symbols:check" size="sm" class="shrink-0 mt-1 text-(--primary)" />
               <div class="flex-1 min-w-0 markdown-content">
                 {item.p}
               </div>
@@ -339,7 +337,6 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
     {#if !loading && (result.length > 0 || rawText)}
       <div class="mt-5 pt-3 border-t border-dashed border-(--line-divider)">
         <div class="text-xs font-bold text-black/50 dark:text-white/50 mb-2 flex items-center gap-1.5">
-          <span>💬</span>
           {i18n(I18nKey.aiSummaryMoreAsk)}
         </div>
         <div class="flex flex-wrap gap-2">

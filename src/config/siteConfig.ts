@@ -112,6 +112,8 @@ export const siteConfig: SiteConfig = {
 		gallery: true,
 		// 追番页面开关
 		anime: true,
+		// AI聊天页面开关
+		chat: true,
 	},
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
