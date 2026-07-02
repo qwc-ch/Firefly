@@ -38,7 +38,7 @@ export const friendsConfig: FriendLink[] = [
 		desc: "坐姿不如起而行。",
 		siteurl: "https://fqzlr.com/",
 		tags: ["Blog"],
-		weight: 7,
+		weight: 19,
 		enabled: true,
 	},
 	{
@@ -195,6 +195,15 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://dongjianying.xyz",
 		tags: ["Blog"],
 		weight: 20, // 权重，数字越大排序越靠
+		enabled: true, // 是否启用
+	},
+	{
+		title: "萧小晓",
+		imgurl: "https://www.lxlovo.top/png.png",
+		desc: "一个爱写文的菜鸡。",
+		siteurl: "https://blog.lxlovo.top",
+		tags: ["Blog"],
+		weight: 18, // 权重，数字越大排序越靠
 		enabled: true, // 是否启用
 	},
 ];
