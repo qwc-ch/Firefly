@@ -173,6 +173,16 @@ async function deleteConv(id: string) {
 	}
 }
 
+async function waitForPagefind(timeout = 3000): Promise<boolean> {
+	if (window.pagefind) return true;
+	const start = Date.now();
+	while (Date.now() - start < timeout) {
+		await new Promise((r) => setTimeout(r, 200));
+		if (window.pagefind) return true;
+	}
+	return false;
+}
+
 async function sendMessage() {
 	const text = inputText.trim();
 	if (!text || streaming) return;
@@ -195,7 +205,7 @@ async function sendMessage() {
 	streamContent = "";
 
 	let context = "";
-	if (window.pagefind) {
+	if (await waitForPagefind()) {
 		try {
 			const result = await window.pagefind.search(text);
 			if (result.results.length > 0) {
@@ -206,9 +216,11 @@ async function sendMessage() {
 						return `${data.meta.title}: ${(data.excerpt || "").replace(/<[^>]*>/g, "").slice(0, 200)}`;
 					}),
 				);
-				context = articles.join("\n");
+				context = articles.join("\n\n");
 			}
-		} catch {}
+		} catch (e) {
+			console.warn("pagefind search error:", e);
+		}
 	}
 
 	try {
