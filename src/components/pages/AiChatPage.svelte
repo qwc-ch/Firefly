@@ -84,6 +84,9 @@ onMount(() => {
 });
 
 async function initPagefind() {
+	if (import.meta.env.DEV) {
+		return;
+	}
 	if (window.pagefind) {
 		pagefindReady = true;
 		return;
@@ -91,16 +94,7 @@ async function initPagefind() {
 	const handleReady = () => {
 		pagefindReady = true;
 	};
-	window.addEventListener("pagefindready", handleReady);
-	if (!window.pagefind && import.meta.env.PROD) {
-		try {
-			const pagefindUrl = "/pagefind/pagefind.js";
-			const pagefind = await import(/* @vite-ignore */ pagefindUrl);
-			await pagefind.options({ excerptLength: 30 });
-			window.pagefind = pagefind;
-			pagefindReady = true;
-		} catch {}
-	}
+	window.addEventListener("pagefindready", handleReady, { once: true });
 	return () => window.removeEventListener("pagefindready", handleReady);
 }
 
@@ -205,31 +199,30 @@ async function sendMessage() {
 	streamContent = "";
 
 	let context = "";
-	if (await waitForPagefind()) {
+	const ready = await waitForPagefind(5000);
+	if (ready && window.pagefind) {
 		try {
-			const keywords = text
-				.replace(/[？?。，！!、；：""''（）、·…—\n]/g, " ")
-				.replace(
-					/(你|我|他|她|它|们|是|的|了|在|有|和|就|不|人|都|一|一个|上|也|很|到|说|要|去|会|着|没有|看|好|自己|这|这个|那|那个|什么|怎么|如何|能|可以|知道|了解|请问|帮|找|看看|相关|有没有|关于|吗|吧|呢|哦|呀|嗯|呗|嘛|啊|啦)/g,
-					" ",
-				)
-				.replace(/\s+/g, " ")
-				.trim();
-			const query = keywords.length > 5 ? keywords : text;
-			const result = await window.pagefind.search(query);
+			// 直接用原文搜索，Pagefind 内置分词与相关性排序，无需粗暴去停用词
+			const result = await window.pagefind.search(text);
 			if (result.results.length > 0) {
-				const top = result.results.slice(0, 3);
+				const top = result.results.slice(0, 5);
 				const articles = await Promise.all(
 					top.map(async (r: PagefindResult) => {
 						const data = await r.data();
-						return `${data.meta.title}: ${(data.excerpt || "").replace(/<[^>]*>/g, "").slice(0, 200)}`;
+						const excerpt = (data.excerpt || "").replace(/<[^>]*>/g, "").trim();
+						return `【${data.meta.title}】(${data.url})\n${excerpt.slice(0, 500)}`;
 					}),
 				);
-				context = articles.join("\n\n");
+				context = articles.join("\n\n---\n\n");
+			} else {
+				context = "[本站搜索结果：未找到与用户问题直接相关的文章]";
 			}
 		} catch (e) {
 			console.warn("pagefind search error:", e);
+			context = "[本站搜索失败，无法确认是否有相关文章]";
 		}
+	} else {
+		context = "[本站搜索未就绪，无法确认是否有相关文章]";
 	}
 
 	try {
