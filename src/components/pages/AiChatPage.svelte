@@ -186,6 +186,23 @@ async function sendMessage() {
 	streaming = true;
 	streamContent = "";
 
+	let context = "";
+	if (window.pagefind) {
+		try {
+			const result = await window.pagefind.search(text);
+			if (result.results.length > 0) {
+				const top = result.results.slice(0, 3);
+				const articles = await Promise.all(
+					top.map(async (r: PagefindResult) => {
+						const data = await r.data();
+						return `${data.meta.title}: ${(data.excerpt || "").replace(/<[^>]*>/g, "").slice(0, 200)}`;
+					}),
+				);
+				context = articles.join("\n");
+			}
+		} catch {}
+	}
+
 	try {
 		const res = await fetch(`${API_BASE}/chat/persona`, {
 			method: "POST",
@@ -197,9 +214,7 @@ async function sendMessage() {
 				conversationId: convId,
 				message: text,
 				modelIdx,
-				articleContext: searchQuery
-					? searchResults.map((r) => `${r.title}: ${r.excerpt}`).join("\n")
-					: "",
+				articleContext: context,
 			}),
 		});
 
@@ -412,7 +427,7 @@ function handleKeydown(e: KeyboardEvent) {
           {#each conversations as conv}
             <button
               onclick={() => selectConversation(conv)}
-              class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 group {currentConv?.id === conv.id ? 'bg-(--primary)/10 text-(--primary)' : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70'}"
+              class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 {currentConv?.id === conv.id ? 'bg-(--primary)/10 text-(--primary)' : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70'}"
             >
               <span class="truncate flex-1">{conv.title}</span>
               <span
@@ -426,7 +441,7 @@ function handleKeydown(e: KeyboardEvent) {
                     setTimeout(() => { if (deletingId === conv.id) deletingId = null; }, 3000);
                   }
                 }}
-                class="opacity-0 group-hover:opacity-100 shrink-0 cursor-pointer {deletingId === conv.id ? 'text-red-500 font-bold' : 'hover:text-red-500'}"
+                class="shrink-0 cursor-pointer {deletingId === conv.id ? 'text-red-500 font-bold' : 'text-black/30 dark:text-white/30 hover:text-red-500'}"
               >
                 {deletingId === conv.id ? '确认?' : ''}
                 <Icon icon="material-symbols:delete" size="sm" />
@@ -456,39 +471,6 @@ function handleKeydown(e: KeyboardEvent) {
               {/each}
             </div>
           {/if}
-        </div>
-
-        <div class="p-3 border-t border-(--line-divider)">
-          <div class="relative">
-            <div class="flex items-center gap-1 px-3 py-2 text-xs rounded-lg bg-(--btn-regular-bg) text-(--btn-content) border border-(--line-divider)">
-              <Icon icon="material-symbols:search" size="sm" />
-              <input
-                bind:value={searchQuery}
-                oninput={searchArticles}
-                placeholder="搜索文章..."
-                class="flex-1 bg-transparent focus:outline-none text-xs"
-              />
-            </div>
-            {#if searchOpen}
-              <div class="absolute bottom-full left-0 right-0 mb-1 bg-(--card-bg) border border-(--line-divider) rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
-                {#if !pagefindReady}
-                  <div class="px-3 py-2 text-xs text-black/40 dark:text-white/40">搜索功能加载中...</div>
-                {:else if searchResults.length > 0}
-                  {#each searchResults as article}
-                    <button
-                      onclick={() => insertArticleContext(article)}
-                      class="block w-full text-left px-3 py-2 text-xs hover:bg-black/5 dark:hover:bg-white/5 border-b border-(--line-divider) last:border-0"
-                    >
-                      <div class="font-bold text-(--primary) truncate">{article.title}</div>
-                      <div class="text-black/50 dark:text-white/50 truncate">{article.excerpt}</div>
-                    </button>
-                  {/each}
-                {:else if searchQuery}
-                  <div class="px-3 py-2 text-xs text-black/40 dark:text-white/40">未找到相关文章</div>
-                {/if}
-              </div>
-            {/if}
-          </div>
         </div>
       </div>
     {/if}
