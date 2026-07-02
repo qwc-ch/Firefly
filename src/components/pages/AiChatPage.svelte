@@ -41,7 +41,7 @@ let inputText = $state("");
 let loading = $state(false);
 let streaming = $state(false);
 let streamContent = $state("");
-let showSidebar = $state(window.innerWidth >= 768);
+let showSidebar = $state(true);
 let searchQuery = $state("");
 let searchResults = $state<
 	{ id: string; title: string; excerpt: string; url: string }[]
@@ -50,6 +50,8 @@ let searchOpen = $state(false);
 let pagefindReady = $state(false);
 
 onMount(() => {
+	showSidebar = window.innerWidth >= 768;
+
 	const params = new URLSearchParams(window.location.search);
 	const urlToken = params.get("token");
 	if (urlToken) {
