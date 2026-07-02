@@ -167,16 +167,6 @@ async function deleteConv(id: string) {
 	}
 }
 
-async function waitForPagefind(timeout = 3000): Promise<boolean> {
-	if (window.pagefind) return true;
-	const start = Date.now();
-	while (Date.now() - start < timeout) {
-		await new Promise((r) => setTimeout(r, 200));
-		if (window.pagefind) return true;
-	}
-	return false;
-}
-
 async function sendMessage() {
 	const text = inputText.trim();
 	if (!text || streaming) return;
@@ -199,8 +189,7 @@ async function sendMessage() {
 	streamContent = "";
 
 	let context = "";
-	const ready = await waitForPagefind(5000);
-	if (ready && window.pagefind) {
+	if (import.meta.env.PROD && window.pagefind) {
 		try {
 			// 直接用原文搜索，Pagefind 内置分词与相关性排序，无需粗暴去停用词
 			const result = await window.pagefind.search(text);
@@ -221,8 +210,6 @@ async function sendMessage() {
 			console.warn("pagefind search error:", e);
 			context = "[本站搜索失败，无法确认是否有相关文章]";
 		}
-	} else {
-		context = "[本站搜索未就绪，无法确认是否有相关文章]";
 	}
 
 	try {
