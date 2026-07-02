@@ -552,5 +552,3 @@ function handleKeydown(e: KeyboardEvent) {
     </div>
   </div>
 {/if}
-  </div>
-{/if}
