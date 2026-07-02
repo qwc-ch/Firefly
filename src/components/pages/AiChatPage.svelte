@@ -5,9 +5,12 @@ import { aiSummaryConfig } from "@/config";
 
 const API_BASE = "https://i.520781.xyz";
 
-interface PagefindResult {
-	id: string;
-	data(): Promise<{ meta: { title: string }; excerpt: string; url: string }>;
+interface PostIndexEntry {
+	title: string;
+	description: string;
+	category: string;
+	tags: string[];
+	url: string;
 }
 
 interface User {
@@ -43,14 +46,9 @@ let loading = $state(false);
 let streaming = $state(false);
 let streamContent = $state("");
 let showSidebar = $state(true);
-let searchQuery = $state("");
-let searchResults = $state<
-	{ id: string; title: string; excerpt: string; url: string }[]
->([]);
-let searchOpen = $state(false);
-let pagefindReady = $state(false);
 let modelIdx = $state(aiSummaryConfig.defaultModel);
 let modelMenuOpen = $state(false);
+let postsIndex = $state<PostIndexEntry[]>([]);
 
 onMount(() => {
 	showSidebar = window.innerWidth >= 768;
@@ -79,23 +77,17 @@ onMount(() => {
 		}
 	}, 5000);
 
-	initPagefind();
+	loadPostsIndex();
 	return () => clearInterval(retryTimer);
 });
 
-async function initPagefind() {
-	if (import.meta.env.DEV) {
-		return;
-	}
-	if (window.pagefind) {
-		pagefindReady = true;
-		return;
-	}
-	const handleReady = () => {
-		pagefindReady = true;
-	};
-	window.addEventListener("pagefindready", handleReady, { once: true });
-	return () => window.removeEventListener("pagefindready", handleReady);
+async function loadPostsIndex() {
+	try {
+		const res = await fetch("/posts-index.json");
+		if (res.ok) {
+			postsIndex = await res.json();
+		}
+	} catch {}
 }
 
 async function api(path: string, opts: RequestInit = {}) {
@@ -134,6 +126,7 @@ async function loadConversations() {
 
 async function selectConversation(conv: Conversation) {
 	currentConv = conv;
+	messages = [];
 	try {
 		const res = await api(`/conversations/${conv.id}`);
 		if (res.ok) {
@@ -188,27 +181,56 @@ async function sendMessage() {
 	streaming = true;
 	streamContent = "";
 
+	if (!currentConv) {
+		currentConv = {
+			id: "new",
+			user_id: user?.id || 0,
+			title: "新对话",
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+		};
+	}
+
+	const sendConvId = currentConv?.id || null;
+
 	let context = "";
-	if (import.meta.env.PROD && window.pagefind) {
-		try {
-			// 直接用原文搜索，Pagefind 内置分词与相关性排序，无需粗暴去停用词
-			const result = await window.pagefind.search(text);
-			if (result.results.length > 0) {
-				const top = result.results.slice(0, 5);
-				const articles = await Promise.all(
-					top.map(async (r: PagefindResult) => {
-						const data = await r.data();
-						const excerpt = (data.excerpt || "").replace(/<[^>]*>/g, "").trim();
-						return `【${data.meta.title}】(${data.url})\n${excerpt.slice(0, 500)}`;
-					}),
-				);
-				context = articles.join("\n\n---\n\n");
-			} else {
-				context = "[本站搜索结果：未找到与用户问题直接相关的文章]";
+	const SEARCH_TRIGGERS =
+		/搜索|查一下|找找|有没有|相关文章|博客文章|关于.*的|看看|是什么|什么意思|介绍|教程|笔记|推荐|学习|入门|使用|部署|配置|安装|攻略|技巧|方法|原理|分析|对比|区别|差异|分享|记录|总结|心得|体验|测评|实测|搭建|自建|怎么用|怎么弄|怎么做|哪里有|在哪找|哪里找|如何/;
+	if (postsIndex.length > 0 && SEARCH_TRIGGERS.test(text)) {
+		const words = text
+			.replace(/[？?。，！!、；：""''（）、·…—\n]/g, " ")
+			.replace(
+				/你|我|他|她|它|们|是|的|了|在|有|和|就|不|人|都|一|一个|上|也|很|到|说|要|去|会|着|没有|看|好|自己|这|这个|那|那个|想|请|帮|帮我看|帮帮忙|帮一下|帮我|告诉我|告诉我一下|能不能|能不能帮我|可以吗|吗|吧|呢|哦|呀|嗯|啊|啦|呗/g,
+				" ",
+			)
+			.replace(/\s+/g, " ")
+			.trim()
+			.split(" ")
+			.filter((w) => w.length >= 2);
+		if (words.length > 0) {
+			try {
+				const matches = postsIndex
+					.filter((p) =>
+						words.some(
+							(w) =>
+								p.title.toLowerCase().includes(w) ||
+								p.description.toLowerCase().includes(w) ||
+								p.tags.some((t) => t.toLowerCase().includes(w)) ||
+								p.category.toLowerCase().includes(w),
+						),
+					)
+					.slice(0, 5);
+				if (matches.length > 0) {
+					context = matches
+						.map((p) => `【${p.title}】(${p.url})\n${p.description}`)
+						.join("\n\n---\n\n");
+				} else {
+					context = "[本站搜索结果：未找到与用户问题直接相关的文章]";
+				}
+			} catch (e) {
+				console.warn("search error:", e);
+				context = "[本站搜索失败]";
 			}
-		} catch (e) {
-			console.warn("pagefind search error:", e);
-			context = "[本站搜索失败，无法确认是否有相关文章]";
 		}
 	}
 
@@ -295,6 +317,11 @@ async function sendMessage() {
 		}
 
 		if (fullContent) {
+			if (sendConvId !== null && currentConv?.id !== sendConvId) {
+				streaming = false;
+				streamContent = "";
+				return;
+			}
 			messages = [
 				...messages,
 				{
@@ -308,6 +335,11 @@ async function sendMessage() {
 			loadConversations();
 		}
 	} catch (e: unknown) {
+		if (sendConvId !== null && currentConv?.id !== sendConvId) {
+			streaming = false;
+			streamContent = "";
+			return;
+		}
 		messages = [
 			...messages,
 			{
@@ -322,54 +354,6 @@ async function sendMessage() {
 
 	streaming = false;
 	streamContent = "";
-}
-
-let searchDebounce: ReturnType<typeof setTimeout>;
-
-async function searchArticles() {
-	const q = searchQuery.trim();
-	if (!q) {
-		searchOpen = false;
-		searchResults = [];
-		return;
-	}
-	searchOpen = true;
-	clearTimeout(searchDebounce);
-	searchDebounce = setTimeout(async () => {
-		if (!window.pagefind) {
-			searchResults = [];
-			return;
-		}
-		try {
-			const result = await window.pagefind.search(q);
-			if (result.results.length > 0) {
-				searchResults = await Promise.all(
-					result.results.slice(0, 5).map(async (r: PagefindResult) => {
-						const data = await r.data();
-						return {
-							id: r.id,
-							title: data.meta.title || "无标题",
-							excerpt: data.excerpt?.replace(/<[^>]*>/g, "") || "",
-							url: data.url || "#",
-						};
-					}),
-				);
-			} else {
-				searchResults = [];
-			}
-		} catch {
-			searchResults = [];
-		}
-	}, 300);
-}
-
-function insertArticleContext(article: {
-	title: string;
-	excerpt: string;
-	url: string;
-}) {
-	inputText = `关于文章《${article.title}》：${article.excerpt.slice(0, 100)}`;
-	searchOpen = false;
 }
 
 function login() {

@@ -38,3 +38,6 @@ cache/
 package/
 .obsidian/
 git.sh
+
+# generated at build time
+public/posts-index.json

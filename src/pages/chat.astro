@@ -1,7 +1,6 @@
 ---
 import AiChatPage from "@components/pages/AiChatPage.svelte";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { url } from "@/utils/url-utils";
 
 const title = "AI 聊天";
 const description = "与流萤AI聊天";
@@ -12,29 +11,3 @@ const description = "与流萤AI聊天";
         <AiChatPage client:load />
     </div>
 </MainGridLayout>
-
-{import.meta.env.PROD && (
-<script is:inline define:vars={{ scriptUrl: url('/pagefind/pagefind.js') }}>
-    if (!window.pagefind) {
-        async function loadPagefind() {
-            const url = scriptUrl.replace(/\/$/, "")
-            try {
-                const response = await fetch(url, { method: 'HEAD' });
-                if (response.status !== 200) {
-                    return;
-                }
-                const pagefind = await import(scriptUrl);
-                await pagefind.options({
-                    "excerptLength": 200
-                });
-                window.pagefind = pagefind;
-                window.dispatchEvent(new Event('pagefindready'));
-            } catch (error) {
-                console.warn("Pagefind script not found or failed to load.");
-                window.dispatchEvent(new Event('pagefindloaderror'));
-            }
-        }
-        loadPagefind();
-    }
-</script>
-)}
