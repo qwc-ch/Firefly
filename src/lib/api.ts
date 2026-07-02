@@ -154,3 +154,22 @@ export const siteConfigApi = {
 			body: JSON.stringify({ config, sha, message }),
 		}),
 };
+
+export const friendsConfigApi = {
+	get: () =>
+		request("/api/config/friends") as Promise<{
+			friends: unknown[];
+			friendsPage: Record<string, unknown>;
+			sha: string;
+		}>,
+	save: (
+		friends: unknown[],
+		friendsPage: Record<string, unknown>,
+		sha: string,
+		message?: string,
+	) =>
+		request("/api/config/friends", {
+			method: "PUT",
+			body: JSON.stringify({ friends, friendsPage, sha, message }),
+		}),
+};

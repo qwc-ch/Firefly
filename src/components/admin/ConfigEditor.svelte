@@ -1,10 +1,11 @@
 <script lang="ts">
 import { friendsConfig } from "@/config/friendsConfig";
 import { getIconSvg } from "@/constants/icons";
-import { siteConfigApi } from "@/lib/api";
+import { friendsConfigApi, siteConfigApi } from "@/lib/api";
 
 let config = $state<Record<string, unknown>>({});
 let sha = $state("");
+let friendsSha = $state("");
 let loading = $state(true);
 let saving = $state(false);
 let message = $state("");
@@ -18,13 +19,27 @@ $effect(() => {
 async function loadConfig() {
 	loading = true;
 	try {
-		const data = await siteConfigApi.get();
-		const cfg = data.config;
+		const [siteRes, friendsRes] = await Promise.all([
+			siteConfigApi.get(),
+			friendsConfigApi.get().catch(() => ({
+				friends: friendsConfig.map((f) => ({ ...f })),
+				friendsPage: {},
+				sha: "",
+			})),
+		]);
+		const cfg = siteRes.config;
 		if (!cfg.friends) {
-			cfg.friends = friendsConfig.map((f) => ({ ...f }));
+			cfg.friends = (friendsRes.friends as Record<string, unknown>[])?.length
+				? (friendsRes.friends as Record<string, unknown>[])
+				: friendsConfig.map((f) => ({ ...f }));
+		}
+		if (!cfg.friendsPage) {
+			cfg.friendsPage =
+				(friendsRes.friendsPage as Record<string, unknown>) || {};
 		}
 		config = cfg;
-		sha = data.sha;
+		sha = siteRes.sha;
+		friendsSha = friendsRes.sha;
 	} catch (err: unknown) {
 		message = err instanceof Error ? err.message : "加载失败";
 		messageType = "error";
@@ -36,9 +51,21 @@ async function loadConfig() {
 async function handleSave() {
 	saving = true;
 	try {
-		await siteConfigApi.save(config, sha, "Update site config via admin");
-		const data = await siteConfigApi.get();
-		sha = data.sha;
+		await Promise.all([
+			siteConfigApi.save(config, sha, "Update site config via admin"),
+			friendsConfigApi.save(
+				(config.friends as unknown[]) || [],
+				(config.friendsPage as Record<string, unknown>) || {},
+				friendsSha,
+				"Update friends config via admin",
+			),
+		]);
+		const [siteRes, friendsRes] = await Promise.all([
+			siteConfigApi.get(),
+			friendsConfigApi.get(),
+		]);
+		sha = siteRes.sha;
+		friendsSha = friendsRes.sha;
 		message = "配置已保存并提交到 GitHub";
 		messageType = "success";
 		setTimeout(() => (message = ""), 3000);
