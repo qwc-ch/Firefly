@@ -1,0 +1,1810 @@
+<!DOCTYPE html><html lang="zh-CN" class="bg-(--page-bg) text-[14px] md:text-[16px]" data-wallpaper-mode="fullscreen" style="--configHue: 330;--page-width: 100rem;--banner-height-home: 65vh;--banner-height: 35vh;" data-astro-cid-ju4pidww><head><meta charset="UTF-8"><script data-swup-ignore-script defer src="https://umami.520781.xyz/script.js" data-website-id="0ea6a26e-e3cf-431e-ac72-f9d39cac3b93"></script><script data-swup-ignore-script>
+			;(() => {
+				const name = 'outbound-link-click'
+
+				const applyOutboundTracking = () => {
+					document.querySelectorAll('a').forEach((a) => {
+						if (
+							a.host !== window.location.host &&
+							!a.getAttribute('data-umami-event')
+						) {
+							a.setAttribute('data-umami-event', name)
+							a.setAttribute('data-umami-event-url', a.href)
+						}
+					})
+				}
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', applyOutboundTracking, {
+						once: true,
+					})
+				} else {
+					applyOutboundTracking()
+				}
+
+				document.addEventListener('astro:page-load', applyOutboundTracking)
+			})()
+		</script><title>博客管理后台 - 年华</title><meta name="description" content="基于Firefly和Astro开发的个人博客，我会在这里分享生活和技术。"><meta name="keywords" content="年华, 年华的博客, Firefly, Fuwari, Astro, ACGN, 博客, 技术博客, 静态博客, 生活"><meta name="author" content="年华"><meta property="og:site_name" content="年华"><meta property="og:url" content="https://blog.amamo.top/config/"><meta property="og:title" content="博客管理后台 - 年华"><meta property="og:description" content="基于Firefly和Astro开发的个人博客，我会在这里分享生活和技术。"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://blog.amamo.top/config/"><meta name="twitter:title" content="博客管理后台 - 年华"><meta name="twitter:description" content="基于Firefly和Astro开发的个人博客，我会在这里分享生活和技术。"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.0.2"><link rel="icon" href="/favicon/favicon2.png"><!-- 为特定域名的图片添加 referrerpolicy 以解决 403 问题 --><script>(function(){const noReferrerDomains = "[\"*.hdslb.com\",\"*.bilibili.com\"]";
+
+        (function() {
+          const domains = JSON.parse(noReferrerDomains);
+
+          // 域名匹配函数，支持通配符
+          function matchesDomain(urlStr, patterns) {
+            try {
+              const urlObj = new URL(urlStr);
+              const hostname = urlObj.hostname;
+
+              return patterns.some(function(pattern) {
+                const regexPattern = pattern.replace(/\./g, '\\.').replace(/\*/g, '.*');
+                const regex = new RegExp('^' + regexPattern + '$');
+                return regex.test(hostname);
+              });
+            } catch (e) {
+              return false;
+            }
+          }
+
+          // 处理单个图片元素
+          function processImage(img) {
+            if (!img.src || img.hasAttribute('referrerpolicy')) return;
+
+            if (matchesDomain(img.src, domains)) {
+              img.setAttribute('referrerpolicy', 'no-referrer');
+            }
+          }
+
+          // 立即处理页面上的所有图片
+          document.querySelectorAll('img').forEach(processImage);
+
+          // 使用 MutationObserver 监听动态加载的图片
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeName === 'IMG') {
+                  processImage(node);
+                }
+                if (node.querySelectorAll) {
+                  node.querySelectorAll('img').forEach(processImage);
+                }
+              });
+            });
+          });
+
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        })();
+      })();</script><!-- Set the theme before the page is rendered to avoid a flash --><script>(function(){const BANNER_HEIGHT_EXTEND = 30;
+const PAGE_WIDTH = 100;
+const configHue = 330;
+const defaultMode = "system";
+const defaultWallpaperMode = "fullscreen";
+const isWallpaperSwitchable = true;
+const darkTheme = "github-dark-default";
+const lightTheme = "github-dark-default";
+const baseUrl = "/";
+const cardTransparentOpacity = 0.5;
+
+      // 主题初始化 - 与setting-utils.ts保持一致
+      const LIGHT_MODE = "light";
+      const DARK_MODE = "dark";
+      const SYSTEM_MODE = "system";
+
+      // 获取存储的主题，如果没有则使用默认值
+      const theme = localStorage.getItem("theme") || defaultMode;
+
+      // 获取系统主题
+      function getSystemTheme() {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? DARK_MODE
+          : LIGHT_MODE;
+      }
+
+      // 解析主题（如果是system模式，则获取系统主题）
+      function resolveTheme(themeValue) {
+        if (themeValue === SYSTEM_MODE) {
+          return getSystemTheme();
+        }
+        return themeValue;
+      }
+
+      const resolvedTheme = resolveTheme(theme);
+      const isDark = resolvedTheme === DARK_MODE;
+
+      // 应用主题
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      // Set the theme for Expressive Code
+      document.documentElement.setAttribute(
+        "data-theme",
+        isDark ? darkTheme : lightTheme
+      );
+
+      // Load the hue from local storage
+      const hue = localStorage.getItem("hue") || configHue;
+      document.documentElement.style.setProperty("--hue", hue);
+
+      // 设置卡片透明度（全屏透明模式下使用），优先使用用户自定义值
+      const storedCardOpacity = localStorage.getItem("overlayCardOpacity");
+      const parsedCardOpacity = storedCardOpacity === null ? NaN : Number.parseFloat(storedCardOpacity);
+      const resolvedCardOpacity = Number.isFinite(parsedCardOpacity)
+        ? Math.min(1, Math.max(0, parsedCardOpacity))
+        : cardTransparentOpacity;
+      document.documentElement.style.setProperty("--card-transparent-opacity", String(resolvedCardOpacity));
+
+      // calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
+      // 使用更准确的窗口高度计算
+      function calculateBannerHeightExtend() {
+        let offset = Math.floor(
+          window.innerHeight * (BANNER_HEIGHT_EXTEND / 100)
+        );
+        offset = offset - (offset % 4);
+        document.documentElement.style.setProperty(
+          "--banner-height-extend",
+          `${offset}px`
+        );
+      }
+
+      // 立即设置初始值
+      calculateBannerHeightExtend();
+
+      // 在下一帧重新计算精确值（仅在值变化时更新，避免闪烁）
+      requestAnimationFrame(() => {
+        const oldValue = parseInt(
+          document.documentElement.style.getPropertyValue(
+            "--banner-height-extend"
+          )
+        );
+        calculateBannerHeightExtend();
+        const newValue = parseInt(
+          document.documentElement.style.getPropertyValue(
+            "--banner-height-extend"
+          )
+        );
+        // 如果值变化了，再更新一次确保准确
+        if (Math.abs(oldValue - newValue) > 4) {
+          // 如果有明显变化，延迟一帧再更新，避免闪烁
+          requestAnimationFrame(calculateBannerHeightExtend);
+        }
+      });
+
+      // 初始化壁纸模式 - 在页面渲染前应用
+      const WALLPAPER_BANNER = "banner";
+      const WALLPAPER_FULLSCREEN = "fullscreen";
+      const WALLPAPER_OVERLAY = "overlay";
+      const WALLPAPER_NONE = "none";
+      const wallpaperMode = isWallpaperSwitchable
+        ? localStorage.getItem("wallpaperMode") || defaultWallpaperMode
+        : defaultWallpaperMode;
+
+      // 设置data-wallpaper-mode属性
+      document.documentElement.setAttribute(
+        "data-wallpaper-mode",
+        wallpaperMode
+      );
+
+      // 立即执行函数来处理DOM
+      (function applyWallpaperMode() {
+        // 使用 requestAnimationFrame 确保在下一帧之前执行
+        requestAnimationFrame(function () {
+          // 根据模式隐藏显示对应元素
+          if (
+            wallpaperMode === WALLPAPER_NONE ||
+            wallpaperMode === WALLPAPER_OVERLAY ||
+            wallpaperMode === WALLPAPER_FULLSCREEN
+          ) {
+            // 隐藏横幅
+            if (document.body) {
+              document.body.classList.remove("enable-banner");
+              document.body.classList.add("no-banner-layout");
+            }
+          } else {
+            if (document.body) {
+              document.body.classList.add("enable-banner");
+              document.body.classList.remove("no-banner-layout");
+            }
+          }
+
+          // 全屏透明模式
+          if (wallpaperMode === WALLPAPER_OVERLAY) {
+            if (document.body) {
+              document.body.classList.add("wallpaper-transparent");
+            }
+          } else {
+            if (document.body) {
+              document.body.classList.remove("wallpaper-transparent");
+            }
+          }
+
+          // 处理wallpaper-wrapper的显示
+          const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
+
+          // 检查当前是否为首页
+          const isHomePage =
+            window.location.pathname === baseUrl ||
+            (baseUrl !== '/' && window.location.pathname === baseUrl.replace(/\/$/, '')) ||
+            window.location.pathname === "/";
+
+          if (wallpaperMode === WALLPAPER_OVERLAY) {
+            // 全屏壁纸透明模式：切换为 overlay 显示
+            if (wallpaperWrapper) {
+              wallpaperWrapper.classList.add("wallpaper-overlay");
+              wallpaperWrapper.style.display = "block";
+              wallpaperWrapper.classList.remove("hidden", "opacity-0", "mobile-hide-banner");
+              wallpaperWrapper.classList.add("opacity-100");
+              wallpaperWrapper.style.top = "";
+            }
+          } else if (wallpaperMode === WALLPAPER_FULLSCREEN) {
+            // 全屏壁纸模式：切换为全屏壁纸显示
+            if (wallpaperWrapper) {
+              wallpaperWrapper.classList.remove("wallpaper-overlay");
+              wallpaperWrapper.classList.add("wallpaper-fullscreen");
+              const isMobile = window.innerWidth < 1024;
+              // 移动端非首页时隐藏壁纸（与横幅模式一致）
+              if (isMobile && !isHomePage) {
+                wallpaperWrapper.style.display = "none";
+                wallpaperWrapper.classList.add("mobile-hide-banner");
+              } else {
+                wallpaperWrapper.style.display = "block";
+                wallpaperWrapper.classList.remove("hidden", "opacity-0", "mobile-hide-banner");
+                wallpaperWrapper.classList.add("opacity-100");
+              }
+              wallpaperWrapper.style.top = "";
+            }
+          } else if (wallpaperMode === WALLPAPER_NONE) {
+            // 纯色背景：隐藏壁纸
+            if (wallpaperWrapper) {
+              wallpaperWrapper.style.display = "none";
+              wallpaperWrapper.classList.add("hidden", "opacity-0");
+            }
+          } else {
+            // banner模式：以 banner 方式显示
+            if (wallpaperWrapper) {
+              wallpaperWrapper.classList.remove("wallpaper-overlay");
+              wallpaperWrapper.classList.remove("wallpaper-fullscreen");
+              const isMobile = window.innerWidth < 1024;
+              // 移动端非首页时隐藏banner（初始状态直接隐藏，不需要动画）
+              // 桌面端始终显示banner
+              if (isMobile && !isHomePage) {
+                wallpaperWrapper.style.display = "none";
+                wallpaperWrapper.classList.add("mobile-hide-banner");
+              } else {
+                wallpaperWrapper.style.display = "block";
+                wallpaperWrapper.classList.remove("mobile-hide-banner");
+              }
+            }
+          }
+
+          // 处理主内容区域位置
+          const mainContentWrapper = document.querySelector(
+            ".w-full.z-30.pointer-events-none"
+          );
+          if (mainContentWrapper) {
+            // 初始化期间禁用过渡动画，防止内容位置跳动
+            mainContentWrapper.style.setProperty("transition", "none", "important");
+            const isMobile = window.innerWidth < 1024;
+            // 只在移动端非首页时调整主内容位置
+            if (isMobile && !isHomePage) {
+              mainContentWrapper.classList.add("mobile-main-no-banner");
+            } else {
+              mainContentWrapper.classList.remove("mobile-main-no-banner");
+            }
+            // 全屏壁纸模式：用 relative 定位让内容紧跟壁纸（移动端非首页除外，壁纸已隐藏）
+            const isMobileNonHome = window.innerWidth < 1024 && !isHomePage;
+            if (wallpaperMode === WALLPAPER_FULLSCREEN && !isMobileNonHome) {
+              mainContentWrapper.style.position = "relative";
+              mainContentWrapper.style.top = "0";
+              mainContentWrapper.style.zIndex = "30";
+              mainContentWrapper.style.setProperty("margin-top", "1rem", "important");
+            } else if (isMobile && isHomePage && (wallpaperMode === WALLPAPER_BANNER || wallpaperMode === undefined)) {
+              // 移动端横幅模式首页：清除 inline top，让 CSS 响应式规则生效
+              mainContentWrapper.style.removeProperty("top");
+              mainContentWrapper.style.position = "";
+              mainContentWrapper.style.zIndex = "";
+              mainContentWrapper.style.setProperty("margin-top", "0", "important");
+            } else if (isMobileNonHome) {
+              mainContentWrapper.style.setProperty("top", "5.5rem", "important");
+              mainContentWrapper.style.position = "";
+              mainContentWrapper.style.zIndex = "";
+              mainContentWrapper.style.setProperty("margin-top", "0", "important");
+            } else if (wallpaperMode === WALLPAPER_BANNER && !isHomePage) {
+              // 桌面端横幅模式非首页：与首页相同定位（保留grid transform）
+              mainContentWrapper.style.setProperty("top", "calc(var(--banner-height) - 3.5rem)", "important");
+              mainContentWrapper.style.position = "";
+              mainContentWrapper.style.zIndex = "";
+              mainContentWrapper.style.setProperty("margin-top", "0", "important");
+            }
+            // 定位完成后显示主内容（初始CSS规则会隐藏，防止壁纸初始化前闪烁）
+            mainContentWrapper.style.visibility = "visible";
+            // 延迟恢复过渡动画，确保位置已生效
+            requestAnimationFrame(() => {
+              mainContentWrapper.style.removeProperty("transition");
+            });
+          }
+
+          // 处理banner homeText元素
+          const bannerTextOverlay = document.querySelector(
+            ".banner-home-text-overlay"
+          );
+          if (bannerTextOverlay) {
+            const isHomePage =
+              window.location.pathname === baseUrl || 
+              (baseUrl !== '/' && window.location.pathname === baseUrl.replace(/\/$/, '')) ||
+              window.location.pathname === "/";
+            if ((wallpaperMode === WALLPAPER_BANNER || wallpaperMode === WALLPAPER_FULLSCREEN) && isHomePage) {
+              bannerTextOverlay.classList.remove("hidden");
+            } else {
+              bannerTextOverlay.classList.add("hidden");
+            }
+          }
+        });
+      })();
+
+      // 初始化水波纹动画状态 - 在 html 元素上设置属性，CSS 会立即生效
+      (function applyWavesEnabled() {
+        const wavesEnabled = localStorage.getItem("wavesEnabled");
+        if (wavesEnabled !== null) {
+          document.documentElement.setAttribute("data-waves-enabled", wavesEnabled);
+        }
+      })();
+
+      // 初始化渐变过渡状态 - 在 html 元素上设置属性，CSS 会立即生效
+      (function applyGradientEnabled() {
+        const gradientEnabled = localStorage.getItem("gradientEnabled");
+        if (gradientEnabled !== null) {
+          document.documentElement.setAttribute("data-gradient-enabled", gradientEnabled);
+        }
+      })();
+
+      // 初始化横幅标题显示状态 - 在 html 元素上设置属性，CSS 会立即生效
+      (function applyBannerTitleEnabled() {
+        const bannerTitleEnabled = localStorage.getItem("bannerTitleEnabled");
+        if (bannerTitleEnabled !== null) {
+          document.documentElement.setAttribute("data-banner-title-enabled", bannerTitleEnabled);
+        }
+      })();
+    })();</script><!-- defines global css variables. This will be applied to <html> <body> and some other elements idk why --><link rel="alternate" type="application/rss+xml" title="年华" href="https://blog.amamo.top/rss.xml"><!-- Font Setup (Astro Font API) --><!-- Astro Font API: 自动下载、缓存并生成优化的 @font-face --><style>@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/0777cbdcf1983e64.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:300;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/bd11f27b8dbac1a1.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:400;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/55e2e1306166cc66.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:500;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/0f7c5e2ce7cab7eb.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:700;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/ad6bc6999df197d3.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:300;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/eecbb020c15d3d07.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:400;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/179376c88e792cbb.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:500;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0";src:url("/_astro/fonts/5e5f2ba54502ad0c.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:700;font-style:normal;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:300;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:500;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:normal;size-adjust:91.6704%;ascent-override:126.5403%;descent-override:31.4169%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:300;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial";src:local("Arial");font-display:swap;font-weight:500;font-style:normal;size-adjust:98.6988%;ascent-override:117.5293%;descent-override:29.1797%;line-gap-override:0%;}@font-face{font-family:"Zen Maru Gothic-20da1854feb236c0 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:normal;size-adjust:91.6704%;ascent-override:126.5403%;descent-override:31.4169%;line-gap-override:0%;}:root{--font-zen-maru-gothic:"Zen Maru Gothic-20da1854feb236c0","Zen Maru Gothic-20da1854feb236c0 fallback: Arial","Zen Maru Gothic-20da1854feb236c0 fallback: Arial Bold",sans-serif;}</style><style>@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/b92787725bce141b.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:300;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/07431a16dd76433e.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:400;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/fe8426e418b1784b.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:500;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/c5c4490645b295f5.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:600;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/ffa1f1149b7accfe.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:700;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/508014400d20fe8c.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:300;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/bc273a2ecdfd6228.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:400;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/2e91b11b3637a475.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:500;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/d66ba9aabc6d3ddb.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:600;font-style:normal;}@font-face{font-family:Inter-bab5275136dc0807;src:url("/_astro/fonts/8675f4cad3dc992b.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:700;font-style:normal;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:300;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:500;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:600;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:normal;size-adjust:97.6602%;ascent-override:99.196%;descent-override:24.699%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:300;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:500;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial";src:local("Arial");font-display:swap;font-weight:600;font-style:normal;size-adjust:105.1479%;ascent-override:92.1322%;descent-override:22.9402%;line-gap-override:0%;}@font-face{font-family:"Inter-bab5275136dc0807 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:normal;size-adjust:97.6602%;ascent-override:99.196%;descent-override:24.699%;line-gap-override:0%;}:root{--font-inter:Inter-bab5275136dc0807,"Inter-bab5275136dc0807 fallback: Arial","Inter-bab5275136dc0807 fallback: Arial Bold",sans-serif;}</style><style>@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd";src:url("/_astro/fonts/cc5f60fd46e42cc9.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:400;font-style:normal;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd";src:url("/_astro/fonts/4e13c01b98043a1e.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:700;font-style:normal;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd";src:url("/_astro/fonts/4a498dfb2bdc397b.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:400;font-style:normal;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd";src:url("/_astro/fonts/1eeba51e3ef72549.woff2") format("woff2");font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-weight:700;font-style:normal;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd fallback: Courier New";src:local("Courier New");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.9837%;ascent-override:102.0166%;descent-override:30.0049%;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd fallback: Courier New";src:local("Courier New");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.9837%;ascent-override:102.0166%;descent-override:30.0049%;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd fallback: Courier New";src:local("Courier New");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.9837%;ascent-override:102.0166%;descent-override:30.0049%;}@font-face{font-family:"JetBrains Mono-17dcdfba148ee2dd fallback: Courier New";src:local("Courier New");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.9837%;ascent-override:102.0166%;descent-override:30.0049%;}:root{--font-jetbrains-mono:"JetBrains Mono-17dcdfba148ee2dd","JetBrains Mono-17dcdfba148ee2dd fallback: Courier New",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}</style><!-- 区域字体 CSS 变量 + body 字体 --><style>
+    :root {
+      --font-banner-title: var(--font-zen-maru-gothic, inherit);
+      --font-banner-subtitle: var(--font-inter, inherit);
+      
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+    }
+  </style><script type="module">document.fonts&&typeof document.fonts.ready<"u"&&document.fonts.ready.then(()=>{document.dispatchEvent(new CustomEvent("fontsLoaded"))}).catch(n=>{console.warn("Font loading failed:",n)});</script><link rel="stylesheet" href="/_astro/config.DDXNi1BB.css"><style>.page{padding:24px}.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.page-title-row{display:flex;align-items:center;gap:10px}.page-title{font-size:20px;font-weight:700;color:var(--deep-text);margin:0}.badge{display:inline-flex;align-items:center;justify-content:center;padding:2px 10px;border-radius:var(--radius-full);background:var(--btn-regular-bg);color:var(--btn-content);font-size:12px;font-weight:600}.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:var(--radius-xl);cursor:pointer;transition:opacity .15s}.btn-primary:hover{opacity:.9}.btn-primary:disabled{opacity:.5}.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:var(--btn-regular-bg);color:var(--btn-content);font-weight:500;font-size:13px;border:none;border-radius:var(--radius-xl);cursor:pointer;transition:background .15s}.btn-secondary:hover{background:var(--btn-regular-bg-hover)}.message{padding:10px 16px;border-radius:var(--radius-xl);font-size:13px;font-weight:500;margin-bottom:16px;background:var(--btn-regular-bg);color:var(--btn-content)}.message-error{background:var(--admonitions-color-caution);color:#fff}.empty-state{text-align:center;padding:80px 0;color:var(--content-meta);font-size:14px;display:flex;flex-direction:column;align-items:center;gap:12px}.form-group{display:flex;flex-direction:column;gap:6px}.form-label{font-size:13px;font-weight:600;color:var(--deep-text)}.form-input{padding:9px 14px;border:1px solid var(--line-divider);border-radius:var(--radius-xl);background:var(--muted);color:var(--deep-text);font-size:14px;outline:none;transition:border-color .15s}.form-input:focus{border-color:var(--primary)}.form-input:disabled{opacity:.5}.form-textarea{resize:vertical;min-height:80px;font-family:inherit}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-check-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.form-checkbox{accent-color:var(--primary);width:16px;height:16px}.form-check-label{font-size:13px;color:var(--deep-text);margin-right:8px}.form-actions{display:flex;align-items:center;gap:10px;padding-top:16px;border-top:1px solid var(--line-divider);flex-wrap:wrap}.hidden{display:none}@media(max-width:767px){.page{padding:16px}.form-row{grid-template-columns:1fr}}.music-nav-panel{position:fixed;top:4.5rem;right:4rem;width:20rem;border-radius:var(--radius-large);overflow:hidden;background:var(--card-bg);transition:color .15s,opacity .15s,transform .15s;box-shadow:var(--shadow-xl);border:1px solid rgba(0,0,0,.05);z-index:100;padding:1.125rem .5rem .5rem}:root.dark .music-nav-panel{border-color:#ffffff1a}.music-nav-panel.closed{transform:translateY(-4px);opacity:0;pointer-events:none}.music-nav-panel.closed *{pointer-events:none}@media(max-width:767px){.music-nav-panel{top:3.25rem;right:.5rem;left:auto;bottom:auto;width:calc(100vw - 1rem);max-width:20rem;border-radius:var(--radius-large);overflow:visible;padding-bottom:.5rem}.music-nav-panel.closed{transform:translateY(-4px)}}
+</style><link rel="stylesheet" href="/_astro/Layout.Catub2DN.css"><script type="module" src="/_astro/page.CZUPQ-vU.js"></script></head><body class="min-h-screen sticky-navbar enable-card-border card-follow-theme-hue" style="--configHue: 330;--page-width: 100rem;--banner-height-home: 65vh;--banner-height: 35vh;" data-astro-cid-ju4pidww><div id="progress-bar" style="--configHue: 330;--page-width: 100rem;--banner-height-home: 65vh;--banner-height: 35vh;" data-astro-cid-ju4pidww></div><!-- 页面顶部渐变高光效果 - 只在full和semifull模式下显示 --><div class="top-gradient-highlight" style="--configHue: 330;--page-width: 100rem;--banner-height-home: 65vh;--banner-height: 35vh;" data-astro-cid-ju4pidww></div><!-- 全局配置载体 --><div id="config-carrier" data-hue="330" data-wallpaper-mode="fullscreen"></div><script>(function(){const managerConfigStr = "{\"mode\":\"meting\",\"meting\":{\"api\":\"https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r\",\"server\":\"netease\",\"type\":\"playlist\",\"id\":\"17426009449\",\"auth\":\"\",\"fallbackApis\":[\"https://api.injahow.cn/meting/?server=:server&type=:type&id=:id\",\"https://api.moeyao.cn/meting/?server=:server&type=:type&id=:id\"]},\"localPlaylist\":[],\"volume\":0.8,\"playMode\":\"list\",\"showLyrics\":true,\"i18n\":{\"noPlaying\":\"暂未播放\",\"lyrics\":\"歌词\",\"volume\":\"音量\",\"playMode\":\"切换播放模式\",\"prev\":\"上一首\",\"next\":\"下一首\",\"playlist\":\"列表\",\"noLyrics\":\"暂无歌词\",\"loadingLyrics\":\"正在加载歌词...\",\"failedLyrics\":\"歌词加载失败\",\"noSongs\":\"暂无歌曲\",\"error\":\"播放器错误\",\"play\":\"播放\",\"pause\":\"暂停\",\"progress\":\"播放进度\",\"noCover\":\"暂无封面\"}}";
+
+(function () {
+    // Singleton guard – only create once
+    if (window.__fireflyMusic) return;
+
+    var config = JSON.parse(managerConfigStr);
+
+    // ── Helpers ──────────────────────────────────────────────
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        var min = Math.floor(seconds / 60);
+        var sec = Math.floor(seconds % 60);
+        return min + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function parseLRC(lrc) {
+        if (!lrc) return [];
+        var lines = lrc.split('\n');
+        var result = [];
+        var timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+        lines.forEach(function (line) {
+            var matches = Array.from(line.matchAll(timeReg));
+            if (matches.length > 0) {
+                var text = line.replace(timeReg, '').trim();
+                if (text) {
+                    matches.forEach(function (match) {
+                        var m = parseInt(match[1]);
+                        var s = parseInt(match[2]);
+                        var ms = parseInt(match[3]);
+                        var time = m * 60 + s + ms / (match[3].length === 3 ? 1000 : 100);
+                        result.push({ time: time, text: text });
+                    });
+                }
+            }
+        });
+        return result.sort(function (a, b) { return a.time - b.time; });
+    }
+
+    // ── Audio element (persistent, attached to body) ────────
+    var audio = document.createElement('audio');
+    audio.crossOrigin = 'anonymous';
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+
+    // ── State ────────────────────────────────────────────────
+    var loadVersion = 0; // incremented on each loadTrack to discard stale play() results
+    var state = {
+        playlist: [],
+        currentIndex: 0,
+        isPlaying: false,
+        playMode: 0, // 0: list, 1: one, 2: random
+        volume: localStorage.getItem('music-player-volume') !== null
+            ? parseFloat(localStorage.getItem('music-player-volume'))
+            : (config.volume || 0.7),
+        isMuted: false,
+        lyrics: [],
+        currentLrcIndex: -1,
+        initialized: false,
+        initializing: false,
+        error: null
+    };
+
+    // Map config playMode string to number
+    if (config.playMode === 'random') state.playMode = 2;
+    else if (config.playMode === 'one') state.playMode = 1;
+    else state.playMode = 0;
+
+    // ── Event helpers ────────────────────────────────────────
+    function emit(name, detail) {
+        window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
+    }
+
+    // ── Meting fetch ─────────────────────────────────────────
+    async function fetchMetingData() {
+        if (!config.meting) return;
+        var m = config.meting;
+        var apis = [m.api].concat(m.fallbackApis || []);
+
+        for (var i = 0; i < apis.length; i++) {
+            var baseApi = apis[i];
+            if (!baseApi) continue;
+            try {
+                var fetchUrl = baseApi
+                    .replace(':server', m.server)
+                    .replace(':type', m.type)
+                    .replace(':id', m.id)
+                    .replace(':r', Math.random());
+                if (m.auth) fetchUrl += '&auth=' + m.auth;
+
+                var res = await fetch(fetchUrl);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                var data = await res.json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    state.playlist = data.map(function (item) {
+                        return {
+                            name: item.title || item.name || 'Unknown',
+                            artist: item.author || item.artist || 'Unknown',
+                            url: item.url,
+                            pic: item.pic || item.cover || '',
+                            lrc: item.lrc
+                        };
+                    });
+                    return;
+                }
+            } catch (e) {
+                console.warn('Meting API failed for ' + baseApi, e);
+            }
+        }
+        throw new Error('All Meting APIs failed');
+    }
+
+    // ── Lyrics ───────────────────────────────────────────────
+    function loadLyrics(track) {
+        state.lyrics = [];
+        state.currentLrcIndex = -1;
+
+        if (!track.lrc) {
+            emit('fm:lyrics', { lyrics: [], status: 'none' });
+            return;
+        }
+
+        var isLrcUrl = /^(https?:)?\/\//.test(track.lrc)
+            || track.lrc.startsWith('/')
+            || /\.(lrc|txt)(\?|#|$)/i.test(track.lrc);
+
+        if (isLrcUrl) {
+            emit('fm:lyrics', { lyrics: [], status: 'loading' });
+            fetch(track.lrc)
+                .then(function (r) { return r.text(); })
+                .then(function (text) {
+                    state.lyrics = parseLRC(text);
+                    emit('fm:lyrics', { lyrics: state.lyrics, status: 'loaded' });
+                })
+                .catch(function () {
+                    state.lyrics = [];
+                    emit('fm:lyrics', { lyrics: [], status: 'failed' });
+                });
+        } else {
+            state.lyrics = parseLRC(track.lrc);
+            emit('fm:lyrics', { lyrics: state.lyrics, status: state.lyrics.length > 0 ? 'loaded' : 'none' });
+        }
+    }
+
+    // ── Track loading ────────────────────────────────────────
+    function loadTrack(index, autoPlay) {
+        if (index < 0 || index >= state.playlist.length) return;
+        state.currentIndex = index;
+        var track = state.playlist[index];
+        var ver = ++loadVersion;
+
+        audio.src = track.url;
+
+        loadLyrics(track);
+
+        emit('fm:track', { index: index, track: track, autoPlay: !!autoPlay });
+
+        if (autoPlay) {
+            audio.play().then(function () {
+                if (ver !== loadVersion) return; // stale, discard
+                state.isPlaying = true;
+                emit('fm:play-state', { isPlaying: true });
+            }).catch(function (e) {
+                if (ver !== loadVersion) return; // stale, discard
+                if (e.name === 'AbortError') return; // interrupted by new load
+                console.warn('Autoplay blocked:', e);
+            });
+        } else {
+            state.isPlaying = false;
+            emit('fm:play-state', { isPlaying: false });
+        }
+    }
+
+    // ── Playback controls ────────────────────────────────────
+    function togglePlay() {
+        if (audio.paused) {
+            audio.play().then(function () {
+                state.isPlaying = true;
+                emit('fm:play-state', { isPlaying: true });
+            });
+        } else {
+            audio.pause();
+            state.isPlaying = false;
+            emit('fm:play-state', { isPlaying: false });
+        }
+    }
+
+    function playNext(auto) {
+        if (state.playMode === 1 && auto) {
+            audio.currentTime = 0;
+            audio.play();
+            return;
+        }
+        var nextIndex;
+        if (state.playMode === 2) {
+            nextIndex = Math.floor(Math.random() * state.playlist.length);
+        } else {
+            nextIndex = (state.currentIndex + 1) % state.playlist.length;
+        }
+        loadTrack(nextIndex, true);
+    }
+
+    function playPrev() {
+        var prevIndex;
+        if (state.playMode === 2) {
+            prevIndex = Math.floor(Math.random() * state.playlist.length);
+        } else {
+            prevIndex = (state.currentIndex - 1 + state.playlist.length) % state.playlist.length;
+        }
+        loadTrack(prevIndex, true);
+    }
+
+    function setPlayMode(mode) {
+        state.playMode = mode;
+        emit('fm:mode', { playMode: mode });
+    }
+
+    function cyclePlayMode() {
+        setPlayMode((state.playMode + 1) % 3);
+    }
+
+    function setVolume(val) {
+        val = Math.max(0, Math.min(1, val));
+        state.volume = val;
+        state.isMuted = false;
+        audio.volume = val;
+        audio.muted = false;
+        localStorage.setItem('music-player-volume', val.toString());
+        emit('fm:volume', { volume: val, isMuted: false });
+    }
+
+    function toggleMute() {
+        state.isMuted = !state.isMuted;
+        audio.muted = state.isMuted;
+        emit('fm:volume', { volume: state.volume, isMuted: state.isMuted });
+    }
+
+    function seek(percent) {
+        if (!audio.duration) return;
+        audio.currentTime = Math.max(0, Math.min(1, percent)) * audio.duration;
+    }
+
+    function seekToTime(time) {
+        if (!audio.duration) return;
+        audio.currentTime = Math.max(0, Math.min(time, audio.duration));
+    }
+
+    function playTrackByIndex(index) {
+        if (index === state.currentIndex && !audio.paused) {
+            togglePlay();
+        } else {
+            loadTrack(index, true);
+        }
+    }
+
+    // ── Audio events → broadcast ─────────────────────────────
+    audio.addEventListener('timeupdate', function () {
+        if (isNaN(audio.duration)) return;
+        var ct = audio.currentTime;
+        var dur = audio.duration;
+        var pct = (ct / dur) * 100;
+
+        emit('fm:time', {
+            currentTime: ct,
+            duration: dur,
+            progress: pct,
+            currentTimeStr: formatTime(ct),
+            durationStr: formatTime(dur)
+        });
+
+        // Lyrics sync
+        if (state.lyrics.length > 0) {
+            var idx = -1;
+            for (var i = 0; i < state.lyrics.length; i++) {
+                if (ct >= state.lyrics[i].time) idx = i;
+                else break;
+            }
+            if (idx !== state.currentLrcIndex) {
+                state.currentLrcIndex = idx;
+                emit('fm:lrc-index', { index: idx });
+            }
+        }
+    });
+
+    audio.addEventListener('ended', function () {
+        playNext(true);
+    });
+
+    audio.addEventListener('error', function () {
+        state.error = 'Audio playback error';
+        emit('fm:error', { message: state.error });
+    });
+
+    // ── Init (idempotent) ────────────────────────────────────
+    async function init() {
+        if (state.initialized || state.initializing) return;
+        state.initializing = true;
+
+        try {
+            if (config.mode === 'meting' && config.meting) {
+                await fetchMetingData();
+            } else if (config.mode === 'local') {
+                state.playlist = config.localPlaylist || [];
+            }
+
+            if (state.playlist.length > 0) {
+                // Apply volume
+                audio.volume = state.volume;
+
+                var startIndex = 0;
+                if (state.playMode === 2) {
+                    startIndex = Math.floor(Math.random() * state.playlist.length);
+                }
+
+                state.initialized = true;
+
+                emit('fm:init', {
+                    playlist: state.playlist,
+                    playMode: state.playMode,
+                    volume: state.volume,
+                    isMuted: state.isMuted
+                });
+
+                loadTrack(startIndex, false);
+            } else {
+                state.initialized = true;
+                emit('fm:init', {
+                    playlist: [],
+                    playMode: state.playMode,
+                    volume: state.volume,
+                    isMuted: state.isMuted
+                });
+                emit('fm:error', { message: config.i18n.noSongs });
+            }
+        } catch (e) {
+            console.error('Music Manager init error:', e);
+            state.initialized = true;
+            emit('fm:init', {
+                playlist: [],
+                playMode: state.playMode,
+                volume: state.volume,
+                isMuted: state.isMuted
+            });
+            emit('fm:error', { message: config.i18n.error });
+        } finally {
+            state.initializing = false;
+        }
+    }
+
+    // ── Public API ───────────────────────────────────────────
+    window.__fireflyMusic = {
+        init: init,
+        getState: function () {
+            var track = state.playlist[state.currentIndex] || null;
+            return {
+                playlist: state.playlist,
+                currentIndex: state.currentIndex,
+                track: track,
+                isPlaying: state.isPlaying,
+                playMode: state.playMode,
+                volume: state.volume,
+                isMuted: state.isMuted,
+                currentTime: audio.currentTime,
+                duration: audio.duration || 0,
+                progress: audio.duration ? (audio.currentTime / audio.duration) * 100 : 0,
+                currentTimeStr: formatTime(audio.currentTime),
+                durationStr: formatTime(audio.duration),
+                lyrics: state.lyrics,
+                currentLrcIndex: state.currentLrcIndex,
+                initialized: state.initialized,
+                error: state.error,
+                config: config
+            };
+        },
+        togglePlay: togglePlay,
+        playNext: function () { playNext(false); },
+        playPrev: playPrev,
+        cyclePlayMode: cyclePlayMode,
+        setVolume: setVolume,
+        toggleMute: toggleMute,
+        seek: seek,
+        seekToTime: seekToTime,
+        playTrackByIndex: playTrackByIndex,
+        loadTrack: loadTrack
+    };
+})();
+})();</script>
+  <div id="admin-root"><div id="admin-app"></div><div id="admin-music-player" class="music-nav-panel closed"><div id="admin-player" class="music-player-widget w-full relative transition-all duration-300" role="region" aria-label="音乐" data-astro-cid-h2szdtt3><!-- Top Row: Cover & Info --><div class="flex items-center gap-2 mb-2 px-1" data-astro-cid-h2szdtt3><!-- Circular Cover --><div class="relative shrink-0 w-14 h-14 group" data-astro-cid-h2szdtt3><div class="w-full h-full rounded-full overflow-hidden shadow-lg border-2 border-white dark:border-neutral-700 relative z-10 bg-(--primary)/10 flex items-center justify-center" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="text-2xl text-(--primary) opacity-40 absolute" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:music-note-rounded"><path fill="currentColor" d="M7.175 19.825Q6 18.65 6 17t1.175-2.825T10 13q.575 0 1.063.138t.937.412V4q0-.425.288-.712T13 3h4q.425 0 .713.288T18 4v2q0 .425-.288.713T17 7h-3v10q0 1.65-1.175 2.825T10 21t-2.825-1.175"/></svg><img class="music-cover w-full h-full object-cover animate-spin-slow relative z-10 opacity-0 transition-opacity duration-300" src="" alt="封面" style="animation-play-state: paused;" data-astro-cid-h2szdtt3></div></div><!-- Info Section --><div class="flex-1 min-w-0 flex flex-col overflow-hidden" data-astro-cid-h2szdtt3><div class="flex items-center justify-between overflow-hidden gap-2" data-astro-cid-h2szdtt3><div class="flex-1 min-w-0 overflow-hidden relative" data-astro-cid-h2szdtt3><h3 class="music-title font-bold text-base text-neutral-800 dark:text-neutral-100 leading-tight truncate" data-astro-cid-h2szdtt3>音乐</h3></div><!-- Top Right: Lyric Toggle --><button class="btn-lrc-toggle hover:text-(--primary) transition-all duration-300 p-0.5 pr-2 transform active:scale-95 text-neutral-400 shrink-0 " title="歌词" aria-label="歌词" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-lrc-off text-xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:subtitles-off-outline-rounded"><path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4l2 2H4v12h11.15l-2-2H7q-.425 0-.712-.288T6 15t.288-.712T7 14h4.15l-9.8-9.85q-.275-.275-.288-.687t.288-.713q.275-.275.7-.275t.7.275l18.5 18.5q.275.275.288.688t-.288.712q-.275.275-.7.275t-.7-.275L17.15 20zM22 6v10.75q0 .5-.312.75t-.688.25q-.425 0-.712-.3T20 16.725V6H9.275q-.5 0-.75-.312T8.275 5q0-.425.288-.712T9.275 4H20q.825 0 1.413.588T22 6m-5 6h-1.725q-.5 0-.75-.312t-.25-.688t.25-.687t.75-.313H17q.425 0 .713.288T18 11t-.288.713T17 12m-10.712-.288Q6 11.426 6 11t.288-.712T7 10t.713.288T8 11t-.288.713T7 12t-.712-.288"/></svg><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-lrc-on text-xl hidden" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:subtitles-outline-rounded"><path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm0-2h16V6H4zm0 0V6zm3-2h6q.425 0 .713-.288T14 15t-.288-.712T13 14H7q-.425 0-.712.288T6 15t.288.713T7 16m4-4h6q.425 0 .713-.288T18 11t-.288-.712T17 10h-6q-.425 0-.712.288T10 11t.288.713T11 12m-3.287-.288Q8 11.426 8 11t-.288-.712T7 10t-.712.288T6 11t.288.713T7 12t.713-.288m10 4Q18 15.426 18 15t-.288-.712T17 14t-.712.288T16 15t.288.713T17 16t.713-.288"/></svg></button></div><div class="min-w-0 overflow-hidden" data-astro-cid-h2szdtt3><p class="music-artist text-xs font-medium text-neutral-500 dark:text-neutral-400 truncate" data-astro-cid-h2szdtt3>暂未播放</p></div><!-- Time Display & Volume --><div class="flex items-center gap-3 text-neutral-400 h-5" data-astro-cid-h2szdtt3><div class="text-[10px] font-mono flex items-center gap-1 shrink-0 h-full" aria-live="polite" data-astro-cid-h2szdtt3><span class="current-time" data-astro-cid-h2szdtt3>0:00</span><span class="opacity-50" aria-hidden="true" data-astro-cid-h2szdtt3>/</span><span class="total-time" data-astro-cid-h2szdtt3>0:00</span></div><!-- Volume (Always visible) --><div class="flex items-center gap-1 bg-transparent h-full ml-auto" data-astro-cid-h2szdtt3><button class="btn-mute hover:text-(--primary) transition-colors p-0.5 rounded-md flex items-center" title="音量" aria-label="音量" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class=" icon-vol-high text-lg" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:volume-up-rounded"><path fill="currentColor" d="M19 11.975q0-2.075-1.1-3.787t-2.95-2.563q-.375-.175-.55-.537t-.05-.738q.15-.4.538-.575t.787 0Q18.1 4.85 19.55 7.063T21 11.974t-1.45 4.913t-3.875 3.287q-.4.175-.788 0t-.537-.575q-.125-.375.05-.737t.55-.538q1.85-.85 2.95-2.562t1.1-3.788M7 15H4q-.425 0-.712-.288T3 14v-4q0-.425.288-.712T4 9h3l3.3-3.3q.475-.475 1.088-.213t.612.938v11.15q0 .675-.612.938T10.3 18.3zm9.5-3q0 1.05-.475 1.988t-1.25 1.537q-.25.15-.513.013T14 15.1V8.85q0-.3.263-.437t.512.012q.775.625 1.25 1.575t.475 2"/></svg><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-vol-mute text-lg hidden" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:volume-off-rounded"><path fill="currentColor" d="M16.775 19.575q-.275.175-.55.325t-.575.275q-.375.175-.762 0t-.538-.575q-.15-.375.038-.737t.562-.538q.1-.05.188-.1t.187-.1L12 14.8v2.775q0 .675-.612.938T10.3 18.3L7 15H4q-.425 0-.712-.288T3 14v-4q0-.425.288-.712T4 9h2.2L2.1 4.9q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l17 17q.275.275.275.7t-.275.7t-.7.275t-.7-.275zm2.225-7.6q0-2.075-1.1-3.787t-2.95-2.563q-.375-.175-.55-.537t-.05-.738q.15-.4.538-.575t.787 0Q18.1 4.85 19.55 7.05T21 11.975q0 .825-.15 1.638t-.425 1.562q-.2.55-.612.688t-.763.012t-.562-.45t-.013-.75q.275-.65.4-1.312T19 11.975m-4.225-3.55Q15.6 8.95 16.05 10t.45 2v.25q0 .125-.025.25q-.05.325-.35.425t-.55-.15L14.3 11.5q-.15-.15-.225-.337T14 10.775V8.85q0-.3.263-.437t.512.012M9.75 6.95Q9.6 6.8 9.6 6.6t.15-.35l.55-.55q.475-.475 1.087-.213t.613.938V8q0 .35-.3.475t-.55-.125z"/></svg></button><div class="w-16 transition-all duration-300 ease-out flex items-center" data-astro-cid-h2szdtt3><div class="vol-container h-1 w-16 bg-neutral-300/50 dark:bg-neutral-500/40 rounded-full cursor-pointer relative ml-1" role="slider" aria-label="音量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" data-astro-cid-h2szdtt3><div class="vol-bar absolute left-0 top-0 h-full bg-(--primary) rounded-full w-[70%]" data-astro-cid-h2szdtt3></div></div></div></div></div></div></div><!-- Progress Bar (Slim) --><div class="px-1" data-astro-cid-h2szdtt3><div class="progress-container relative w-full h-1 bg-neutral-300/60 dark:bg-neutral-500/40 rounded-full cursor-pointer touch-none mb-2 group mt-2" role="slider" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-astro-cid-h2szdtt3><div class="progress-bar absolute left-0 top-0 h-full bg-(--primary) rounded-full w-0 transition-[width] duration-100" data-astro-cid-h2szdtt3></div><!-- Hover Thumb --><div class="progress-thumb absolute top-1/2 -mt-1.5 -ml-1.5 w-3 h-3 bg-(--primary) ring-2 ring-white dark:ring-neutral-800 rounded-full shadow-sm scale-0 group-hover:scale-100 transition-transform duration-200" data-astro-cid-h2szdtt3></div></div></div><!-- Controls Row --><div class="flex items-center justify-between px-1 select-none" data-astro-cid-h2szdtt3><!-- Repeat Mode --><button class="btn-repeat text-neutral-300 dark:text-neutral-600 hover:text-(--primary) transition-colors p-2 active:scale-95" title="切换播放模式" aria-label="切换播放模式" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-repeat text-xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:repeat-rounded"><path fill="currentColor" d="m6.85 19l.85.85q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L3.7 18.7q-.15-.15-.213-.325T3.426 18t.063-.375t.212-.325l2.575-2.575q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7l-.85.85H17v-3q0-.425.288-.712T18 13t.713.288T19 14v3q0 .825-.587 1.413T17 19zm10.3-12H7v3q0 .425-.288.713T6 11t-.712-.288T5 10V7q0-.825.588-1.412T7 5h10.15l-.85-.85q-.3-.3-.288-.7t.288-.7q.3-.3.712-.312t.713.287L20.3 5.3q.15.15.213.325t.062.375t-.062.375t-.213.325l-2.575 2.575q-.3.3-.712.288T16.3 9.25q-.275-.3-.288-.7t.288-.7z"/></svg><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-repeat-one text-xl hidden" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:repeat-one-rounded"><path fill="currentColor" d="M11.5 10.5h-.75q-.325 0-.537-.213T10 9.75t.213-.537T10.75 9H12q.425 0 .713.288T13 10v4.25q0 .325-.213.538T12.25 15t-.537-.213t-.213-.537zM6.85 19l.85.85q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L3.7 18.7q-.15-.15-.213-.325T3.426 18t.063-.375t.212-.325l2.575-2.575q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7l-.85.85H17v-3q0-.425.288-.712T18 13t.713.288T19 14v3q0 .825-.587 1.413T17 19zm10.3-12H7v3q0 .425-.288.713T6 11t-.712-.288T5 10V7q0-.825.588-1.412T7 5h10.15l-.85-.85q-.3-.3-.288-.7t.288-.7q.3-.3.712-.312t.713.287L20.3 5.3q.15.15.213.325t.062.375t-.062.375t-.213.325l-2.575 2.575q-.3.3-.712.288T16.3 9.25q-.275-.3-.288-.7t.288-.7z"/></svg><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-shuffle text-xl hidden" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:shuffle-rounded"><path fill="currentColor" d="M15 20q-.425 0-.712-.288T14 19t.288-.712T15 18h1.6l-2.475-2.475q-.3-.3-.287-.712t.312-.713t.713-.3t.712.3L18 16.55V15q0-.425.288-.712T19 14t.713.288T20 15v4q0 .425-.288.713T19 20zm-10.7-.3q-.275-.275-.275-.7t.275-.7L16.6 6H15q-.425 0-.712-.288T14 5t.288-.712T15 4h4q.425 0 .713.288T20 5v4q0 .425-.288.713T19 10t-.712-.288T18 9V7.4L5.7 19.7q-.275.275-.7.275t-.7-.275m-.025-14Q4 5.425 4 5t.275-.7t.687-.275t.713.275l4.2 4.175q.275.275.288.688t-.288.712q-.275.275-.7.275t-.7-.275z"/></svg></button><!-- Prev --><button class="btn-prev text-neutral-600 dark:text-neutral-300 hover:text-(--primary) transition-colors p-2 active:scale-95" title="上一首" aria-label="上一首" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="text-3xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:skip-previous-rounded"><path fill="currentColor" d="M5.5 17V7q0-.425.288-.712T6.5 6t.713.288T7.5 7v10q0 .425-.288.713T6.5 18t-.712-.288T5.5 17m11.45-.025l-6.2-4.15q-.225-.15-.337-.362T10.3 12t.113-.462t.337-.363l6.2-4.15q.125-.1.275-.125t.275-.025q.4 0 .7.275t.3.725v8.25q0 .45-.3.725t-.7.275q-.125 0-.275-.025t-.275-.125"/></svg></button><!-- Play/Pause (Feature) --><button class="btn-play w-12 h-12 bg-(--btn-regular-bg) hover:bg-(--btn-regular-bg-hover) active:bg-(--btn-regular-bg-active) text-(--primary) rounded-full flex items-center justify-center transition-all duration-300" title="播放" aria-label="播放" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-play text-3xl ml-0.5" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:play-arrow-rounded"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712"/></svg><svg width="1em" height="1em" viewBox="0 0 24 24" class="icon-pause text-3xl hidden" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:pause-rounded"><path fill="currentColor" d="M16 19q-.825 0-1.412-.587T14 17V7q0-.825.588-1.412T16 5t1.413.588T18 7v10q0 .825-.587 1.413T16 19m-8 0q-.825 0-1.412-.587T6 17V7q0-.825.588-1.412T8 5t1.413.588T10 7v10q0 .825-.587 1.413T8 19"/></svg></button><!-- Next --><button class="btn-next text-neutral-600 dark:text-neutral-300 hover:text-(--primary) transition-colors p-2 active:scale-95" title="下一首" aria-label="下一首" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="text-3xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:skip-next-rounded"><path fill="currentColor" d="M16.5 17V7q0-.425.288-.712T17.5 6t.713.288T18.5 7v10q0 .425-.288.713T17.5 18t-.712-.288T16.5 17m-11-.875v-8.25q0-.45.3-.725t.7-.275q.125 0 .275.025t.275.125l6.2 4.15q.225.15.338.363T13.7 12t-.112.463t-.338.362l-6.2 4.15q-.125.1-.275.125t-.275.025q-.4 0-.7-.275t-.3-.725"/></svg></button><!-- Playlist Toggle Arrow --><button class="btn-drawer-toggle text-neutral-400 hover:text-(--primary) transition-all duration-300 p-2 transform active:scale-95" title="列表" aria-label="列表" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="text-xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="mdi:playlist-music"><path fill="currentColor" d="M15 6H3v2h12zm0 4H3v2h12zM3 16h8v-2H3zM17 6v8.18c-.31-.11-.65-.18-1-.18a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3V8h3V6z"/></svg></button></div><!-- Lyrics Drawer --><div class="lrc-drawer grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] grid-rows-[0fr] opacity-0" data-astro-cid-h2szdtt3><div class="overflow-hidden min-h-0" data-astro-cid-h2szdtt3><div class="mt-2 pt-2 border-t border-neutral-100 dark:border-white/5 mx-1" data-astro-cid-h2szdtt3><div class="lrc-container h-48 overflow-y-auto custom-scrollbar flex flex-col items-center gap-2 p-4 py-24 text-center relative scroll-smooth" role="listbox" aria-label="歌词" data-astro-cid-h2szdtt3><div class="text-neutral-400 text-sm py-10" role="option" data-astro-cid-h2szdtt3>暂无歌词</div></div></div></div></div><!-- Playlist Drawer (Accordion) --><div class="playlist-drawer grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] grid-rows-[0fr] opacity-0" data-astro-cid-h2szdtt3><div class="overflow-hidden min-h-0" data-astro-cid-h2szdtt3><div class="mt-2 pt-2 border-t border-neutral-100 dark:border-white/5 mx-1" data-astro-cid-h2szdtt3><div class="playlist-container max-h-48 overflow-y-auto custom-scrollbar pr-1 pb-1 relative" role="listbox" aria-label="列表" data-astro-cid-h2szdtt3><!-- Items --></div></div></div></div><!-- Loading Overlay --><div class="music-loading absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-[#1e1e1e]/60 backdrop-blur-[2px] transition-opacity duration-300 opacity-0 pointer-events-none rounded-xl" aria-busy="true" aria-hidden="true" data-astro-cid-h2szdtt3><div class="w-8 h-8 text-(--primary) animate-spin" data-astro-cid-h2szdtt3><svg width="1em" height="1em" viewBox="0 0 24 24" class="text-3xl" aria-hidden="true" data-astro-cid-h2szdtt3="true" data-icon="material-symbols:sync-rounded"><path fill="currentColor" d="M6 12.05q0 1.125.425 2.188T7.75 16.2l.25.25V15q0-.425.288-.712T9 14t.713.288T10 15v4q0 .425-.288.713T9 20H5q-.425 0-.712-.288T4 19t.288-.712T5 18h1.75l-.4-.35q-1.3-1.15-1.825-2.625T4 12.05Q4 9.7 5.2 7.787T8.425 4.85q.35-.2.738-.025t.512.575q.125.375-.012.75t-.488.575q-1.45.8-2.312 2.213T6 12.05m12-.1q0-1.125-.425-2.187T16.25 7.8L16 7.55V9q0 .425-.288.713T15 10t-.712-.288T14 9V5q0-.425.288-.712T15 4h4q.425 0 .713.288T20 5t-.288.713T19 6h-1.75l.4.35q1.225 1.225 1.788 2.663T20 11.95q0 2.35-1.2 4.263t-3.225 2.937q-.35.2-.737.025t-.513-.575q-.125-.375.013-.75t.487-.575q1.45-.8 2.313-2.212T18 11.95"/></svg></div></div></div><template id="playlist-item-template-admin-player" data-astro-cid-h2szdtt3><div class="playlist-item flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors group" data-astro-cid-h2szdtt3><div class="w-8 h-8 rounded-md overflow-hidden shrink-0 relative bg-neutral-200 dark:bg-neutral-700" data-astro-cid-h2szdtt3><img src="" class="item-cover w-full h-full object-cover" loading="lazy" alt="" data-astro-cid-h2szdtt3><!-- Active Indicator overlay with animated equalizer / play icon --><div class="item-active-overlay absolute inset-0 bg-(--primary)/20 hidden items-center justify-center" data-astro-cid-h2szdtt3><div class="eq-bars flex items-end gap-[2px] h-3.5" data-astro-cid-h2szdtt3><span class="eq-bar w-[3px] bg-(--primary) rounded-sm" data-astro-cid-h2szdtt3></span><span class="eq-bar w-[3px] bg-(--primary) rounded-sm" data-astro-cid-h2szdtt3></span><span class="eq-bar w-[3px] bg-(--primary) rounded-sm" data-astro-cid-h2szdtt3></span></div><svg class="eq-play-icon text-(--primary) hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" data-astro-cid-h2szdtt3><path d="M8 5v14l11-7z" data-astro-cid-h2szdtt3></path></svg></div></div><div class="flex-1 min-w-0" data-astro-cid-h2szdtt3><div class="item-title text-xs font-bold text-neutral-700 dark:text-neutral-200 truncate group-hover:text-(--primary) transition-colors" data-astro-cid-h2szdtt3></div><div class="item-artist text-[10px] text-neutral-400 truncate" data-astro-cid-h2szdtt3></div></div></div></template><script>(function(){const viewConfigStr = "{\"showLyrics\":true,\"i18n\":{\"noPlaying\":\"暂未播放\",\"lyrics\":\"歌词\",\"noLyrics\":\"暂无歌词\",\"loadingLyrics\":\"正在加载歌词...\",\"failedLyrics\":\"歌词加载失败\",\"noSongs\":\"暂无歌曲\",\"error\":\"播放器错误\",\"play\":\"播放\",\"pause\":\"暂停\",\"noCover\":\"暂无封面\",\"music\":\"音乐\"}}";
+const widgetId = "admin-player";
+
+(function () {
+    var cfg = JSON.parse(viewConfigStr);
+    var widget = document.getElementById(widgetId);
+    if (!widget) return;
+
+    var mgr = window.__fireflyMusic;
+    if (!mgr) return;
+
+    // ── UI element refs ──────────────────────────────────────
+    var ui = {
+        widget: widget,
+        loading: widget.querySelector('.music-loading'),
+        cover: widget.querySelector('.music-cover'),
+        title: widget.querySelector('.music-title'),
+        artist: widget.querySelector('.music-artist'),
+        progressBar: widget.querySelector('.progress-bar'),
+        progressThumb: widget.querySelector('.progress-thumb'),
+        progressContainer: widget.querySelector('.progress-container'),
+        currentTime: widget.querySelector('.current-time'),
+        totalTime: widget.querySelector('.total-time'),
+        btnPlay: widget.querySelector('.btn-play'),
+        iconPlay: widget.querySelector('.icon-play'),
+        iconPause: widget.querySelector('.icon-pause'),
+        btnPrev: widget.querySelector('.btn-prev'),
+        btnNext: widget.querySelector('.btn-next'),
+        btnRepeat: widget.querySelector('.btn-repeat'),
+        iconRepeat: widget.querySelector('.icon-repeat'),
+        iconRepeatOne: widget.querySelector('.icon-repeat-one'),
+        iconShuffle: widget.querySelector('.icon-shuffle'),
+        btnMute: widget.querySelector('.btn-mute'),
+        iconVolHigh: widget.querySelector('.icon-vol-high'),
+        iconVolMute: widget.querySelector('.icon-vol-mute'),
+        volContainer: widget.querySelector('.vol-container'),
+        volBar: widget.querySelector('.vol-bar'),
+        btnLrc: widget.querySelector('.btn-lrc-toggle'),
+        iconLrcOn: widget.querySelector('.icon-lrc-on'),
+        iconLrcOff: widget.querySelector('.icon-lrc-off'),
+        lrcDrawer: widget.querySelector('.lrc-drawer'),
+        lrcContainer: widget.querySelector('.lrc-container'),
+        btnDrawer: widget.querySelector('.btn-drawer-toggle'),
+        playlistDrawer: widget.querySelector('.playlist-drawer'),
+        playlistContainer: widget.querySelector('.playlist-container'),
+        itemTemplate: document.getElementById('playlist-item-template-' + widgetId)
+    };
+
+    // Verify critical elements
+    var _critical = [ui.btnPlay, ui.btnRepeat, ui.btnMute, ui.volContainer,
+        ui.btnDrawer, ui.btnLrc, ui.lrcDrawer, ui.lrcContainer,
+        ui.progressContainer, ui.btnNext, ui.btnPrev, ui.loading,
+        ui.cover, ui.title, ui.artist, ui.playlistContainer, ui.itemTemplate];
+    if (_critical.some(function(el) { return !el; })) return;
+
+    // ── Local state (drawers, user scrolling, virtual scroll) ──
+    var ITEM_H = 42;
+    var OVERSCAN = 8;
+    var local = {
+        isUserScrolling: false,
+        scrollTimeout: null,
+        currentLrcIndex: -1,
+        vs: {
+            playlist: [],
+            currentIndex: -1,
+            renderedStart: -1,
+            renderedEnd: -1,
+            renderedEls: {},
+            scrollRaf: 0,
+            drawerOpen: false
+        }
+    };
+
+    // ── UI update functions ──────────────────────────────────
+    function setLoading(bool) {
+        if (bool) {
+            ui.loading.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            ui.loading.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    function updatePlayStateUI(isPlaying) {
+        if (isPlaying) {
+            ui.btnPlay.classList.add('bg-(--primary)', 'text-white', 'hover:brightness-110');
+            ui.btnPlay.classList.remove('bg-(--btn-regular-bg)', 'hover:bg-(--btn-regular-bg-hover)', 'active:bg-(--btn-regular-bg-active)', 'text-(--primary)');
+            ui.iconPlay.classList.add('hidden');
+            ui.iconPause.classList.remove('hidden');
+            ui.cover.style.animationPlayState = 'running';
+            ui.btnPlay.setAttribute('aria-label', cfg.i18n.pause);
+            ui.btnPlay.title = cfg.i18n.pause;
+        } else {
+            ui.btnPlay.classList.remove('bg-(--primary)', 'text-white', 'hover:brightness-110');
+            ui.btnPlay.classList.add('bg-(--btn-regular-bg)', 'hover:bg-(--btn-regular-bg-hover)', 'active:bg-(--btn-regular-bg-active)', 'text-(--primary)');
+            ui.iconPlay.classList.remove('hidden');
+            ui.iconPause.classList.add('hidden');
+            ui.cover.style.animationPlayState = 'paused';
+            ui.btnPlay.setAttribute('aria-label', cfg.i18n.play);
+            ui.btnPlay.title = cfg.i18n.play;
+        }
+        // Toggle eq-bars / play icon in playlist
+        var activeItems = ui.playlistContainer.querySelectorAll('.playlist-item[aria-current="true"]');
+        activeItems.forEach(function (item) {
+            var eqBars = item.querySelector('.eq-bars');
+            var playIcon = item.querySelector('.eq-play-icon');
+            if (isPlaying) {
+                eqBars.classList.remove('hidden');
+                eqBars.classList.add('flex');
+                playIcon.classList.add('hidden');
+            } else {
+                eqBars.classList.add('hidden');
+                eqBars.classList.remove('flex');
+                playIcon.classList.remove('hidden');
+            }
+        });
+    }
+
+    function updateModeUI(playMode) {
+        var primaryColor = 'text-(--primary)';
+        if (playMode === 0) {
+            ui.btnRepeat.className = 'p-2 active:scale-95 transition-colors text-neutral-300 dark:text-neutral-600 hover:text-[var(--primary)]';
+            ui.iconRepeat.classList.remove('hidden');
+            ui.iconRepeatOne.classList.add('hidden');
+            ui.iconShuffle.classList.add('hidden');
+        } else if (playMode === 1) {
+            ui.btnRepeat.className = 'p-2 active:scale-95 transition-colors ' + primaryColor;
+            ui.iconRepeat.classList.add('hidden');
+            ui.iconRepeatOne.classList.remove('hidden');
+            ui.iconShuffle.classList.add('hidden');
+        } else {
+            ui.btnRepeat.className = 'p-2 active:scale-95 transition-colors ' + primaryColor;
+            ui.iconRepeat.classList.add('hidden');
+            ui.iconRepeatOne.classList.add('hidden');
+            ui.iconShuffle.classList.remove('hidden');
+        }
+    }
+
+    function updateVolumeUI(volume, isMuted) {
+        var pct = isMuted ? 0 : volume * 100;
+        ui.volBar.style.width = pct + '%';
+        ui.volContainer.setAttribute('aria-valuenow', Math.round(pct).toString());
+        if (isMuted || volume === 0) {
+            ui.iconVolHigh.classList.add('hidden');
+            ui.iconVolMute.classList.remove('hidden');
+        } else {
+            ui.iconVolHigh.classList.remove('hidden');
+            ui.iconVolMute.classList.add('hidden');
+        }
+    }
+
+    function updateTrackUI(track) {
+        if (!track) return;
+        ui.title.innerText = track.name;
+        ui.title.title = track.name;
+        ui.artist.innerText = track.artist;
+        ui.artist.title = track.artist;
+
+        if (track.pic) {
+            ui.cover.classList.add('opacity-0');
+            ui.cover.src = track.pic;
+            ui.cover.alt = track.name + ' - ' + track.artist;
+        } else {
+            ui.cover.src = '';
+            ui.cover.classList.add('opacity-0');
+            ui.cover.alt = cfg.i18n.noCover;
+        }
+
+        // Reset cover rotation
+        ui.cover.classList.remove('animate-spin-slow');
+        void ui.cover.offsetWidth;
+        ui.cover.classList.add('animate-spin-slow');
+        ui.cover.style.animationPlayState = 'paused';
+
+        // Reset progress
+        ui.progressBar.style.width = '0%';
+        ui.progressThumb.style.left = '0%';
+        ui.progressContainer.setAttribute('aria-valuenow', '0');
+        ui.currentTime.innerText = '0:00';
+        ui.totalTime.innerText = '0:00';
+    }
+
+    // ── Virtual scroll helpers (absolute-position based) ──────
+    var PRIMARY_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6366f1';
+
+    function vsApplyActiveStyle(el, isActive) {
+        var overlay = el.querySelector('.item-active-overlay');
+        var title = el.querySelector('.item-title');
+        var eqBars = el.querySelector('.eq-bars');
+        var playIcon = el.querySelector('.eq-play-icon');
+        var isPlaying = mgr.getState().isPlaying;
+        if (isActive) {
+            el.classList.add('bg-neutral-100', 'dark:bg-white/10');
+            el.setAttribute('aria-current', 'true');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            title.style.color = PRIMARY_COLOR;
+            if (isPlaying) {
+                eqBars.classList.remove('hidden');
+                eqBars.classList.add('flex');
+                playIcon.classList.add('hidden');
+            } else {
+                eqBars.classList.add('hidden');
+                eqBars.classList.remove('flex');
+                playIcon.classList.remove('hidden');
+            }
+        } else {
+            el.classList.remove('bg-neutral-100', 'dark:bg-white/10');
+            el.removeAttribute('aria-current');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+            title.style.color = '';
+        }
+    }
+
+    function vsCreateItemEl(idx) {
+        var vs = local.vs;
+        var track = vs.playlist[idx];
+        var clone = ui.itemTemplate.content.cloneNode(true);
+        var itemEl = clone.querySelector('.playlist-item');
+        var img = clone.querySelector('.item-cover');
+        var title = clone.querySelector('.item-title');
+        var artist = clone.querySelector('.item-artist');
+
+        img.src = track.pic || '';
+        img.alt = track.name + ' - ' + track.artist;
+        title.innerText = track.name;
+        artist.innerText = track.artist;
+
+        itemEl.dataset.index = idx;
+        itemEl.setAttribute('role', 'option');
+        itemEl.setAttribute('aria-label', track.name + ' - ' + track.artist);
+        itemEl.onclick = function () { mgr.playTrackByIndex(idx); };
+
+        // Absolute positioning for virtual scroll
+        itemEl.style.position = 'absolute';
+        itemEl.style.left = '0';
+        itemEl.style.right = '0';
+        itemEl.style.top = (idx * ITEM_H) + 'px';
+        itemEl.style.height = ITEM_H + 'px';
+
+        if (idx === vs.currentIndex) {
+            vsApplyActiveStyle(itemEl, true);
+        }
+        return clone;
+    }
+
+    function vsCommitRange() {
+        var vs = local.vs;
+        if (vs.playlist.length === 0 || !vs.drawerOpen) return;
+
+        var container = ui.playlistContainer;
+        var scrollTop = container.scrollTop;
+        var viewHeight = container.clientHeight;
+        var start = Math.max(0, Math.floor(scrollTop / ITEM_H) - OVERSCAN);
+        var end = Math.min(vs.playlist.length, Math.ceil((scrollTop + viewHeight) / ITEM_H) + OVERSCAN);
+
+        if (start === vs.renderedStart && end === vs.renderedEnd) return;
+
+        if (vs.renderedStart === -1) {
+            // First render: batch via fragment
+            var frag = document.createDocumentFragment();
+            for (var i = start; i < end; i++) {
+                frag.appendChild(vsCreateItemEl(i));
+            }
+            container.appendChild(frag);
+        } else {
+            // Incremental: remove out-of-range, add new items
+            var oldEls = vs.renderedEls;
+            for (var ri = vs.renderedStart; ri < vs.renderedEnd; ri++) {
+                if (ri < start || ri >= end) {
+                    if (oldEls[ri]) { oldEls[ri].remove(); delete oldEls[ri]; }
+                }
+            }
+            for (var ai = start; ai < end; ai++) {
+                if (!oldEls[ai]) {
+                    var newEl = vsCreateItemEl(ai);
+                    var inserted = false;
+                    for (var ni = ai + 1; ni < end; ni++) {
+                        if (oldEls[ni]) {
+                            container.insertBefore(newEl, oldEls[ni]);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted) container.appendChild(newEl);
+                    oldEls[ai] = newEl;
+                }
+            }
+        }
+
+        // Rebuild reference map
+        vs.renderedEls = {};
+        var children = container.children;
+        for (var ci = 0; ci < children.length; ci++) {
+            var idx = parseInt(children[ci].dataset.index);
+            if (!isNaN(idx)) vs.renderedEls[idx] = children[ci];
+        }
+
+        vs.renderedStart = start;
+        vs.renderedEnd = end;
+    }
+
+    function vsRequestUpdate() {
+        var vs = local.vs;
+        if (vs.scrollRaf) return;
+        vs.scrollRaf = requestAnimationFrame(function () {
+            vs.scrollRaf = 0;
+            vsCommitRange();
+        });
+    }
+
+    function vsSetContainerHeight() {
+        ui.playlistContainer.style.height = (local.vs.playlist.length * ITEM_H) + 'px';
+    }
+
+    function renderPlaylist(playlist, currentIndex) {
+        var vs = local.vs;
+        vs.playlist = playlist;
+        vs.currentIndex = currentIndex;
+        vs.renderedStart = -1;
+        vs.renderedEnd = -1;
+        vs.renderedEls = {};
+        vs.drawerOpen = ui.playlistDrawer.style.gridTemplateRows === '1fr';
+        ui.playlistContainer.innerHTML = '';
+        if (vs.drawerOpen) {
+            vsSetContainerHeight();
+            vsCommitRange();
+        }
+    }
+
+    function updatePlaylistActiveUI(currentIndex) {
+        var vs = local.vs;
+        var oldIndex = vs.currentIndex;
+        vs.currentIndex = currentIndex;
+
+        if (vs.renderedEls[oldIndex]) {
+            vsApplyActiveStyle(vs.renderedEls[oldIndex], false);
+        }
+
+        if (currentIndex >= 0 && currentIndex < vs.playlist.length) {
+            if (currentIndex < vs.renderedStart || currentIndex >= vs.renderedEnd) {
+                ui.playlistContainer.scrollTop = currentIndex * ITEM_H;
+                vsCommitRange();
+            }
+            if (vs.renderedEls[currentIndex]) {
+                vsApplyActiveStyle(vs.renderedEls[currentIndex], true);
+            }
+        }
+    }
+
+    function renderLyricsUI(lyrics, status) {
+        local.currentLrcIndex = -1;
+        ui.lrcContainer.innerHTML = '';
+        if (status === 'loading') {
+            ui.lrcContainer.innerHTML = '<div class="text-neutral-400 text-sm py-10">' + cfg.i18n.loadingLyrics + '</div>';
+            return;
+        }
+        if (status === 'failed') {
+            ui.lrcContainer.innerHTML = '<div class="text-neutral-400 text-sm py-10">' + cfg.i18n.failedLyrics + '</div>';
+            return;
+        }
+        if (!lyrics || lyrics.length === 0) {
+            ui.lrcContainer.innerHTML = '<div class="text-neutral-400 text-sm py-10" role="option">' + cfg.i18n.noLyrics + '</div>';
+            return;
+        }
+        lyrics.forEach(function (line, index) {
+            var lineEl = document.createElement('div');
+            lineEl.className = 'lrc-line transition-all duration-300 text-sm text-neutral-400 py-1 cursor-pointer hover:text-(--primary)';
+            lineEl.innerText = line.text;
+            lineEl.dataset.index = index;
+            lineEl.setAttribute('role', 'option');
+            lineEl.setAttribute('aria-label', line.text);
+            lineEl.onclick = function () {
+                mgr.seekToTime(line.time);
+            };
+            ui.lrcContainer.appendChild(lineEl);
+        });
+    }
+
+    function updateLrcHighlight(index) {
+        if (index === local.currentLrcIndex) return;
+        local.currentLrcIndex = index;
+
+        var lines = ui.lrcContainer.querySelectorAll('.lrc-line');
+        lines.forEach(function (line, i) {
+            if (i === index) {
+                line.classList.add('text-(--primary)', 'font-bold', 'text-base');
+                line.classList.remove('text-neutral-400', 'text-sm');
+            } else {
+                line.classList.remove('text-(--primary)', 'font-bold', 'text-base');
+                line.classList.add('text-neutral-400', 'text-sm');
+            }
+        });
+
+        // Auto-scroll unless user is scrolling
+        if (index !== -1 && !local.isUserScrolling) {
+            var line = ui.lrcContainer.querySelector('.lrc-line[data-index="' + index + '"]');
+            if (line) {
+                var containerHeight = ui.lrcContainer.clientHeight;
+                var lineOffset = line.offsetTop;
+                var lineHeight = line.offsetHeight;
+                var targetScroll = lineOffset - (containerHeight / 2) + (lineHeight / 2);
+                ui.lrcContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
+            }
+        }
+    }
+
+    // ── Full sync from manager state (for late-mount) ────────
+    function syncAll() {
+        var s = mgr.getState();
+        if (!s.initialized) return;
+
+        // Loading off
+        setLoading(false);
+
+        if (s.playlist.length === 0) {
+            ui.title.innerText = s.error || cfg.i18n.noSongs;
+            return;
+        }
+
+        renderPlaylist(s.playlist, s.currentIndex);
+        if (s.track) updateTrackUI(s.track);
+        updatePlayStateUI(s.isPlaying);
+        updateModeUI(s.playMode);
+        updateVolumeUI(s.volume, s.isMuted);
+
+        // Progress
+        if (s.duration > 0) {
+            ui.progressBar.style.width = s.progress + '%';
+            ui.progressThumb.style.left = s.progress + '%';
+            ui.progressContainer.setAttribute('aria-valuenow', Math.round(s.progress).toString());
+            ui.currentTime.innerText = s.currentTimeStr;
+            ui.totalTime.innerText = s.durationStr;
+        }
+
+        // Lyrics
+        renderLyricsUI(s.lyrics, s.lyrics.length > 0 ? 'loaded' : 'none');
+        if (s.currentLrcIndex >= 0) updateLrcHighlight(s.currentLrcIndex);
+
+        // Cover image: if already set, show it
+        if (s.track && s.track.pic && ui.cover.src && ui.cover.complete && ui.cover.naturalWidth > 0) {
+            ui.cover.classList.remove('opacity-0');
+        }
+        // Update cover animation state to match play state
+        ui.cover.style.animationPlayState = s.isPlaying ? 'running' : 'paused';
+    }
+
+    // ── Event listeners (fm:* from manager) ──────────────────
+    var handlers = {};
+
+    function on(name, fn) {
+        handlers[name] = fn;
+        window.addEventListener(name, fn);
+    }
+
+    on('fm:init', function (e) {
+        var d = e.detail;
+        setLoading(false);
+        if (d.playlist.length > 0) {
+            renderPlaylist(d.playlist, 0);
+            updateModeUI(d.playMode);
+            updateVolumeUI(d.volume, d.isMuted);
+        } else {
+            ui.title.innerText = cfg.i18n.noSongs;
+        }
+    });
+
+    on('fm:track', function (e) {
+        var d = e.detail;
+        updateTrackUI(d.track);
+        updatePlaylistActiveUI(d.index);
+    });
+
+    on('fm:play-state', function (e) {
+        updatePlayStateUI(e.detail.isPlaying);
+    });
+
+    on('fm:time', function (e) {
+        var d = e.detail;
+        ui.progressBar.style.width = d.progress + '%';
+        ui.progressThumb.style.left = d.progress + '%';
+        ui.progressContainer.setAttribute('aria-valuenow', Math.round(d.progress).toString());
+        ui.currentTime.innerText = d.currentTimeStr;
+        ui.totalTime.innerText = d.durationStr;
+    });
+
+    on('fm:volume', function (e) {
+        updateVolumeUI(e.detail.volume, e.detail.isMuted);
+    });
+
+    on('fm:mode', function (e) {
+        updateModeUI(e.detail.playMode);
+    });
+
+    on('fm:lyrics', function (e) {
+        renderLyricsUI(e.detail.lyrics, e.detail.status);
+    });
+
+    on('fm:lrc-index', function (e) {
+        updateLrcHighlight(e.detail.index);
+    });
+
+    on('fm:error', function (e) {
+        ui.title.innerText = e.detail.message || cfg.i18n.error;
+    });
+
+    // ── Button click delegates ───────────────────────────────
+    ui.btnPlay.addEventListener('click', function () { mgr.togglePlay(); });
+    ui.btnNext.addEventListener('click', function () { mgr.playNext(); });
+    ui.btnPrev.addEventListener('click', function () { mgr.playPrev(); });
+    ui.btnRepeat.addEventListener('click', function () { mgr.cyclePlayMode(); });
+    ui.btnMute.addEventListener('click', function () { mgr.toggleMute(); });
+
+    ui.volContainer.addEventListener('click', function (e) {
+        var rect = ui.volContainer.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var val = Math.max(0, Math.min(1, x / rect.width));
+        mgr.setVolume(val);
+    });
+
+    ui.progressContainer.addEventListener('click', function (e) {
+        var rect = ui.progressContainer.getBoundingClientRect();
+        var clickX = e.clientX - rect.left;
+        var percent = Math.min(Math.max(clickX / rect.width, 0), 1);
+        mgr.seek(percent);
+    });
+
+    // ── Drawer logic (local state) ───────────────────────────
+    ui.btnLrc.addEventListener('click', function () {
+        var isOpen = ui.lrcDrawer.style.gridTemplateRows === '1fr';
+        if (isOpen) {
+            ui.lrcDrawer.style.gridTemplateRows = '0fr';
+            ui.lrcDrawer.classList.remove('opacity-100');
+            ui.lrcDrawer.classList.add('opacity-0');
+            ui.btnLrc.classList.remove('text-(--primary)');
+            ui.btnLrc.classList.add('text-neutral-400');
+            ui.iconLrcOn.classList.add('hidden');
+            ui.iconLrcOff.classList.remove('hidden');
+        } else {
+            // Close playlist if open
+            ui.playlistDrawer.style.gridTemplateRows = '0fr';
+            ui.playlistDrawer.classList.remove('opacity-100');
+            ui.playlistDrawer.classList.add('opacity-0');
+            ui.btnDrawer.classList.remove('text-(--primary)');
+            ui.btnDrawer.classList.add('text-neutral-400');
+
+            ui.lrcDrawer.style.gridTemplateRows = '1fr';
+            ui.lrcDrawer.classList.add('opacity-100');
+            ui.lrcDrawer.classList.remove('opacity-0');
+            ui.btnLrc.classList.add('text-(--primary)');
+            ui.btnLrc.classList.remove('text-neutral-400');
+            ui.iconLrcOn.classList.remove('hidden');
+            ui.iconLrcOff.classList.add('hidden');
+        }
+    });
+
+    ui.btnDrawer.addEventListener('click', function () {
+        var isOpen = ui.playlistDrawer.style.gridTemplateRows === '1fr';
+        if (isOpen) {
+            ui.playlistDrawer.style.gridTemplateRows = '0fr';
+            ui.playlistDrawer.classList.remove('opacity-100');
+            ui.playlistDrawer.classList.add('opacity-0');
+            ui.btnDrawer.classList.add('text-neutral-400');
+            ui.btnDrawer.classList.remove('text-(--primary)');
+            local.vs.drawerOpen = false;
+        } else {
+            // Close lyrics if open
+            ui.lrcDrawer.style.gridTemplateRows = '0fr';
+            ui.lrcDrawer.classList.remove('opacity-100');
+            ui.lrcDrawer.classList.add('opacity-0');
+            ui.btnLrc.classList.remove('text-(--primary)');
+            ui.btnLrc.classList.add('text-neutral-400');
+            ui.iconLrcOn.classList.add('hidden');
+            ui.iconLrcOff.classList.remove('hidden');
+
+            ui.playlistDrawer.style.gridTemplateRows = '1fr';
+            ui.playlistDrawer.classList.add('opacity-100');
+            ui.playlistDrawer.classList.remove('opacity-0');
+            ui.btnDrawer.classList.remove('text-neutral-400');
+            ui.btnDrawer.classList.add('text-(--primary)');
+            local.vs.drawerOpen = true;
+
+            // Render playlist after drawer transition settles
+            if (local.vs.playlist.length > 0) {
+                requestAnimationFrame(function () {
+                    vsSetContainerHeight();
+                    vsCommitRange();
+                });
+            }
+        }
+    });
+
+    // ── Playlist virtual scroll listener ──────────────────────
+    ui.playlistContainer.addEventListener('scroll', function () {
+        vsRequestUpdate();
+    });
+
+    // ── Lyrics user scroll detection ─────────────────────────
+    function resetScrollTimeout() {
+        clearTimeout(local.scrollTimeout);
+        local.scrollTimeout = setTimeout(function () {
+            local.isUserScrolling = false;
+            // Snap back to current lyric
+            var s = mgr.getState();
+            if (s.currentLrcIndex >= 0) {
+                var line = ui.lrcContainer.querySelector('.lrc-line[data-index="' + s.currentLrcIndex + '"]');
+                if (line) {
+                    var containerHeight = ui.lrcContainer.clientHeight;
+                    var lineOffset = line.offsetTop;
+                    var lineHeight = line.offsetHeight;
+                    var targetScroll = lineOffset - (containerHeight / 2) + (lineHeight / 2);
+                    ui.lrcContainer.scrollTo({ top: targetScroll, behavior: 'auto' });
+                }
+            }
+        }, 3000);
+    }
+
+    ui.lrcContainer.addEventListener('wheel', function () {
+        local.isUserScrolling = true;
+        resetScrollTimeout();
+    });
+    ui.lrcContainer.addEventListener('touchstart', function () {
+        local.isUserScrolling = true;
+        resetScrollTimeout();
+    });
+
+    // ── Cover image events ───────────────────────────────────
+    ui.cover.addEventListener('load', function () {
+        ui.cover.classList.remove('opacity-0');
+    });
+    ui.cover.addEventListener('error', function () {
+        ui.cover.classList.add('opacity-0');
+    });
+
+    // ── Cleanup on DOM removal ───────────────────────────────
+    var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+            var removed = mutations[i].removedNodes;
+            for (var j = 0; j < removed.length; j++) {
+                if (removed[j] === widget || (removed[j].contains && removed[j].contains(widget))) {
+                    // Widget removed from DOM – clean up event listeners
+                    Object.keys(handlers).forEach(function (name) {
+                        window.removeEventListener(name, handlers[name]);
+                    });
+                    observer.disconnect();
+                    clearTimeout(local.scrollTimeout);
+                    return;
+                }
+            }
+        }
+    });
+    if (widget.parentNode) {
+        observer.observe(widget.parentNode, { childList: true });
+    }
+
+    // ── Init: either sync existing state or trigger init ─────
+    var currentState = mgr.getState();
+    if (currentState.initialized) {
+        // Manager already initialized (late mount) – sync all UI
+        syncAll();
+    } else {
+        // First widget to mount – show loading and trigger init
+        setLoading(true);
+        mgr.init();
+    }
+})();
+})();</script></div></div>
+<!-- Sakura Effect --><script>(function(){const sakuraConfig = {"enable":false,"switchable":true,"sakuraNum":21,"limitTimes":-1,"size":{"min":0.5,"max":1.1},"opacity":{"min":0.3,"max":0.9},"speed":{"horizontal":{"min":-1.7,"max":-1.2},"vertical":{"min":1.5,"max":2.2},"rotation":0.03,"fadeSpeed":0.03},"zIndex":100};
+
+		let windowWidth = window.innerWidth;
+		let windowHeight = window.innerHeight;
+
+		// 樱花对象类
+		class Sakura {
+			constructor(x, y, s, r, a, fn, idx, img, limitArray, config) {
+				this.x = x;
+				this.y = y;
+				this.s = s;
+				this.r = r;
+				this.a = a;
+				this.fn = fn;
+				this.idx = idx;
+				this.img = img;
+				this.limitArray = limitArray;
+				this.config = config;
+			}
+
+			draw(cxt) {
+				cxt.save();
+				cxt.translate(this.x, this.y);
+				cxt.rotate(this.r);
+				cxt.globalAlpha = this.a;
+				cxt.drawImage(this.img, 0, 0, 40 * this.s, 40 * this.s);
+				cxt.restore();
+			}
+
+			update() {
+				this.x = this.fn.x(this.x, this.y);
+				this.y = this.fn.y(this.y, this.y);
+				this.r = this.fn.r(this.r);
+				this.a = this.fn.a(this.a);
+				// 如果樱花越界，重新调整位置
+				if (
+					this.x > windowWidth ||
+					this.x < 0 ||
+					this.y > windowHeight ||
+					this.y < 0 ||
+					this.a <= 0
+				) {
+					// 如果樱花不做限制
+					if (this.limitArray[this.idx] === -1) {
+						this.resetPosition();
+					}
+					// 否则樱花有限制
+					else {
+						if (this.limitArray[this.idx] > 0) {
+							this.resetPosition();
+							this.limitArray[this.idx]--;
+						}
+					}
+				}
+			}
+
+			resetPosition() {
+				this.r = getRandom('fnr', this.config);
+				if (Math.random() > 0.4) {
+					this.x = getRandom('x', this.config);
+					this.y = 0;
+					this.s = getRandom('s', this.config);
+					this.r = getRandom('r', this.config);
+					this.a = getRandom('a', this.config);
+				} else {
+					this.x = windowWidth;
+					this.y = getRandom('y', this.config);
+					this.s = getRandom('s', this.config);
+					this.r = getRandom('r', this.config);
+					this.a = getRandom('a', this.config);
+				}
+			}
+		}
+
+		// 樱花列表类
+		class SakuraList {
+			constructor() {
+				this.list = [];
+			}
+
+			push(sakura) {
+				this.list.push(sakura);
+			}
+
+			update() {
+				for (let i = 0, len = this.list.length; i < len; i++) {
+					this.list[i].update();
+				}
+			}
+
+			draw(cxt) {
+				for (let i = 0, len = this.list.length; i < len; i++) {
+					this.list[i].draw(cxt);
+				}
+			}
+
+			get(i) {
+				return this.list[i];
+			}
+
+			size() {
+				return this.list.length;
+			}
+		}
+
+		// 获取随机值的函数
+		function getRandom(option, config) {
+			let ret;
+			let random;
+
+			switch (option) {
+				case 'x':
+					ret = Math.random() * windowWidth;
+					break;
+				case 'y':
+					ret = Math.random() * windowHeight;
+					break;
+				case 's':
+					ret = config.size.min + Math.random() * (config.size.max - config.size.min);
+					break;
+				case 'r':
+					ret = Math.random() * 6;
+					break;
+				case 'a':
+					ret = config.opacity.min + Math.random() * (config.opacity.max - config.opacity.min);
+					break;
+				case 'fnx':
+					random = config.speed.horizontal.min + Math.random() * (config.speed.horizontal.max - config.speed.horizontal.min);
+					ret = function (x, _y) {
+						return x + random;
+					};
+					break;
+				case 'fny':
+					random = config.speed.vertical.min + Math.random() * (config.speed.vertical.max - config.speed.vertical.min);
+					ret = function (_x, y) {
+						return y + random;
+					};
+					break;
+				case 'fnr':
+					ret = function (r) {
+						return r + config.speed.rotation;
+					};
+					break;
+				case 'fna':
+					ret = function (alpha) {
+						return alpha - config.speed.fadeSpeed * 0.01;
+					};
+					break;
+			}
+			return ret;
+		}
+
+		// 樱花管理器类
+		class SakuraManager {
+			constructor(config) {
+				this.config = config;
+				this.canvas = null;
+				this.ctx = null;
+				this.sakuraList = null;
+				this.animationId = null;
+				this.img = null;
+				this.isRunning = false;
+			}
+
+			// 初始化樱花特效
+			async init() {
+				if (!this.config.enable || this.isRunning) {
+					return;
+				}
+
+				// 创建图片对象
+				this.img = new Image();
+				this.img.src = '/assets/images/effects/sakura.png'; // 使用樱花图片
+
+				// 等待图片加载完成
+				await new Promise((resolve, reject) => {
+					if (this.img) {
+						this.img.onload = () => resolve();
+						this.img.onerror = () => reject(new Error('Failed to load sakura image'));
+					}
+				});
+
+				this.createCanvas();
+				this.createSakuraList();
+				this.startAnimation();
+				this.isRunning = true;
+			}
+
+			// 创建画布
+			createCanvas() {
+				this.canvas = document.createElement('canvas');
+				this.canvas.height = windowHeight;
+				this.canvas.width = windowWidth;
+				this.canvas.setAttribute('style', `position: fixed; left: 0; top: 0; pointer-events: none; z-index: ${this.config.zIndex}; transform: translateZ(0);`);
+				this.canvas.setAttribute('id', 'canvas_sakura');
+				document.body.appendChild(this.canvas);
+				this.ctx = this.canvas.getContext('2d');
+
+				// 监听窗口大小变化
+				this._boundHandleResize = this.handleResize.bind(this);
+				window.addEventListener('resize', this._boundHandleResize);
+			}
+
+			// 创建樱花列表
+			createSakuraList() {
+				if (!this.img || !this.ctx) return;
+
+				this.sakuraList = new SakuraList();
+				const limitArray = new Array(this.config.sakuraNum).fill(this.config.limitTimes);
+
+				for (let i = 0; i < this.config.sakuraNum; i++) {
+					const randomX = getRandom('x', this.config);
+					const randomY = getRandom('y', this.config);
+					const randomS = getRandom('s', this.config);
+					const randomR = getRandom('r', this.config);
+					const randomA = getRandom('a', this.config);
+					const randomFnx = getRandom('fnx', this.config);
+					const randomFny = getRandom('fny', this.config);
+					const randomFnR = getRandom('fnr', this.config);
+					const randomFnA = getRandom('fna', this.config);
+
+					const sakura = new Sakura(
+						randomX,
+						randomY,
+						randomS,
+						randomR,
+						randomA,
+						{
+							x: randomFnx,
+							y: randomFny,
+							r: randomFnR,
+							a: randomFnA,
+						},
+						i,
+						this.img,
+						limitArray,
+						this.config
+					);
+
+					sakura.draw(this.ctx);
+					this.sakuraList.push(sakura);
+				}
+			}
+
+			// 开始动画
+			startAnimation() {
+				if (!this.ctx || !this.canvas || !this.sakuraList) return;
+
+				const animate = () => {
+					if (!this.ctx || !this.canvas || !this.sakuraList) return;
+
+					this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+					this.sakuraList.update();
+					this.sakuraList.draw(this.ctx);
+					this.animationId = requestAnimationFrame(animate);
+				};
+
+				this.animationId = requestAnimationFrame(animate);
+			}
+
+			// 处理窗口大小变化
+			handleResize() {
+				windowWidth = window.innerWidth;
+				windowHeight = window.innerHeight;
+				if (this.canvas) {
+					this.canvas.width = windowWidth;
+					this.canvas.height = windowHeight;
+				}
+			}
+
+			// 停止樱花特效
+			stop() {
+				if (this.animationId) {
+					cancelAnimationFrame(this.animationId);
+					this.animationId = null;
+				}
+
+				if (this.canvas) {
+					document.body.removeChild(this.canvas);
+					this.canvas = null;
+				}
+
+				if (this._boundHandleResize) {
+					window.removeEventListener('resize', this._boundHandleResize);
+					this._boundHandleResize = null;
+				}
+				this.isRunning = false;
+			}
+
+			// 切换樱花特效
+			toggle() {
+				if (this.isRunning) {
+					this.stop();
+				} else {
+					this.init();
+				}
+			}
+
+			// 更新配置
+			updateConfig(newConfig) {
+				const wasRunning = this.isRunning;
+				if (wasRunning) {
+					this.stop();
+				}
+				this.config = newConfig;
+				if (wasRunning && newConfig.enable) {
+					this.init();
+				}
+			}
+
+			// 获取运行状态
+			getIsRunning() {
+				return this.isRunning;
+			}
+		}
+
+		// 创建全局樱花管理器实例
+		let globalSakuraManager = null;
+		window.sakuraManager = null;
+
+		// 初始化樱花特效
+		function initSakura(config) {
+			if (globalSakuraManager) {
+				globalSakuraManager.updateConfig(config);
+			} else {
+				globalSakuraManager = new SakuraManager(config);
+				window.sakuraManager = globalSakuraManager;
+				if (config.enable) {
+					globalSakuraManager.init();
+				}
+			}
+		}
+
+		// 樱花特效初始化
+		(function() {
+			// 全局标记，确保樱花特效只初始化一次
+			if (window.sakuraInitialized) {
+				return;
+			}
+			
+			// 初始化樱花特效的函数
+			const setupSakura = () => {
+				if (window.sakuraInitialized) return;
+				// 检查用户是否在设置中关闭了樱花特效
+				var storedEnabled = localStorage.getItem("sakuraEnabled");
+				var isEnabled = storedEnabled !== null ? storedEnabled === "true" : sakuraConfig.enable;
+				// 创建管理器并根据用户偏好决定是否启动
+				var cfg = Object.assign({}, sakuraConfig, { enable: isEnabled });
+				initSakura(cfg);
+				window.sakuraInitialized = true;
+			};
+			
+			// 页面加载完成后初始化樱花特效
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', setupSakura);
+			} else {
+				setupSakura();
+			}
+		})();
+
+		// 监听设置面板的樱花特效切换事件
+		window.addEventListener('sakuraToggle', function(e) {
+			var enabled = e.detail.enabled;
+			var mgr = window.sakuraManager;
+			if (!mgr) return;
+			if (enabled && !mgr.getIsRunning()) {
+				mgr.config.enable = true;
+				mgr.init();
+			} else if (!enabled && mgr.getIsRunning()) {
+				mgr.stop();
+			}
+		});
+	})();</script><!-- Fancybox Manager --><script type="module" src="/_astro/FancyboxManager.astro_astro_type_script_index_0_lang.QwGR3oCF.js"></script></body></html><script type="module" src="/_astro/Layout.astro_astro_type_script_index_0_lang.gZeiJrIX.js"></script><script type="module" src="/_astro/config.astro_astro_type_script_index_0_lang.RuCI_fsG.js"></script>
