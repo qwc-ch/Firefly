@@ -33,11 +33,8 @@ export const siteConfig: SiteConfig = {
 
 	// 主题色
 	themeColor: {
-		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		hue: 330,
-		// 是否对访问者隐藏主题色选择器
 		fixed: false,
-		// 默认模式："light" 亮色，"dark" 暗色，"system" 跟随系统
 		defaultMode: "system",
 	},
 
@@ -48,46 +45,28 @@ export const siteConfig: SiteConfig = {
 
 	// 网站Card样式配置
 	card: {
-		// 是否开启卡片边框和阴影，开启后让网站更有立体感
 		border: true,
-		// 是否让卡片风格跟随主题色相
 		followTheme: true,
 	},
 
 	// Favicon 配置
 	favicon: [
 		{
-			// 图标文件路径
-			src: "/favicon/favicon2.png",
-			// 可选，指定主题 'light' | 'dark'
-			// theme: "light",
-			// 可选，图标大小
-			// sizes: "32x32",
+		src: "/favicon/favicon2.png",
 		},
 	],
 
 	// 导航栏配置
 	navbar: {
-		// 导航栏Logo
-		// 支持三种类型：
-		// 1. Astro图标库: { type: "icon", value: "material-symbols:home-pin-outline" }
-		// 2. 本地图片（public目录，不优化）: { type: "image", value: "/assets/images/logo.webp", alt: "Logo" }
-		// 3. 本地图片（src目录，自动优化但会增加构建时间）: { type: "image", value: "assets/images/logo.webp", alt: "Logo" }
-		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
 		logo: {
 			type: "image",
 			value: "assets/images/firefly.png",
 			alt: "🍀",
 		},
-		// 导航栏标题
 		title: "Firefly",
-		// 全宽导航栏，导航栏是否占满屏幕宽度
 		widthFull: false,
-		// 导航菜单对齐方式，left：左对齐，center：居中
 		menuAlign: "center",
-		// 导航栏图标和标题是否跟随主题色
 		followTheme: false,
-		// 导航栏是否固定在顶部并始终可见
 		stickyNavbar: true,
 	},
 
@@ -100,19 +79,237 @@ export const siteConfig: SiteConfig = {
 
 	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
 	pages: {
-		// 友链页面开关
-		friends: true,
-		// 打赏页面开关
+		friends: [
+			{
+			title: "夏夜流萤",
+			imgurl: "https://weavatar.com/avatar/d252655d40d6874417a720bad0a6c5f77f8f6a1fd2f882f8f338402dc37e4190?s=640",
+			desc: "飞萤之火自无梦的长夜亮起，绽放在终竟的明天。",
+			siteurl: "https://blog.cuteleaf.cn",
+			tags: [
+				"Blog",
+			],
+			weight: 10,
+			enabled: true,
+			},
+			{
+			title: "fqzlr",
+			imgurl: "https://q1.qlogo.cn/g?b=qq&nk=20447289&s=640",
+			desc: "坐姿不如起而行。",
+			siteurl: "https://fqzlr.com/",
+			tags: [
+				"Blog",
+			],
+			weight: 7,
+			enabled: true,
+			},
+			{
+			title: "年华",
+			imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
+			desc: "分享生活和技术。",
+			siteurl: "https://blog.520781.xyz/",
+			tags: [
+				"Blog",
+			],
+			weight: 100,
+			enabled: true,
+			},
+			{
+			title: "团子和蛋糕",
+			imgurl: "https://re.tsh520.cn/zl/tx.webp",
+			desc: "如果你喜欢那么欢迎来到我的世界！",
+			siteurl: "https://blog.tsh520.cn",
+			tags: [
+				"Blog",
+			],
+			weight: 10,
+			enabled: true,
+			},
+			{
+			title: "UpXuu",
+			imgurl: "https://upxuu.com/images/20260214145619.jpg",
+			desc: "逐光而上",
+			siteurl: "https://upxuu.com/",
+			tags: [
+				"Blog",
+			],
+			weight: 10,
+			enabled: true,
+			},
+			{
+			title: "Dogxi 的狗窝",
+			imgurl: "https://blog.dogxi.me/avatar.png",
+			desc: "Dogxi 的个人博客，因为热爱所以热爱",
+			siteurl: "https://blog.dogxi.me",
+			tags: [
+				"Blog",
+			],
+			weight: 1,
+			enabled: true,
+			},
+			{
+			title: "versus0",
+			imgurl: "https://img.542000.xyz/file/friend_avatar/1778931720838_f167cb95af9d881f4378b92b3e181d89_4647054993754934443.jpg",
+			desc: "I may be still unripened.But I'm not afraid.",
+			siteurl: "https://blog.542000.xyz",
+			tags: [
+				"Blog",
+			],
+			weight: 18,
+			enabled: true,
+			},
+			{
+			title: "Hyde Blog",
+			imgurl: "https://seasir.top/assets/avatar.avif",
+			desc: "人心中的成见是一座大山",
+			siteurl: "https://seasir.top/",
+			tags: [
+				"Blog",
+			],
+			weight: 19,
+			enabled: true,
+			},
+			{
+			title: "二叉树树",
+			imgurl: "https://q2.qlogo.cn/headimg_dl?dst_uin=2726730791&spec=0",
+			desc: "Protect What You Love.",
+			siteurl: "https://2x.nz",
+			tags: [
+				"Blog",
+			],
+			weight: 20,
+			enabled: true,
+			},
+			{
+			title: "十三",
+			imgurl: "https://img.nw177.cn/blog/100.assets/avatar.webp",
+			desc: "欲买桂花同载酒，终不似，少年游。",
+			siteurl: "https://blog.nw177.cn/",
+			tags: [
+				"Blog",
+			],
+			weight: 10,
+			enabled: true,
+			},
+			{
+			title: "ZhiJing’s Blog",
+			imgurl: "https://iwexe.top/avatar.svg",
+			desc: " Go with the flow.",
+			siteurl: "https://iwexe.top/",
+			tags: [
+				"Blog",
+			],
+			weight: 100,
+			enabled: true,
+			},
+			{
+			title: "星遐蝶梦",
+			imgurl: "https://blog.casto.top/assets/images/avatar.png",
+			desc: "星穹漫遐，蝶携清梦。",
+			siteurl: "https://blog.casto.top",
+			tags: [
+				"Blog",
+			],
+			weight: 10,
+			enabled: true,
+			},
+			{
+			title: "L!!!!ght",
+			imgurl: "https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
+			desc: "阳光正好，慢慢前行。",
+			siteurl: "https://sunlight.kejk.cn",
+			tags: [
+				"Blog",
+			],
+			weight: 11,
+			enabled: true,
+			},
+			{
+			title: "Saimen Blog",
+			imgurl: "https://com.z2m.store/img/butterfly-icon.png",
+			desc: "读史可以明智,知古方能鉴今。",
+			siteurl: "https://com.z2m.store",
+			tags: [
+				"Blog",
+			],
+			weight: 9,
+			enabled: true,
+			},
+			{
+			title: "沈幼楚の小窝",
+			imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1050925710&s=640",
+			desc: "天真永不消逝，浪漫至死不渝.",
+			siteurl: "https://blog.shenyouchu.cn/",
+			tags: [
+				"Blog",
+			],
+			weight: 9,
+			enabled: true,
+			},
+			{
+			title: "莱姆Lime",
+			imgurl: "https://sudachi.top/logo.jpeg",
+			desc: "聚是火簇，散作繁星",
+			siteurl: "https://sudachi.top/",
+			tags: [
+				"技术",
+			],
+			weight: 17,
+			enabled: true,
+			},
+			{
+			title: "THW’s Blog",
+			imgurl: "https://image.tianhw.top/avatar.webp",
+			desc: "前途似海，来日方长",
+			siteurl: "https://blog.tianhw.top",
+			tags: [
+				"Blog",
+			],
+			weight: 14,
+			enabled: true,
+			},
+			{
+			title: "Sigrika-善良耙耙柑🍊",
+			imgurl: "https://qwq.sigrika.cc/assets/images/avatar.gif",
+			desc: "记录我的二次元之旅",
+			siteurl: "https://qwq.sigrika.cc/",
+			tags: [
+				"Blog",
+			],
+			weight: 18,
+			enabled: true,
+			},
+			{
+			title: "董健颖",
+			imgurl: "https://weavatar.com/api/avatar/e3e6c5e34c0111ab1a16acb37cec03f01907406e60b49477c089001f5ed083b8?s=50&t=1781771969751?s=640",
+			desc: "这是我的个人博客，记录我的学习和生活点滴，分享我的学习经验和见解。希望在这里能与志同道合的朋友们交流和成长！",
+			siteurl: "https://dongjianying.xyz",
+			tags: [
+				"Blog",
+			],
+			weight: 20,
+			enabled: true,
+			},
+		],
 		sponsor: true,
-		// 留言板页面开关，需要配置评论系统
 		guestbook: true,
-		// 番组计划页面开关，含追番、游戏、书籍和音乐
-		bangumi: true,
-		// 相册页面开关
+		bangumi: {
+			userId: "1186385",
+			mode: "dynamic",
+			apiUrl: "https://bgmapi.anibt.net",
+			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
+			categoryOrder: [
+				"anime",
+				"book",
+				"music",
+				"game",
+			],
+		},
 		gallery: true,
-		// 追番页面开关
-		anime: true,
-		// AI聊天页面开关
+		anime: {
+			bilibili: {
+				uid: "38932988",
+			},
+		},
 		chat: true,
 	},
 
@@ -124,42 +321,26 @@ export const siteConfig: SiteConfig = {
 
 	// 文章列表布局配置
 	postListLayout: {
-		// 默认布局模式："list" 列表模式（单列布局），"grid" 网格模式（多列布局）
 		defaultMode: "list",
-		// 移动端默认布局模式，不设置则跟随 defaultMode
 		mobileDefaultMode: "list",
-		// 是否在文章列表中显示标签
 		showTags: true,
-		// 文章简介显示行数，设为 0 则不截断
 		descriptionLines: 2,
-		// 是否允许用户切换布局
 		allowSwitch: true,
-		// 网格布局配置，仅在 defaultMode 为 "grid" 或允许切换布局时生效
 		grid: {
-			// 是否开启瀑布流布局，同时有封面图和无封面图的混合文章推荐开启
 			masonry: true,
-			// 网格模式卡片最小宽度(px)，浏览器根据容器宽度自动计算列数
 			columnWidth: 320,
 		},
 	},
 
 	// 文章内容页配置
 	post: {
-		// 提醒框（Admonitions）配置，修改后需要重启开发服务器才能生效
-		// 主题：'github' | 'obsidian' | 'vitepress' | 'docusaurus'，每个主题风格和语法不同，可根据喜好选择
 		rehypeCallouts: {
 			theme: "github",
-			// 是否启用兼容 Python-Markdown 风格的 admonition 语法（!!!和???语法）
-			// 注意：只有 theme 配置成 obsidian 主题才能基本支持这些语法，其他主题会有样式问题或不兼容的情况
 			enablePythonMarkdownAdmonitions: false,
 		},
-		// 文章页底部的"上次编辑时间"卡片开关
 		showLastModified: true,
-		// 文章过期阈值（天数），超过此天数才显示"上次编辑"卡片
 		outdatedThreshold: 180,
-		// 是否开启分享海报生成功能
 		sharePoster: true,
-		// OpenGraph图片功能，注意开启后要渲染很长时间，不建议本地调试的时候开启
 		generateOgImages: false,
 	},
 
@@ -199,7 +380,6 @@ export const siteConfig: SiteConfig = {
 
 	// 分页配置
 	pagination: {
-		// 每页显示的文章数量
 		postsPerPage: 10,
 	},
 
@@ -209,17 +389,12 @@ export const siteConfig: SiteConfig = {
 	// Astro 仅能对 src 目录下的图像进行优化，src 目录下的图像越多，构建时间会越长
 	// Astro 图像文档 https://docs.astro.build/zh-cn/guides/images/
 	imageOptimization: {
-		// 输出图片格式
-		// - "avif": 仅输出 AVIF 格式（最新技术，最小体积，目前兼容性较低）
-		// - "webp": 仅输出 WebP 格式（体积适中，兼容性好）
-		// - "both": 同时输出 AVIF 和 WebP（推荐，浏览器自动选择最佳格式）
 		formats: "webp",
-		// 图片压缩质量 (1-100)，值越低体积越小但质量越差，推荐 70-85
 		quality: 85,
-		// 为特定域名的图片添加 referrerpolicy="no-referrer" 属性
-		// 支持通配符 *，例如：["i0.hdslb.com", "*.bilibili.com"]
-		// 可解决指定域名图片加载时的 403 问题（如防盗链图片）
-		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
+		noReferrerDomains: [
+			"*.hdslb.com",
+			"*.bilibili.com",
+		],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
