@@ -207,7 +207,16 @@ async function sendMessage() {
 	let context = "";
 	if (await waitForPagefind()) {
 		try {
-			const result = await window.pagefind.search(text);
+			const keywords = text
+				.replace(/[？?。，！!、；：""''（）、·…—\n]/g, " ")
+				.replace(
+					/(你|我|他|她|它|们|是|的|了|在|有|和|就|不|人|都|一|一个|上|也|很|到|说|要|去|会|着|没有|看|好|自己|这|这个|那|那个|什么|怎么|如何|能|可以|知道|了解|请问|帮|找|看看|相关|有没有|关于|吗|吧|呢|哦|呀|嗯|呗|嘛|啊|啦)/g,
+					" ",
+				)
+				.replace(/\s+/g, " ")
+				.trim();
+			const query = keywords.length > 5 ? keywords : text;
+			const result = await window.pagefind.search(query);
 			if (result.results.length > 0) {
 				const top = result.results.slice(0, 3);
 				const articles = await Promise.all(
