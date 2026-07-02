@@ -72,6 +72,16 @@ async function handleSave() {
 	} catch (err: unknown) {
 		message = err instanceof Error ? err.message : "保存失败";
 		messageType = "error";
+		try {
+			const [siteRes, friendsRes] = await Promise.all([
+				siteConfigApi.get(),
+				friendsConfigApi.get(),
+			]);
+			sha = siteRes.sha;
+			friendsSha = friendsRes.sha;
+		} catch {
+			// ignore refresh errors
+		}
 	} finally {
 		saving = false;
 	}
