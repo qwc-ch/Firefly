@@ -10,8 +10,8 @@ export const aiSummaryConfig: AiSummaryConfig = {
 			hasThinking: false,
 		},
 		{
-			id: "qwen",
-			name: "Qwen-3.5-397B",
+			id: "minimax-m2",
+			name: "MiniMax-M2.7",
 			url: "https://i.520781.xyz/summarize2",
 			hasThinking: true,
 		},
