@@ -41,7 +41,7 @@ let inputText = $state("");
 let loading = $state(false);
 let streaming = $state(false);
 let streamContent = $state("");
-let showSidebar = $state(true);
+let showSidebar = $state(window.innerWidth >= 768);
 let searchQuery = $state("");
 let searchResults = $state<
 	{ id: string; title: string; excerpt: string; url: string }[]
@@ -353,7 +353,7 @@ function handleKeydown(e: KeyboardEvent) {
     <div class="w-16 h-16 rounded-full bg-(--primary)/10 flex items-center justify-center text-(--primary)">
       <Icon icon="material-symbols:link" class="text-2xl" />
     </div>
-    <h1 class="text-2xl font-bold text-black/80 dark:text-white/80">小萤 AI</h1>
+    <h1 class="text-2xl font-bold text-black/80 dark:text-white/80">流萤AI</h1>
     <p class="text-sm text-black/50 dark:text-white/50">登录后开始与 AI 聊天，可以搜索本站文章进行讨论</p>
     <button
       onclick={login}
@@ -365,7 +365,8 @@ function handleKeydown(e: KeyboardEvent) {
 {:else}
   <div class="flex h-[80vh] gap-0 card-base overflow-hidden">
     {#if showSidebar}
-      <div class="w-64 shrink-0 border-r border-(--line-divider) flex flex-col bg-(--card-bg) hidden md:flex">
+      <div class="md:hidden fixed inset-0 z-30 bg-black/30" onclick={() => showSidebar = false}></div>
+      <div class="w-64 shrink-0 border-r border-(--line-divider) flex flex-col bg-(--card-bg) fixed inset-y-0 left-0 z-40 shadow-xl md:relative md:shadow-none md:flex">
         <div class="p-3 border-b border-(--line-divider) flex items-center gap-2">
           {#if user.avatar_url}
             <img src={user.avatar_url} alt={user.username} class="w-8 h-8 rounded-full" />
