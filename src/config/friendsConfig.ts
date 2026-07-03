@@ -39,11 +39,11 @@ export const friendsConfig: FriendLink[] = [
 	title: "年华",
 	imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
 	desc: "分享生活和技术。",
-	siteurl: "https://blog.amamo.top/fj",
+	siteurl: "https://blog.amamo.top/",
 	tags: [
 		"Blog",
 	],
-	weight: 1,
+	weight: 100,
 	enabled: true,
 	},
 	{
