@@ -4,6 +4,8 @@ import { getIconSvg } from "@/constants/icons";
 import { friendsConfigApi, siteConfigApi } from "@/lib/api";
 
 let config = $state<Record<string, unknown>>({});
+let friends = $state<Record<string, unknown>[]>([]);
+let friendsPage = $state<Record<string, unknown>>({});
 let sha = $state("");
 let friendsSha = $state("");
 let loading = $state(true);
@@ -27,17 +29,11 @@ async function loadConfig() {
 				sha: "",
 			})),
 		]);
-		const cfg = siteRes.config;
-		if (!cfg.friends) {
-			cfg.friends = (friendsRes.friends as Record<string, unknown>[])?.length
-				? (friendsRes.friends as Record<string, unknown>[])
-				: friendsConfig.map((f) => ({ ...f }));
-		}
-		if (!cfg.friendsPage) {
-			cfg.friendsPage =
-				(friendsRes.friendsPage as Record<string, unknown>) || {};
-		}
-		config = cfg;
+		config = siteRes.config;
+		friends = (friendsRes.friends as Record<string, unknown>[])?.length
+			? (friendsRes.friends as Record<string, unknown>[])
+			: friendsConfig.map((f) => ({ ...f }));
+		friendsPage = (friendsRes.friendsPage as Record<string, unknown>) || {};
 		sha = siteRes.sha;
 		friendsSha = friendsRes.sha;
 	} catch (err: unknown) {
@@ -51,11 +47,12 @@ async function loadConfig() {
 async function handleSave() {
 	saving = true;
 	try {
+		const { friends: _f, friendsPage: _fp, ...siteConfigData } = config;
 		await Promise.all([
-			siteConfigApi.save(config, sha, "Update site config via admin"),
+			siteConfigApi.save(siteConfigData, sha, "Update site config via admin"),
 			friendsConfigApi.save(
-				(config.friends as unknown[]) || [],
-				(config.friendsPage as Record<string, unknown>) || {},
+				friends as unknown[],
+				friendsPage,
 				friendsSha,
 				"Update friends config via admin",
 			),
@@ -385,12 +382,12 @@ function getNested(path: string): unknown {
         <button class="section-header" onclick={() => toggleSection('friends')}>
           <span class="section-dot" style="background: var(--primary)"></span>
           <span class="section-title">友链管理</span>
-          <span class="friend-count">{((config.friends as Array<unknown>)?.length || 0)} 个友链</span>
+			<span class="friend-count">{friends.length} 个友链</span>
           <i class="icon section-arrow" class:open={openSections.has('friends')} style="font-size:18px">{@html getIconSvg("material-symbols:chevron-right")}</i>
         </button>
         {#if openSections.has('friends')}
           <div class="section-body">
-            {#each (config.friends as Array<Record<string, unknown>>) || [] as friend, i (friend.title as string || '')}
+            {#each friends as friend, i (friend.title as string || '')}
               <div class="friend-card" class:friend-disabled={!friend.enabled}>
                 <div class="friend-card-header">
                   <img class="friend-avatar" src={String(friend.imgurl || '')} alt={String(friend.title || '')} />
@@ -398,11 +395,10 @@ function getNested(path: string): unknown {
                     <span class="friend-title">{String(friend.title || '')}</span>
                     <span class="friend-desc">{String(friend.desc || '')}</span>
                   </div>
-                  <label class="toggle" ontouchstart={(e) => e.stopPropagation()}>
+                    <label class="toggle" ontouchstart={(e) => e.stopPropagation()}>
                     <input type="checkbox" checked={!!friend.enabled} onchange={(e) => {
-                      const arr = (config.friends as Array<Record<string, unknown>>) || [];
-                      arr[i].enabled = (e.target as HTMLInputElement).checked;
-                      config = { ...config, friends: arr };
+                      friends[i] = { ...friends[i], enabled: (e.target as HTMLInputElement).checked };
+                      friends = friends;
                     }} />
                     <span class="toggle-slider"></span>
                   </label>
@@ -411,34 +407,33 @@ function getNested(path: string): unknown {
 	<div class="friend-field-row">
 					<label class="friend-field" style="flex:1; min-width:0">
 						<span>标题</span>
-						<input class="friend-input" value={String(friend.title || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].title = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+						<input class="friend-input" value={String(friend.title || '')} oninput={(e) => { friends[i] = { ...friends[i], title: (e.target as HTMLInputElement).value }; friends = friends; }} />
 					</label>
 					<label class="friend-field" style="flex:0 0 auto">
 						<span>权重</span>
-						<input class="friend-input friend-input-sm" type="number" value={Number(friend.weight ?? 10)} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].weight = Number((e.target as HTMLInputElement).value); config = { ...config, friends: arr }; }} />
+						<input class="friend-input friend-input-sm" type="number" value={Number(friend.weight ?? 10)} oninput={(e) => { friends[i] = { ...friends[i], weight: Number((e.target as HTMLInputElement).value) }; friends = friends; }} />
 					</label>
 				</div>
                   <label class="friend-field">
                     <span>头像 URL</span>
-                    <input class="friend-input" value={String(friend.imgurl || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].imgurl = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                    <input class="friend-input" value={String(friend.imgurl || '')} oninput={(e) => { friends[i] = { ...friends[i], imgurl: (e.target as HTMLInputElement).value }; friends = friends; }} />
                   </label>
                   <label class="friend-field">
                     <span>站点 URL</span>
-                    <input class="friend-input" value={String(friend.siteurl || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].siteurl = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                    <input class="friend-input" value={String(friend.siteurl || '')} oninput={(e) => { friends[i] = { ...friends[i], siteurl: (e.target as HTMLInputElement).value }; friends = friends; }} />
                   </label>
                   <label class="friend-field">
                     <span>描述</span>
-                    <input class="friend-input" value={String(friend.desc || '')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].desc = (e.target as HTMLInputElement).value; config = { ...config, friends: arr }; }} />
+                    <input class="friend-input" value={String(friend.desc || '')} oninput={(e) => { friends[i] = { ...friends[i], desc: (e.target as HTMLInputElement).value }; friends = friends; }} />
                   </label>
                   <label class="friend-field">
                     <span>标签（逗号分隔）</span>
-                    <input class="friend-input" value={((friend.tags as string[]) || []).join(', ')} oninput={(e) => { const arr = (config.friends as Array<Record<string, unknown>>) || []; arr[i].tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim()).filter(Boolean); config = { ...config, friends: arr }; }} />
+                    <input class="friend-input" value={((friend.tags as string[]) || []).join(', ')} oninput={(e) => { friends[i] = { ...friends[i], tags: (e.target as HTMLInputElement).value.split(',').map(t => t.trim()).filter(Boolean) }; friends = friends; }} />
                   </label>
                   <div class="friend-actions">
                     <button class="friend-btn friend-btn-danger" onclick={() => {
-                      const arr = (config.friends as Array<Record<string, unknown>>) || [];
-                      arr.splice(i, 1);
-                      config = { ...config, friends: arr };
+                      friends.splice(i, 1);
+                      friends = friends;
                     }}>删除</button>
                   </div>
                 </div>
@@ -447,9 +442,7 @@ function getNested(path: string): unknown {
 
             <div class="friend-add-area">
               <button class="btn-add-friend" onclick={() => {
-                const arr = (config.friends as Array<Record<string, unknown>>) || [];
-                arr.push({ title: '', imgurl: '', desc: '', siteurl: '', tags: [], weight: 10, enabled: true });
-                config = { ...config, friends: arr };
+                friends = [...friends, { title: '', imgurl: '', desc: '', siteurl: '', tags: [], weight: 10, enabled: true }];
               }}>
                 <i class="icon" style="font-size:16px">{@html getIconSvg("material-symbols:add")}</i>
                 <span>添加友链</span>
@@ -460,29 +453,29 @@ function getNested(path: string): unknown {
               <div class="friend-page-title">友链页面配置</div>
               <label class="friend-field">
                 <span>页面标题（留空使用默认）</span>
-                <input class="friend-input" value={String(config.friendsPage?.title || '')} oninput={(e) => setNested('friendsPage.title', (e.target as HTMLInputElement).value)} />
+                <input class="friend-input" value={String(friendsPage.title || '')} oninput={(e) => { friendsPage = { ...friendsPage, title: (e.target as HTMLInputElement).value }; }} />
               </label>
               <label class="friend-field">
                 <span>页面描述（留空使用默认）</span>
-                <input class="friend-input" value={String(config.friendsPage?.description || '')} oninput={(e) => setNested('friendsPage.description', (e.target as HTMLInputElement).value)} />
+                <input class="friend-input" value={String(friendsPage.description || '')} oninput={(e) => { friendsPage = { ...friendsPage, description: (e.target as HTMLInputElement).value }; }} />
               </label>
               <div class="friend-check-row">
                 <label class="toggle">
-                  <input type="checkbox" checked={config.friendsPage?.showCustomContent ?? true} onchange={(e) => setNested('friendsPage.showCustomContent', (e.target as HTMLInputElement).checked)} />
+                  <input type="checkbox" checked={friendsPage.showCustomContent ?? true} onchange={(e) => { friendsPage = { ...friendsPage, showCustomContent: (e.target as HTMLInputElement).checked }; }} />
                   <span class="toggle-slider"></span>
                 </label>
                 <span class="friend-check-label">显示自定义内容</span>
               </div>
               <div class="friend-check-row">
                 <label class="toggle">
-                  <input type="checkbox" checked={config.friendsPage?.showComment ?? true} onchange={(e) => setNested('friendsPage.showComment', (e.target as HTMLInputElement).checked)} />
+                  <input type="checkbox" checked={friendsPage.showComment ?? true} onchange={(e) => { friendsPage = { ...friendsPage, showComment: (e.target as HTMLInputElement).checked }; }} />
                   <span class="toggle-slider"></span>
                 </label>
                 <span class="friend-check-label">显示评论区</span>
               </div>
               <div class="friend-check-row">
                 <label class="toggle">
-                  <input type="checkbox" checked={config.friendsPage?.randomizeSort ?? false} onchange={(e) => setNested('friendsPage.randomizeSort', (e.target as HTMLInputElement).checked)} />
+                  <input type="checkbox" checked={friendsPage.randomizeSort ?? false} onchange={(e) => { friendsPage = { ...friendsPage, randomizeSort: (e.target as HTMLInputElement).checked }; }} />
                   <span class="toggle-slider"></span>
                 </label>
                 <span class="friend-check-label">随机排序（忽略权重）</span>

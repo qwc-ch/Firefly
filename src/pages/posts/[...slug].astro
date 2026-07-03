@@ -131,6 +131,7 @@ const jsonLd = {
 };
 
 const relatedPosts = await getRelatedPosts(entry, 5);
+const tocItems = headings.map((h) => ({ id: h.slug, text: h.text }));
 ---
 
 <MainGridLayout
@@ -351,7 +352,7 @@ const relatedPosts = await getRelatedPosts(entry, 5);
       ) : (
         <>
           {aiSummaryConfig.enabled && (
-            <AiSummary url={Astro.url.href} toc={headings} client:load />
+            <AiSummary url={Astro.url.href} toc={tocItems} client:load />
           )}
           <Markdown class="mb-6 markdown-content onload-animation">
             <Content />
