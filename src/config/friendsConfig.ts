@@ -233,17 +233,6 @@ export const friendsConfig: FriendLink[] = [
 	weight: 18,
 	enabled: true,
 	},
-	{
-	title: "fgbhggh",
-	imgurl: "bjjjjk",
-	desc: "hj",
-	siteurl: "hjjjjj",
-	tags: [
-		"hh",
-	],
-	weight: 10,
-	enabled: true,
-	},
 ];
 
 // 获取启用的友链并进行排序
