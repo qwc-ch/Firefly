@@ -300,6 +300,17 @@ export const siteConfig: SiteConfig = {
 			weight: 18,
 			enabled: true,
 			},
+			{
+			title: "fgbhggh",
+			imgurl: "bjjjjk",
+			desc: "hj",
+			siteurl: "hjjjjj",
+			tags: [
+				"hh",
+			],
+			weight: 10,
+			enabled: true,
+			},
 		],
 		sponsor: true,
 		guestbook: true,
