@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	// Favicon 配置
 	favicon: [
 		{
-		src: "/favicon/favicon2.png",
+			src: "/favicon/favicon2.png",
 		},
 	],
 
@@ -87,12 +87,7 @@ export const siteConfig: SiteConfig = {
 			mode: "dynamic",
 			apiUrl: "https://bgmapi.anibt.net",
 			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-			categoryOrder: [
-				"anime",
-				"book",
-				"music",
-				"game",
-			],
+			categoryOrder: ["anime", "book", "music", "game"],
 		},
 		gallery: true,
 		anime: {
@@ -181,10 +176,7 @@ export const siteConfig: SiteConfig = {
 	imageOptimization: {
 		formats: "webp",
 		quality: 85,
-		noReferrerDomains: [
-			"*.hdslb.com",
-			"*.bilibili.com",
-		],
+		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
