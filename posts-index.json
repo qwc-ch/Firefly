@@ -87,6 +87,16 @@
     "url": "/posts/cf_preferred/"
   },
   {
+    "title": "Cloudflare VS Vercel",
+    "description": "简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。",
+    "category": "Cloudflare,Vercel",
+    "tags": [
+      "Cloudflare",
+      "Vercel"
+    ],
+    "url": "/posts/cf-vs-vercel/"
+  },
+  {
     "title": "Linux 上安装和使用 AstrBot",
     "description": "在 Linux 系统上安装 AstrBot 聊天机器人并做基础设置",
     "category": "Linux,Astbot",
