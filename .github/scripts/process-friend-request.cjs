@@ -7,7 +7,7 @@ const { chromium } = require('playwright');
 const FRIENDS_CONFIG_RELATIVE_PATH = 'src/config/friendsConfig.ts';
 const SITE_INFO = {
   name: '年华',
-  url: 'https://blog.520781.xyz/',
+  url: 'https://blog.amamo.top/',
   avatar: 'https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640',
   desc: '分享生活和技术。'
 };
