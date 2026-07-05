@@ -1,13 +1,14 @@
 ---
-title: Cloudflare VS Vercel？！
+title: "Cloudflare VS Vercel？！"
 published: 2026-07-03
-description: '简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。'
-image: ''
-tags: [Cloudflare,Vercel]
+draft: false
+description: "简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。"
+tags: ['Cloudflare', 'Vercel']
 category: 'Cloudflare,Vercel'
-draft: false 
 lang: 'zh-CN'
+author: 'Admin'
 ---
+
 ## 引言
 Vercel 和 Cloudflare 是目前较为常见的两个 Web 部署平台。Vercel 偏向前端生态和开发体验，Cloudflare 则依托其全球边缘网络提供底层计算和存储能力。两者都在往"全栈应用交付平台"的方向发展，但实现路径和适用场景有所不同。
 
