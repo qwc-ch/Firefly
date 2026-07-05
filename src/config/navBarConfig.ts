@@ -39,9 +39,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 留言板
 	links.push(LinkPresets.Guestbook);
 
-	// AI聊天
-	links.push(LinkPresets.Chat);
-
 	// 我的及其子菜单
 	links.push({
 		name: "我的",
@@ -56,6 +53,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 
 			// 番组计划
 			LinkPresets.Bangumi,
+
+			// AI聊天
+			LinkPresets.Chat,
 		],
 	});
 
@@ -119,6 +119,11 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "material-symbols:docs",
 			},
+			{
+				name: "管理",
+				url: "/config/",
+				icon: "material-symbols:settings",
+			},
 		],
 	});
 
@@ -129,13 +134,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 	external: true,
 	// 	icon: "material-symbols:docs",
 	// });
-
-	// 管理后台
-	links.push({
-		name: "管理",
-		url: "/config/",
-		icon: "material-symbols:settings",
-	});
 
 	return { links } as NavBarConfig;
 };
