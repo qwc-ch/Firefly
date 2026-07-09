@@ -1,6 +1,6 @@
 # PagesCMS 配置 - Firefly 博客
 # 基于 PagesCMS v2.x 官方 schema 编写
-# 文档: https://pagescms.org/docs/configuration/
+# 文档: https://pagescms.org/docs/configuration
 
 media:
   # 文章配图 - 上传到文章目录的 images 子文件夹
