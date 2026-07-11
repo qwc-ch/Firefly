@@ -63,6 +63,12 @@ onMount(() => {
 		token = localStorage.getItem("firefly-chat-token") || "";
 	}
 
+	const urlQuestion = params.get("q");
+	if (urlQuestion) {
+		inputText = urlQuestion;
+		window.history.replaceState({}, "", "/chat/");
+	}
+
 	if (token) {
 		loadUser();
 		loadConversations();

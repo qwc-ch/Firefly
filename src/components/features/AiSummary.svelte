@@ -342,7 +342,7 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
         <div class="flex flex-wrap gap-2">
           {#each defaultQuestions as q}
             <button
-              onclick={() => {}}
+              onclick={() => window.location.href = `/chat/?q=${encodeURIComponent(q)}`}
               class="text-xs px-2.5 py-1 bg-(--enter-btn-bg) hover:bg-(--primary)/10 text-black/60 dark:text-white/60 hover:text-(--primary) transition-colors rounded border border-(--line-divider) hover:border-(--primary) shrink-0"
             >
               {q}
@@ -350,7 +350,7 @@ const defaultQuestions = ["详细概括本文内容", "概括文章特点"];
           {/each}
           {#each questions as q}
             <button
-              onclick={() => {}}
+              onclick={() => window.location.href = `/chat/?q=${encodeURIComponent(q)}`}
               class="text-xs px-2.5 py-1 bg-(--primary)/5 border border-(--primary)/30 hover:border-(--primary) hover:bg-(--primary)/10 text-(--primary) font-medium transition-colors rounded shrink-0"
             >
               {q}
