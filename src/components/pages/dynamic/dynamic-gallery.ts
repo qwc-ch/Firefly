@@ -1,3 +1,5 @@
+import * as FancyboxModule from "@fancyapps/ui";
+
 type GalleryImage = {
 	alt: string;
 	element: HTMLImageElement;
@@ -29,6 +31,7 @@ export function registerDynamicGallery(): void {
 			this.bindControls();
 			this.dataset.ready = "true";
 			this.hidden = false;
+			document.dispatchEvent(new CustomEvent("dynamic-gallery:ready"));
 		}
 
 		private buildGrid() {
@@ -113,6 +116,23 @@ export function registerDynamicGallery(): void {
 			);
 			this.querySelector("[data-gallery-next]")?.addEventListener("click", () =>
 				this.select(this.activeIndex + 1),
+			);
+			this.querySelector("[data-gallery-lightbox]")?.addEventListener(
+				"click",
+				(event) => {
+					event.preventDefault();
+					const Fancybox = FancyboxModule.Fancybox;
+					Fancybox.show(
+						this.images.map((image) => ({
+							src: image.src,
+							type: "image",
+							caption: image.alt,
+						})),
+						{
+							startIndex: this.activeIndex,
+						},
+					);
+				},
 			);
 		}
 
