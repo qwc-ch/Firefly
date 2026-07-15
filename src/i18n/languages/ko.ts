@@ -415,4 +415,12 @@ export const ko: Translation = {
 	[Key.videoPrev]: "이전 영상",
 	[Key.videoNext]: "다음 영상",
 	[Key.videoLoadError]: "영상을 불러오지 못했습니다",
+
+	// AI Summary
+	[Key.aiSummary]: "AI 요약",
+	[Key.aiSummaryReading]: "글 읽는 중...",
+	[Key.aiSummaryError]: "AI가 잠시 휴식 중입니다. 나중에 새로고침해 주세요.",
+	[Key.aiSummaryThinking]: "사고 과정",
+	[Key.aiSummaryReference]: "참조",
+	[Key.aiSummaryMoreAsk]: "AI에게 더 물어보기",
 };

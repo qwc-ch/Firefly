@@ -16,6 +16,7 @@ import type {
 	MobileBottomComponentConfig,
 	WidgetComponentConfig,
 } from "@/types/config";
+import Weather from "../widget/Weather.astro";
 
 interface Props {
 	class?: string;
@@ -53,6 +54,7 @@ const componentMap = {
 	music: Music,
 	siteInfo: SiteInfo,
 	dynamic: Dynamic,
+	weather: Weather,
 };
 
 // 获取侧边栏位置

@@ -82,10 +82,25 @@ export type SiteConfig = {
 		friends: boolean; // 友链页面开关
 		sponsor: boolean; // 打赏页面开关
 		guestbook: boolean; // 留言板页面开关
-		bangumi: boolean;
+		bangumi:
+			| boolean
+			| {
+					userId?: string;
+					mode?: "static" | "dynamic";
+					apiUrl?: string;
+					subjectBaseUrl?: string;
+					categoryOrder?: string[];
+			  };
 		gallery: boolean; // 相册页面开关
-		anime: boolean; // 追番页面开关
-		dynamic: boolean; // 动态页面开关
+		anime:
+			| boolean
+			| {
+					bilibili?: {
+						uid: string;
+					};
+			  };
+		chat?: boolean; // AI聊天页面开关
+		dynamic?: boolean; // 动态页面开关
 	};
 
 	// 分类导航栏开关
