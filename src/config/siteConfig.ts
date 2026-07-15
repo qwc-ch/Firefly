@@ -96,6 +96,7 @@ export const siteConfig: SiteConfig = {
 			},
 		},
 		chat: true,
+		dynamic: true,
 	},
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
@@ -108,9 +109,23 @@ export const siteConfig: SiteConfig = {
 	postListLayout: {
 		defaultMode: "list",
 		mobileDefaultMode: "list",
-		showTags: true,
-		descriptionLines: 2,
 		allowSwitch: true,
+		descriptionLines: 2,
+		showStatsIcons: true,
+		tagsPosition: "bottom",
+		meta: {
+			showPublished: true,
+			showCategory: true,
+			showTags: true,
+			tagCount: 5,
+			showWords: false,
+			showReadingTime: false,
+		},
+		stats: {
+			showPublished: true,
+			showWords: true,
+			showReadingTime: true,
+		},
 		grid: {
 			masonry: true,
 			columnWidth: 320,

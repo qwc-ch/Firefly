@@ -4,6 +4,7 @@ import Advertisement from "@/components/widget/Advertisement.astro";
 import Announcement from "@/components/widget/Announcement.astro";
 import Calendar from "@/components/widget/Calendar.astro";
 import Categories from "@/components/widget/Categories.astro";
+import Dynamic from "@/components/widget/Dynamic.astro";
 import Music from "@/components/widget/Music.astro";
 import Profile from "@/components/widget/Profile.astro";
 import SidebarTOC from "@/components/widget/SidebarTOC.astro";
@@ -15,12 +16,11 @@ import type {
 	MobileBottomComponentConfig,
 	WidgetComponentConfig,
 } from "@/types/config";
-import UmamiStats from "../widget/UmamiStats.astro";
-import Weather from "../widget/Weather.astro";
 
 interface Props {
 	class?: string;
 	headings?: MarkdownHeading[];
+	encrypted?: boolean;
 	side?: "left" | "right" | "bottom";
 }
 
@@ -52,7 +52,7 @@ const componentMap = {
 	calendar: Calendar,
 	music: Music,
 	siteInfo: SiteInfo,
-	weather: Weather,
+	dynamic: Dynamic,
 };
 
 // 获取侧边栏位置
@@ -77,14 +77,14 @@ const getComponents = (): (
 	return [];
 };
 
-// 过滤并排序组件
+// 过滤并排序组件（不再进行 showOnPostPage 过滤，交由客户端处理）
 const filterAndSortComponents = (
 	components: (WidgetComponentConfig | MobileBottomComponentConfig)[],
 ) => {
 	return components.filter((comp) => comp.enable);
 };
 
-// 分离 top 和 sticky 位置的组件
+// 分离 top 和 sticky 位置的组件（保持原始数组顺序）
 const getComponentsByPosition = (
 	components: (WidgetComponentConfig | MobileBottomComponentConfig)[],
 ) => {
@@ -97,15 +97,15 @@ const getComponentsByPosition = (
 	return { topComponents, stickyComponents };
 };
 
-// 获取动画延迟
+// 获取动画延迟（硬编码）
 const getAnimationDelay = (index: number): string => {
 	return `${index * ANIMATION_DELAY_UNIT}ms`;
 };
 
-// 判断当前页面是否为文章页面
+// 判断当前页面是否为文章页面（服务端渲染时确定）
 const isPostPage = Astro.url.pathname.includes("/posts/");
 
-// 判断组件在当前页面首屏是否可见
+// 判断组件在当前页面首屏是否可见（用于计算布局间距，避免隐藏组件占位）
 const isComponentInitiallyVisible = (
 	config: WidgetComponentConfig | MobileBottomComponentConfig,
 ): boolean => {
@@ -152,8 +152,13 @@ const getComponentProps = (
 		}
 	}
 
+	// 特殊处理 SidebarTOC 组件
 	if (config.type === "sidebarToc") {
-		return { ...baseProps, headings: Astro.props.headings || [] };
+		return {
+			...baseProps,
+			headings: Astro.props.headings || [],
+			encrypted: Astro.props.encrypted || false,
+		};
 	}
 
 	return baseProps;
@@ -163,6 +168,7 @@ const getComponentProps = (
 const allComponents = getComponents();
 const filteredComponents = filterAndSortComponents(allComponents);
 
+// 对于移动端底部组件，直接使用所有组件，不进行position分组
 const isMobileBottom = side === SIDEBAR_SIDE.BOTTOM;
 const { topComponents, stickyComponents } = !isMobileBottom
 	? getComponentsByPosition(filteredComponents)
@@ -171,45 +177,18 @@ const bottomComponents = isMobileBottom ? filteredComponents : [];
 const hasInitiallyVisibleTopComponents = topComponents.some(
 	isComponentInitiallyVisible,
 );
-
-// 为移动端准备分离的组件（为了实现 Profile 在上，统计在下）
-let mobileProfileComp: MobileBottomComponentConfig | undefined;
-let mobileOtherComponents: MobileBottomComponentConfig[] = [];
-
-if (isMobileBottom) {
-	mobileProfileComp = bottomComponents.find((comp) => comp.type === "profile");
-	mobileOtherComponents = bottomComponents.filter(
-		(comp) => comp.type !== "profile",
-	);
-}
-
-// 决定是否渲染 sticky 容器（如果有 sticky 组件，或者当前是左侧边栏）
-const hasStickyContent =
-	stickyComponents.length > 0 || side === SIDEBAR_SIDE.LEFT;
 ---
 
 {
-	(topComponents.length > 0 || stickyComponents.length > 0 || bottomComponents.length > 0 || hasStickyContent) && (
+	(topComponents.length > 0 || stickyComponents.length > 0 || bottomComponents.length > 0) && (
 		<div id={`${side}-sidebar`} class:list={[className, "flex flex-col w-full pt-0"]}>
-			{/* Mobile bottom components - 移动端布局 */}
+			{/* Mobile bottom components - 直接渲染所有组件，不分组 */}
 			{isMobileBottom ? (
 				<div class="flex flex-col w-full gap-4">
-					{/* 1. 先渲染个人信息 */}
-					{mobileProfileComp && (() => {
-						const Component = componentMap[mobileProfileComp.type];
-						if (!Component) return null;
-						const props = getComponentProps(mobileProfileComp, 0) as any;
-						return <Component {...props} />;
-					})()}
-
-					{/* 2. 接着渲染统计组件（实现上下互换） */}
-					<UmamiStats class="onload-animation" style="animation-delay: 50ms" />
-					
-					{/* 3. 最后渲染其他的常规组件 */}
-					{mobileOtherComponents.map((comp, index) => {
+					{bottomComponents.map((comp, index) => {
 						const Component = componentMap[comp.type];
 						if (!Component) return null;
-						const props = getComponentProps(comp, index + 2) as any; 
+						const props = getComponentProps(comp, index) as any;
 						return <Component {...props} />;
 					})}
 				</div>
@@ -233,7 +212,7 @@ const hasStickyContent =
 					)}
 
 					{/* Sticky components */}
-					{hasStickyContent && !isMobileBottom && (
+					{stickyComponents.length > 0 && (
 						<div
 							id={`${side}-sidebar-sticky`}
 							class:list={[
@@ -242,11 +221,6 @@ const hasStickyContent =
 								hasInitiallyVisibleTopComponents ? "top-4" : "top-0",
 							]}
 						>
-							{/* PC 端仅在左侧边栏渲染统计，避免两侧重复 */}
-							{side === SIDEBAR_SIDE.LEFT && (
-								<UmamiStats class="onload-animation" style="animation-delay: 200ms" />
-							)}
-
 							{stickyComponents.map((comp, index) => {
 								const Component = componentMap[comp.type];
 								if (!Component) return null;

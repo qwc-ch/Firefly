@@ -33,6 +33,7 @@ import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.
 import rehypeEmailProtection from "./src/plugins/rehype-email-protection.mjs";
 import rehypeExternalLinks from "./src/plugins/rehype-external-links.mjs";
 import rehypeFigure from "./src/plugins/rehype-figure.mjs";
+import rehypeImageReferrerPolicy from "./src/plugins/rehype-image-referrerpolicy.mjs";
 import { rehypeDiagramPanZoom } from "./src/plugins/rehype-diagram-panzoom.mjs";
 import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
 import { rehypePlantuml } from "./src/plugins/rehype-plantuml.mjs";
@@ -200,7 +201,9 @@ export default defineConfig({
 				// 根据页面开关配置过滤sitemap
 				const url = new URL(page);
 				const pathname = url.pathname;
-
+				if (pathname === "/dynamic/" && !siteConfig.pages.dynamic) {
+					return false;
+				}
 				if (pathname === "/friends/" && !siteConfig.pages.friends) {
 					return false;
 				}
@@ -249,6 +252,10 @@ export default defineConfig({
 				rehypePlantuml,
 				rehypeDiagramPanZoom,
 				rehypeFigure,
+				[
+					rehypeImageReferrerPolicy,
+					{ domains: siteConfig.imageOptimization?.noReferrerDomains || [] },
+				],
 				[rehypeExternalLinks, { siteUrl: siteConfig.site_url }],
 				[rehypeEmailProtection, { method: "base64" }], // 邮箱保护插件，支持 'base64' 或 'rot13'
 				[
