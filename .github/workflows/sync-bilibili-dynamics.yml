@@ -27,6 +27,15 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Install Playwright + Chromium
+        run: |
+          mkdir -p /tmp/pw
+          cd /tmp/pw
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+          echo "NODE_PATH=/tmp/pw/node_modules" >> "$GITHUB_ENV"
+
       - name: Sync Bilibili Dynamics
         run: node .github/scripts/sync-bilibili-dynamics.cjs
         env:

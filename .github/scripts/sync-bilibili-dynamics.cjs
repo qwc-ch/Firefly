@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { chromium } = require("playwright");
 
 const UID = process.env.BILIBILI_UID || "3546591015209640";
 const FILTER_KEYWORDS = (process.env.FILTER_KEYWORDS || "投票,抽奖")
@@ -8,24 +9,6 @@ const FILTER_KEYWORDS = (process.env.FILTER_KEYWORDS || "投票,抽奖")
 const MAX_PAGES = Math.min(Number(process.env.MAX_PAGES) || 5, 50);
 const DYNAMIC_DIR = "src/content/dynamic";
 const CACHE_PATH = path.join(__dirname, ".bilibili_cache.json");
-
-function randomBuvid3() {
-  const s = () => Math.floor(Math.random() * 16).toString(16);
-  return Array.from({ length: 8 }, s).join("") + "-"
-    + Array.from({ length: 4 }, s).join("") + "-"
-    + Array.from({ length: 4 }, s).join("") + "-"
-    + Array.from({ length: 4 }, s).join("") + "-"
-    + Array.from({ length: 12 }, s).join("");
-}
-
-const API_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Accept": "application/json, text/plain, */*",
-  "Accept-Language": "zh-CN,zh;q=0.9",
-  "Accept-Encoding": "gzip, deflate",
-  "Referer": `https://space.bilibili.com/${UID}/dynamic`,
-  "Cookie": `buvid3=${randomBuvid3()}`,
-};
 
 function run(cmd, args, opts = {}) {
   const result = spawnSync(cmd, args, { stdio: "inherit", ...opts });
@@ -105,65 +88,75 @@ function parseItem(item) {
   return { id, file, front, body: body.join("\n") };
 }
 
-async function fetchPage(offset) {
-  const params = new URLSearchParams({ host_mid: UID });
-  if (offset) params.set("offset", offset);
-
-  const url = `https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?${params}`;
-  const resp = await fetch(url, { headers: API_HEADERS });
-
-  if (!resp.ok) {
-    console.error(`  HTTP ${resp.status}`);
-    return null;
-  }
-
-  const json = await resp.json();
-  if (json.code !== 0) {
-    console.error(`  API error: ${json.code} ${json.message || ""}`);
-    return null;
-  }
-
-  return json.data;
-}
-
 async function fetchDynamics() {
+  const browser = await chromium.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+  const ctx = await browser.newContext({
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    locale: "zh-CN",
+  });
+  const page = await ctx.newPage();
+
   const allItems = [];
-  const seen = new Set();
+  const seenIds = new Set();
   let offset = "";
-  let pageRetries = 0;
 
-  for (let i = 0; i < MAX_PAGES; i++) {
-    console.log(`\n\uD83D\uDCC4 请求第 ${i + 1} 页${offset ? ` (offset: ${offset.slice(0, 10)}...)` : ""}`);
+  try {
+    console.log(`\n\uD83C\uDF10 访问 B站空间: https://space.bilibili.com/${UID}/dynamic`);
+    await page.goto(`https://space.bilibili.com/${UID}/dynamic`, {
+      waitUntil: "load",
+      timeout: 30000,
+    });
+    await page.waitForTimeout(4000);
 
-    try {
-      const data = await fetchPage(offset);
-      if (!data || !data.items || data.items.length === 0) {
-        console.log("  无数据，停止");
+    for (let i = 0; i < MAX_PAGES; i++) {
+      console.log(`\n\uD83D\uDCC4 请求第 ${i + 1} 页${offset ? ` (offset: ${offset.slice(0, 10)}...)` : ""}`);
+
+      const apidata = await page.evaluate(async (uid, off) => {
+        const params = new URLSearchParams({ host_mid: uid });
+        if (off) params.set("offset", off);
+        const resp = await fetch(
+          "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?" + params,
+          {
+            credentials: "include",
+            headers: { Accept: "application/json, text/plain, */*" },
+          }
+        );
+        const json = await resp.json();
+        return json;
+      }, UID, offset);
+
+      if (apidata.code !== 0) {
+        console.log(`  API 错误: ${apidata.code} ${apidata.message || ""}`);
+        break;
+      }
+      if (!apidata.data?.items || apidata.data.items.length === 0) {
+        console.log("  无数据");
         break;
       }
 
       let newCount = 0;
-      for (const item of data.items) {
-        if (!seen.has(item.id_str)) {
-          seen.add(item.id_str);
+      for (const item of apidata.data.items) {
+        if (!seenIds.has(item.id_str)) {
+          seenIds.add(item.id_str);
           allItems.push(item);
           newCount++;
         }
       }
-      console.log(`  返回 ${data.items.length} 条，新增 ${newCount} 条`);
+      console.log(`  返回 ${apidata.data.items.length} 条，新增 ${newCount} 条`);
 
-      offset = data.offset || "";
-      if (!offset || !data.has_more) {
+      offset = apidata.data.offset || "";
+      if (!offset || !apidata.data.has_more) {
         console.log("  无更多页");
         break;
       }
-      pageRetries = 0;
-    } catch (err) {
-      console.error(`  请求失败: ${err.message}`);
-      pageRetries++;
-      if (pageRetries >= 3) break;
-      await new Promise(r => setTimeout(r, 2000));
     }
+  } catch (err) {
+    console.error("浏览器异常:", err.message);
+  } finally {
+    await browser.close();
   }
 
   return allItems;
