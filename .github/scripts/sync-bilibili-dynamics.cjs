@@ -114,19 +114,15 @@ async function fetchDynamics() {
     for (let i = 0; i < MAX_PAGES; i++) {
       console.log(`\n\uD83D\uDCC4 请求第 ${i + 1} 页${offset ? ` (offset: ${offset.slice(0, 10)}...)` : ""}`);
 
-      const apidata = await page.evaluate(async (uid, off) => {
+      const apidata = await page.evaluate(async ({ uid, off }) => {
         const params = new URLSearchParams({ host_mid: uid });
         if (off) params.set("offset", off);
         const resp = await fetch(
           "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?" + params,
-          {
-            credentials: "include",
-            headers: { Accept: "application/json, text/plain, */*" },
-          }
+          { credentials: "include", headers: { Accept: "application/json, text/plain, */*" } }
         );
-        const json = await resp.json();
-        return json;
-      }, UID, offset);
+        return await resp.json();
+      }, { uid: UID, off: offset });
 
       if (apidata.code !== 0) {
         console.log(`  API 错误: ${apidata.code} ${apidata.message || ""}`);
@@ -152,6 +148,7 @@ async function fetchDynamics() {
         console.log("  无更多页");
         break;
       }
+      await page.waitForTimeout(1500);
     }
   } catch (err) {
     console.error("浏览器异常:", err.message);
