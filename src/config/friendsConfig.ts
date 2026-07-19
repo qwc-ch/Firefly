@@ -299,6 +299,17 @@ export const friendsConfig: FriendLink[] = [
 	weight: 13,
 	enabled: true,
 	},
+	{
+	title: "Olinl Blog",
+	imgurl: "https://blog.olinl.com/assets/images/avatar.webp",
+	desc: "分享、实践、学习",
+	siteurl: "https://blog.olinl.com",
+	tags: [
+		"Blog",
+	],
+	weight: 9,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
