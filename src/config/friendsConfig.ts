@@ -310,6 +310,17 @@ export const friendsConfig: FriendLink[] = [
 	weight: 9,
 	enabled: true,
 	},
+	{
+	title: "极客指北",
+	imgurl: "https://www.90svip.cn/logo.png",
+	desc: "极客指北",
+	siteurl: "https://www.90svip.cn",
+	tags: [
+		"Blog",
+	],
+	weight: 10,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
