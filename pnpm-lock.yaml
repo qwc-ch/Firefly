@@ -188,6 +188,9 @@ importers:
       tsx:
         specifier: ^4.23.0
         version: 4.23.0
+      twikoo:
+        specifier: 1.7.14
+        version: 1.7.14
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -5514,6 +5517,9 @@ packages:
     resolution: {integrity: sha512-eUdUIaCr963q2h5u3+QwvYp0+eqPvn+egeqZUm0hwERCqqx1E3kK5ehbGCvqSE5MQAULr67ww0cA3jKc3YkM1w==}
     engines: {node: '>=18.0.0'}
     hasBin: true
+
+  twikoo@1.7.14:
+    resolution: {integrity: sha512-hv21UXnj5IPzBCUMS2V1PMUD+uxCcw3pf4DzAvmkDYoakAlWxtPkgNePQRXZZTtCFnrqfaZeJYICZiiP1kUEQQ==}
 
   typed-array-buffer@1.0.3:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
@@ -12472,6 +12478,8 @@ snapshots:
       esbuild: 0.28.1
     optionalDependencies:
       fsevents: 2.3.3
+
+  twikoo@1.7.14: {}
 
   typed-array-buffer@1.0.3:
     dependencies:

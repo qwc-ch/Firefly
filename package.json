@@ -38,7 +38,7 @@
     "@iconify-json/mingcute": "^1.2.7",
     "@iconify-json/simple-icons": "^1.2.89",
     "@iconify/utils": "^3.1.4",
-"@mermanjs/web": "0.8.0-alpha.3",
+    "@mermanjs/web": "0.8.0-alpha.3",
     "@napi-rs/wasm-runtime": "^1.1.6",
     "@swup/astro": "^1.8.0",
     "@tailwindcss/typography": "^0.5.20",
@@ -80,6 +80,7 @@
     "svelte": "^5.56.4",
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.0",
+    "twikoo": "1.7.14",
     "typescript": "^6.0.3",
     "unist-util-visit": "^5.1.0",
     "wrangler": "^4.107.1"
