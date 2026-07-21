@@ -33,7 +33,7 @@ export const siteConfig: SiteConfig = {
 
 	// 主题色
 	themeColor: {
-		hue: 330,
+		hue: 0,
 		fixed: false,
 		defaultMode: "system",
 	},
@@ -53,7 +53,7 @@ export const siteConfig: SiteConfig = {
 	// 如果启用了OpenGraph图片功能，数组中需要包含png格式的favicon图标
 	favicon: [
 		{
-			src: "/favicon/favicon2.png",
+		src: "/favicon/favicon2.png",
 		},
 	],
 
@@ -88,7 +88,12 @@ export const siteConfig: SiteConfig = {
 			mode: "dynamic",
 			apiUrl: "https://bgmapi.anibt.net",
 			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-			categoryOrder: ["anime", "book", "music", "game"],
+			categoryOrder: [
+				"anime",
+				"book",
+				"music",
+				"game",
+			],
 		},
 		gallery: true,
 		anime: {
@@ -193,7 +198,10 @@ export const siteConfig: SiteConfig = {
 	imageOptimization: {
 		formats: "webp",
 		quality: 85,
-		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
+		noReferrerDomains: [
+			"*.hdslb.com",
+			"*.bilibili.com",
+		],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
