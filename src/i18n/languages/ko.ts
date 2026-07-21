@@ -409,6 +409,24 @@ export const ko: Translation = {
 	[Key.passwordProtectedRss]:
 		"이 글은 암호화되어 있습니다. 웹사이트에서 확인해 주세요.",
 
+	// Circle (친구 글)
+	[Key.circle]: "서클",
+	[Key.circleDescription]: "친구들의 최신 글",
+	[Key.circleAllFriends]: "모든 친구",
+	[Key.circleEmpty]: "아직 글이 없습니다",
+	[Key.circleError]: "불러오기 실패, 다시 시도해주세요",
+	[Key.circleLoading]: "서클 데이터 로딩 중...",
+	[Key.circleRefreshing]: "새로고침 중...",
+	[Key.circleSortLatest]: "최신",
+	[Key.circleSortUpdated]: "업데이트",
+	[Key.circleLoadMore]: "더 불러오기",
+	[Key.circleNoMore]: "—— 더 이상 없습니다 ——",
+	[Key.circleRetry]: "재시도",
+	[Key.circleFriendsStat]: "친구",
+	[Key.circleActiveStat]: "활동",
+	[Key.circleArticleStat]: "글",
+	[Key.circleRandomNoticePrefix]: "에서",
+
 	// Background video player
 	[Key.videoPlay]: "배경 영상 재생",
 	[Key.videoPause]: "배경 영상 일시정지",

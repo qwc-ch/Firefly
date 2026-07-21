@@ -419,6 +419,24 @@ export const en: Translation = {
 	[Key.aiSummaryReference]: "Ref",
 	[Key.aiSummaryMoreAsk]: "Ask AI More",
 
+	// Circle (Friends' Moments)
+	[Key.circle]: "Circle",
+	[Key.circleDescription]: "Latest articles from friends",
+	[Key.circleAllFriends]: "All Friends",
+	[Key.circleEmpty]: "No articles found yet",
+	[Key.circleError]: "Failed to load, please try again",
+	[Key.circleLoading]: "Loading circle data...",
+	[Key.circleRefreshing]: "Refreshing...",
+	[Key.circleSortLatest]: "Latest",
+	[Key.circleSortUpdated]: "Updated",
+	[Key.circleLoadMore]: "Load More",
+	[Key.circleNoMore]: "—— No more ——",
+	[Key.circleRetry]: "Retry",
+	[Key.circleFriendsStat]: "Friends",
+	[Key.circleActiveStat]: "Active",
+	[Key.circleArticleStat]: "Articles",
+	[Key.circleRandomNoticePrefix]: "From",
+
 	// Background video player
 	[Key.videoPlay]: "Play background video",
 	[Key.videoPause]: "Pause background video",

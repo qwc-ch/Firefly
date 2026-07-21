@@ -42,11 +42,14 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:group",
 		children: [
-			// 相册
+			// 友链
 			LinkPresets.Friends,
 
-			// 追番
+			// 留言
 			LinkPresets.Guestbook,
+
+			// 朋友圈
+			LinkPresets.Circle,
 		],
 	});
 
@@ -231,6 +234,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/chat/",
 		icon: "material-symbols:smart-toy",
 		pageKey: "chat",
+	},
+	Circle: {
+		name: "朋友圈",
+		url: "/circle/",
+		icon: "material-symbols:group",
+		pageKey: "circle",
 	},
 };
 

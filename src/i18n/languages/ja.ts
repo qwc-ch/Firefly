@@ -418,6 +418,24 @@ export const ja: Translation = {
 	[Key.aiSummaryReference]: "参照",
 	[Key.aiSummaryMoreAsk]: "AIにもっと質問",
 
+	// サークル (友達の輪)
+	[Key.circle]: "サークル",
+	[Key.circleDescription]: "友達の最新記事",
+	[Key.circleAllFriends]: "すべての友達",
+	[Key.circleEmpty]: "記事が見つかりません",
+	[Key.circleError]: "読み込みに失敗しました。再試行してください",
+	[Key.circleLoading]: "サークルデータを読み込み中...",
+	[Key.circleRefreshing]: "更新中...",
+	[Key.circleSortLatest]: "最新",
+	[Key.circleSortUpdated]: "更新",
+	[Key.circleLoadMore]: "もっと読み込む",
+	[Key.circleNoMore]: "—— これ以上ありません ——",
+	[Key.circleRetry]: "再試行",
+	[Key.circleFriendsStat]: "友達",
+	[Key.circleActiveStat]: "アクティブ",
+	[Key.circleArticleStat]: "記事",
+	[Key.circleRandomNoticePrefix]: "から",
+
 	// 背景動画プレイヤー
 	[Key.videoPlay]: "背景動画を再生",
 	[Key.videoPause]: "背景動画を一時停止",

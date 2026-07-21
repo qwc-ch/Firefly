@@ -1,0 +1,70 @@
+---
+import { getEntry, render } from "astro:content";
+import Markdown from "@components/common/Markdown.astro";
+import CircleFeed from "@components/pages/circle/CircleFeed.svelte";
+import { circleConfig, commentConfig, siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import "@/styles/features/circle.css";
+
+if (!siteConfig.pages.circle) {
+	return Astro.redirect("/404/");
+}
+
+const circlePost = await getEntry("spec", "circle");
+
+if (!circlePost) {
+	throw new Error("circle page content not found");
+}
+
+const { Content } = await render(circlePost);
+
+const title = circleConfig.title || i18n(I18nKey.circle);
+const description = circleConfig.description || i18n(I18nKey.circleDescription);
+
+const isCommentEnabled =
+	commentConfig?.type &&
+	commentConfig.type !== "none" &&
+	circleConfig.showComment !== false;
+---
+
+<MainGridLayout title={title} description={description}>
+  <div
+    class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32"
+  >
+    <div class="card-base z-10 px-9 py-6 relative w-full">
+      <CircleFeed
+        dataUrl={circleConfig.dataUrl}
+        pageSize={circleConfig.pageSize}
+        showStats={circleConfig.showStats}
+        showFloor={circleConfig.showFloor}
+        cacheTime={circleConfig.cacheTime}
+        friendsLinkText={i18n(I18nKey.circleAllFriends)}
+        allFriendsUrl="/friends/"
+        emptyText={i18n(I18nKey.circleEmpty)}
+        errorText={i18n(I18nKey.circleError)}
+        loadingText={i18n(I18nKey.circleLoading)}
+        refreshingText={i18n(I18nKey.circleRefreshing)}
+        sortLatestText={i18n(I18nKey.circleSortLatest)}
+        sortUpdatedText={i18n(I18nKey.circleSortUpdated)}
+        loadMoreText={i18n(I18nKey.circleLoadMore)}
+        noMoreText={i18n(I18nKey.circleNoMore)}
+        retryText={i18n(I18nKey.circleRetry)}
+        friendsStatText={i18n(I18nKey.circleFriendsStat)}
+        activeStatText={i18n(I18nKey.circleActiveStat)}
+        articleStatText={i18n(I18nKey.circleArticleStat)}
+        randomNoticePrefix={i18n(I18nKey.circleRandomNoticePrefix)}
+        client:only="svelte"
+      />
+    </div>
+  </div>
+
+  {isCommentEnabled && (
+    <div class="mt-4 card-base z-10 px-9 py-6 relative w-full">
+      <Markdown class="">
+        <Content />
+      </Markdown>
+    </div>
+  )}
+</MainGridLayout>

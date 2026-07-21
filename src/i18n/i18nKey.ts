@@ -406,6 +406,24 @@ enum I18nKey {
 	aiSummaryReference = "aiSummaryReference",
 	aiSummaryMoreAsk = "aiSummaryMoreAsk",
 
+	// 朋友圈
+	circle = "circle",
+	circleDescription = "circleDescription",
+	circleAllFriends = "circleAllFriends",
+	circleEmpty = "circleEmpty",
+	circleError = "circleError",
+	circleLoading = "circleLoading",
+	circleRefreshing = "circleRefreshing",
+	circleSortLatest = "circleSortLatest",
+	circleSortUpdated = "circleSortUpdated",
+	circleLoadMore = "circleLoadMore",
+	circleNoMore = "circleNoMore",
+	circleRetry = "circleRetry",
+	circleFriendsStat = "circleFriendsStat",
+	circleActiveStat = "circleActiveStat",
+	circleArticleStat = "circleArticleStat",
+	circleRandomNoticePrefix = "circleRandomNoticePrefix",
+
 	// 背景视频播放器
 	videoPlay = "videoPlay",
 	videoPause = "videoPause",

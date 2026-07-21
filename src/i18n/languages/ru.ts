@@ -421,6 +421,24 @@ export const ru: Translation = {
 	[Key.aiSummaryReference]: "Ссылка",
 	[Key.aiSummaryMoreAsk]: "Спросить AI",
 
+	// Круг (Лента друзей)
+	[Key.circle]: "Круг",
+	[Key.circleDescription]: "Последние статьи друзей",
+	[Key.circleAllFriends]: "Все друзья",
+	[Key.circleEmpty]: "Статьи не найдены",
+	[Key.circleError]: "Ошибка загрузки, попробуйте снова",
+	[Key.circleLoading]: "Загрузка данных круга...",
+	[Key.circleRefreshing]: "Обновление...",
+	[Key.circleSortLatest]: "Новые",
+	[Key.circleSortUpdated]: "Обновленные",
+	[Key.circleLoadMore]: "Загрузить еще",
+	[Key.circleNoMore]: "—— Больше нет ——",
+	[Key.circleRetry]: "Повторить",
+	[Key.circleFriendsStat]: "Друзья",
+	[Key.circleActiveStat]: "Активные",
+	[Key.circleArticleStat]: "Статьи",
+	[Key.circleRandomNoticePrefix]: "От",
+
 	// Фоновый видеоплеер
 	[Key.videoPlay]: "Воспроизвести фоновое видео",
 	[Key.videoPause]: "Пауза фонового видео",

@@ -101,6 +101,7 @@ export type SiteConfig = {
 			  };
 		chat?: boolean; // AI聊天页面开关
 		dynamic?: boolean; // 动态页面开关
+		circle?: boolean; // 朋友圈页面开关
 	};
 
 	// 分类导航栏开关

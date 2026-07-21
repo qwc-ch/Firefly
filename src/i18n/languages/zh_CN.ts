@@ -408,6 +408,24 @@ export const zh_CN: Translation = {
 	[Key.aiSummaryReference]: "引用",
 	[Key.aiSummaryMoreAsk]: "继续问 AI",
 
+	// 朋友圈
+	[Key.circle]: "朋友圈",
+	[Key.circleDescription]: "浏览友链们的最新文章",
+	[Key.circleAllFriends]: "全部友链",
+	[Key.circleEmpty]: "还没有获取到文章",
+	[Key.circleError]: "加载失败，请稍后再试",
+	[Key.circleLoading]: "正在加载朋友圈数据...",
+	[Key.circleRefreshing]: "刷新中...",
+	[Key.circleSortLatest]: "最新发布",
+	[Key.circleSortUpdated]: "最近更新",
+	[Key.circleLoadMore]: "加载更多",
+	[Key.circleNoMore]: "—— 没有更多了 ——",
+	[Key.circleRetry]: "重试",
+	[Key.circleFriendsStat]: "好友",
+	[Key.circleActiveStat]: "活跃",
+	[Key.circleArticleStat]: "动态",
+	[Key.circleRandomNoticePrefix]: "来自",
+
 	// 背景视频播放器
 	[Key.videoPlay]: "播放背景视频",
 	[Key.videoPause]: "暂停背景视频",
