@@ -389,7 +389,9 @@ export const friendsConfig: FriendLink[] = [
 	desc: "Keep going.",
 	siteurl: "https://xane.eu.cc",
 	rss: "https://xane.eu.cc/rss.xml",
-	tags: [],
+	tags: [
+		"Blog",
+	],
 	weight: 8,
 	enabled: true,
 	},
