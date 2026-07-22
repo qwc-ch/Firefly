@@ -387,7 +387,7 @@ function getNested(path: string): unknown {
         </button>
         {#if openSections.has('friends')}
           <div class="section-body">
-            {#each friends as friend, i (friend.title as string || '')}
+            {#each friends as friend, i (i)}
               <div class="friend-card" class:friend-disabled={!friend.enabled}>
                 <div class="friend-card-header">
                   <img class="friend-avatar" src={String(friend.imgurl || '')} alt={String(friend.title || '')} />
