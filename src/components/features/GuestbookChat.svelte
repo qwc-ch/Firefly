@@ -2,7 +2,12 @@
 import { onDestroy, onMount } from "svelte";
 import { commentConfig } from "@/config/commentConfig";
 
-type Profile = { nick: string; mail: string; link: string; mailMd5?: string };
+type Profile = {
+	nick: string;
+	mail: string;
+	link: string;
+	mailHashes?: string[];
+};
 
 const envId = commentConfig.twikoo.envId;
 const PATH = "/guestbook/";
@@ -22,24 +27,86 @@ let autoScroll = $state(true);
 
 const KEY = "guestbook-profile";
 
-async function md5(str: string): Promise<string> {
-	const buf = await crypto.subtle.digest("MD5", new TextEncoder().encode(str));
-	return Array.from(new Uint8Array(buf))
-		.map((b) => b.toString(16).padStart(2, "0"))
-		.join("");
+function md5(s: string): string {
+	const hex = (n: number) => (n >>> 0).toString(16).padStart(8, "0");
+	const add = (a: number, b: number) => (a + b) >>> 0;
+	const rot = (n: number, s: number) => ((n << s) | (n >>> (32 - s))) >>> 0;
+	const F = (x: number, y: number, z: number) => (x & y) | (~x & z);
+	const G = (x: number, y: number, z: number) => (x & z) | (y & ~z);
+	const H = (x: number, y: number, z: number) => x ^ y ^ z;
+	const I = (x: number, y: number, z: number) => y ^ (x | ~z);
+	const T = (i: number) => (Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0;
+	const pad = (s: string) => {
+		const l = s.length * 8;
+		const r: number[] = [];
+		for (let i = 0; i < s.length; i++) {
+			const c = s.charCodeAt(i);
+			r[i >> 2] = (r[i >> 2] || 0) + (c << ((i % 4) * 8));
+		}
+		const bitLen = s.length * 8;
+		r[bitLen >> 5] = (r[bitLen >> 5] || 0) | (0x80 << (bitLen % 32));
+		r[(((bitLen + 64) >>> 9) << 4) + 15] = bitLen;
+		return r;
+	};
+	const x = pad(s);
+	let a = 1732584193;
+	let b = -271733879;
+	let c = -1732584194;
+	let d = 271733878;
+	for (let blk = 0; blk < x.length; blk += 16) {
+		let aa = a;
+		let bb = b;
+		let cc = c;
+		let dd = d;
+		const X = (i: number) => x[blk + i];
+		const op = (
+			func: (x: number, y: number, z: number) => number,
+			k: number,
+			s: number,
+			idx: number,
+		) => {
+			a = add(b, rot(add(a, add(func(b, c, d), add(X(idx), T(k)))), s));
+			const t = d;
+			d = c;
+			c = b;
+			b = a;
+			a = t;
+		};
+		for (let j = 0; j < 16; j++) op(F, j, [7, 12, 17, 22][j % 4], j);
+		for (let j = 0; j < 16; j++)
+			op(G, j, [5, 9, 14, 20][j % 4], (1 + 5 * j) % 16);
+		for (let j = 0; j < 16; j++)
+			op(H, j, [4, 11, 16, 23][j % 4], (5 + 3 * j) % 16);
+		for (let j = 0; j < 16; j++) op(I, j, [6, 10, 15, 21][j % 4], (7 * j) % 16);
+		a = add(aa, a);
+		b = add(bb, b);
+		c = add(cc, c);
+		d = add(dd, d);
+	}
+	return hex(a) + hex(b) + hex(c) + hex(d);
 }
 
-function loadProfile() {
+async function mailHashes(mail: string): Promise<string[]> {
+	const str = mail.trim().toLowerCase();
+	const sha256 = Array.from(
+		new Uint8Array(
+			await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)),
+		),
+	)
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
+	return [md5(str), sha256];
+}
+
+async function loadProfile() {
 	try {
 		const d = localStorage.getItem(KEY);
 		if (d) profile = JSON.parse(d);
 	} catch {}
 	if (profile.mail) {
-		if (!profile.mailMd5) {
-			md5(profile.mail.trim().toLowerCase()).then((h) => {
-				profile.mailMd5 = h;
-				localStorage.setItem(KEY, JSON.stringify(profile));
-			});
+		if (!profile.mailHashes) {
+			profile.mailHashes = await mailHashes(profile.mail);
+			localStorage.setItem(KEY, JSON.stringify(profile));
 		}
 		return;
 	}
@@ -60,11 +127,9 @@ function loadProfile() {
 						nick: p.nick || profile.nick,
 						link: p.link || profile.link || "",
 					};
-					if (!profile.mailMd5) {
-						md5(profile.mail.trim().toLowerCase()).then((h) => {
-							profile.mailMd5 = h;
-							localStorage.setItem(KEY, JSON.stringify(profile));
-						});
+					if (!profile.mailHashes) {
+						profile.mailHashes = await mailHashes(profile.mail);
+						localStorage.setItem(KEY, JSON.stringify(profile));
 					}
 					return;
 				}
@@ -73,9 +138,7 @@ function loadProfile() {
 	}
 }
 async function saveProfile() {
-	profile.mailMd5 = profile.mail
-		? await md5(profile.mail.trim().toLowerCase())
-		: "";
+	profile.mailHashes = profile.mail ? await mailHashes(profile.mail) : [];
 	localStorage.setItem(KEY, JSON.stringify(profile));
 }
 function avatarUrl(mail: string | undefined, mailMd5?: string): string {
@@ -101,8 +164,7 @@ function fmtTime(iso: string) {
 
 function isSelf(msg: CommentData) {
 	if (profile.mail && msg.mail && msg.mail === profile.mail) return true;
-	if (profile.mailMd5 && msg.mailMd5 && msg.mailMd5 === profile.mailMd5)
-		return true;
+	if (msg.mailMd5 && profile.mailHashes?.includes(msg.mailMd5)) return true;
 	const ids: string[] = JSON.parse(localStorage.getItem("gb-self-ids") || "[]");
 	return ids.includes(msg.id);
 }
@@ -263,8 +325,8 @@ function handleKey(e: KeyboardEvent) {
 
 let timer: ReturnType<typeof setInterval>;
 
-onMount(() => {
-	loadProfile();
+onMount(async () => {
+	await loadProfile();
 	fetchAll();
 	timer = setInterval(fetchAll, 30000);
 });
