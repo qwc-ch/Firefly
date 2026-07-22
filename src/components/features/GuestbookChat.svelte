@@ -2,7 +2,7 @@
 import { onDestroy, onMount } from "svelte";
 import { commentConfig } from "@/config/commentConfig";
 
-type Profile = { nick: string; mail: string; link: string };
+type Profile = { nick: string; mail: string; link: string; mailMd5?: string };
 
 const envId = commentConfig.twikoo.envId;
 const PATH = "/guestbook/";
@@ -22,12 +22,27 @@ let autoScroll = $state(true);
 
 const KEY = "guestbook-profile";
 
+async function md5(str: string): Promise<string> {
+	const buf = await crypto.subtle.digest("MD5", new TextEncoder().encode(str));
+	return Array.from(new Uint8Array(buf))
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
+}
+
 function loadProfile() {
 	try {
 		const d = localStorage.getItem(KEY);
 		if (d) profile = JSON.parse(d);
 	} catch {}
-	if (profile.mail) return;
+	if (profile.mail) {
+		if (!profile.mailMd5) {
+			md5(profile.mail.trim().toLowerCase()).then((h) => {
+				profile.mailMd5 = h;
+				localStorage.setItem(KEY, JSON.stringify(profile));
+			});
+		}
+		return;
+	}
 	const twikooKeys = [
 		`twikoo-${envId}`,
 		"twikoo-commenter",
@@ -45,13 +60,22 @@ function loadProfile() {
 						nick: p.nick || profile.nick,
 						link: p.link || profile.link || "",
 					};
+					if (!profile.mailMd5) {
+						md5(profile.mail.trim().toLowerCase()).then((h) => {
+							profile.mailMd5 = h;
+							localStorage.setItem(KEY, JSON.stringify(profile));
+						});
+					}
 					return;
 				}
 			}
 		} catch {}
 	}
 }
-function saveProfile() {
+async function saveProfile() {
+	profile.mailMd5 = profile.mail
+		? await md5(profile.mail.trim().toLowerCase())
+		: "";
 	localStorage.setItem(KEY, JSON.stringify(profile));
 }
 function avatarUrl(mail: string | undefined, mailMd5?: string): string {
@@ -77,6 +101,8 @@ function fmtTime(iso: string) {
 
 function isSelf(msg: CommentData) {
 	if (profile.mail && msg.mail && msg.mail === profile.mail) return true;
+	if (profile.mailMd5 && msg.mailMd5 && msg.mailMd5 === profile.mailMd5)
+		return true;
 	const ids: string[] = JSON.parse(localStorage.getItem("gb-self-ids") || "[]");
 	return ids.includes(msg.id);
 }
@@ -141,7 +167,10 @@ function flatten(list: CommentData[]): CommentData[] {
 	function walk(arr: CommentData[], parentNick?: string) {
 		for (const c of arr) {
 			const txt = c.comment ?? c.content ?? "";
-			const prefixed = parentNick ? `@${parentNick} ${txt}` : txt;
+			const prefixed =
+				parentNick && !txt.startsWith(`@${parentNick}`)
+					? `@${parentNick} ${txt}`
+					: txt;
 			r.push({ ...c, comment: prefixed, children: [] });
 			if (c.children?.length) walk(c.children, c.nick);
 		}
@@ -290,7 +319,7 @@ $effect(() => {
 						</div>
 						<div class="gb__bub" class:gb__bub--self={isSelf(msg)} class:gb__bub--admin={msg.isAdmin}>{@html msg.comment}</div>
 						<div class="gb__act" class:gb__act--self={isSelf(msg)}>
-							<button onclick={() => { replyNick = msg.nick; replyId = msg.id; if (msgEl) msgEl.scrollTo({ top: msgEl.scrollHeight, behavior: "smooth" }); }}>回复</button>
+							<button onclick={() => { replyNick = msg.nick; replyId = msg.id; text = `@${msg.nick} `; textareaEl?.focus(); if (msgEl) msgEl.scrollTo({ top: msgEl.scrollHeight, behavior: "smooth" }); }}>回复</button>
 							{#if isSelf(msg)}<button class="gb__del" onclick={() => del(msg.id)}>删除</button>{/if}
 						</div>
 					</div>
@@ -341,7 +370,7 @@ $effect(() => {
 				<label><span>网站</span><input type="url" bind:value={profile.link} placeholder="https://" /></label>
 			</div>
 			<div class="gb__mf">
-				<button onclick={() => { if (profile.nick.trim()) { saveProfile(); profileOpen = false; } }}>确认</button>
+				<button onclick={async () => { if (profile.nick.trim()) { await saveProfile(); profileOpen = false; } }}>确认</button>
 			</div>
 		</div>
 	</div>
