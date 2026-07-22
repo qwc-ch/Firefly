@@ -423,6 +423,10 @@ function getNested(path: string): unknown {
                     <input class="friend-input" value={String(friend.siteurl || '')} oninput={(e) => { friends[i] = { ...friends[i], siteurl: (e.target as HTMLInputElement).value }; friends = friends; }} />
                   </label>
                   <label class="friend-field">
+                    <span>RSS 订阅</span>
+                    <input class="friend-input" value={String(friend.rss || '')} oninput={(e) => { friends[i] = { ...friends[i], rss: (e.target as HTMLInputElement).value }; friends = friends; }} />
+                  </label>
+                  <label class="friend-field">
                     <span>描述</span>
                     <input class="friend-input" value={String(friend.desc || '')} oninput={(e) => { friends[i] = { ...friends[i], desc: (e.target as HTMLInputElement).value }; friends = friends; }} />
                   </label>
@@ -442,7 +446,7 @@ function getNested(path: string): unknown {
 
             <div class="friend-add-area">
               <button class="btn-add-friend" onclick={() => {
-                friends = [...friends, { title: '', imgurl: '', desc: '', siteurl: '', tags: [], weight: 10, enabled: true }];
+                friends = [...friends, { title: '', imgurl: '', desc: '', siteurl: '', rss: '', tags: [], weight: 10, enabled: true }];
               }}>
                 <i class="icon" style="font-size:16px">{@html getIconSvg("material-symbols:add")}</i>
                 <span>添加友链</span>
