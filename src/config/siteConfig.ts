@@ -33,7 +33,8 @@ export const siteConfig: SiteConfig = {
 
 	// 主题色
 	themeColor: {
-		hue: 0,
+		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
+		hue: 165,
 		fixed: false,
 		defaultMode: "system",
 	},
@@ -110,7 +111,8 @@ export const siteConfig: SiteConfig = {
 	// 文章列表布局配置
 	postListLayout: {
 		defaultMode: "list",
-		mobileDefaultMode: "list",
+		// 移动端默认布局模式，不设置则跟随 defaultMode
+		mobileDefaultMode: "grid",
 		allowSwitch: true,
 		descriptionLines: 2,
 		showStatsIcons: true,
@@ -162,6 +164,10 @@ export const siteConfig: SiteConfig = {
 		// 可选值: "anime" | "book" | "music" | "game" | "real" (暂不支持"real"类型)
 		// 未列出的类型将按默认顺序排在后面
 		categoryOrder: ["anime", "book", "music", "game"],
+		// 控制各分类的启用状态（true/false），未指定的分类默认启用
+		// categories: {
+		// 	game: false, // 禁用游戏分类显示
+		// },
 	},
 
 	// 追番配置（Bilibili + TMDB）

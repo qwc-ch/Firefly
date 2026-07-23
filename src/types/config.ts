@@ -5,6 +5,7 @@ export type { BackgroundWallpaperConfig } from "./backgroundWallpaper";
 export type { CircleConfig } from "./circleConfig";
 export type { CommentConfig } from "./commentConfig";
 export type { CoverImageConfig } from "./coverImageConfig";
+export type { DisplaySettingsConfig } from "./displaySettingsConfig";
 export type { DynamicConfig } from "./dynamicConfig";
 export type { SakuraConfig } from "./effectsConfig";
 
