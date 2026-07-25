@@ -6,7 +6,6 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-<<<<<<< HEAD
     "build": "npx tsx scripts/generate-lqips.ts && astro build && npx tsx scripts/subset-fonts.ts && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",

@@ -35,7 +35,6 @@ export const siteConfig: SiteConfig = {
 	themeColor: {
 		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		hue: 165,
-		fixed: false,
 		defaultMode: "system",
 	},
 
@@ -113,7 +112,6 @@ export const siteConfig: SiteConfig = {
 		defaultMode: "list",
 		// 移动端默认布局模式，不设置则跟随 defaultMode
 		mobileDefaultMode: "grid",
-		allowSwitch: true,
 		descriptionLines: 2,
 		showStatsIcons: true,
 		tagsPosition: "bottom",
