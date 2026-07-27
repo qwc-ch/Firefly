@@ -195,6 +195,10 @@ export const siteConfig: SiteConfig = {
 	// Astro 仅能对 src 目录下的图像进行优化，src 目录下的图像越多，构建时间会越长
 	// Astro 图像文档 https://docs.astro.build/zh-cn/guides/images/
 	imageOptimization: {
+		// 输出图片格式
+		// - "avif": 仅输出 AVIF 格式（最新技术，最小体积，目前兼容性较低，构建时间较长）
+		// - "webp": 仅输出 WebP 格式（体积适中，兼容性好，构建时间短）
+		// - "both": 同时输出 AVIF 和 WebP（浏览器自动选择最佳格式）
 		formats: "webp",
 		quality: 85,
 		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],

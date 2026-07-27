@@ -29,7 +29,6 @@ yarn.lock
 # ide
 .idea
 *.iml
-.claude
 
 # docs
 Firefly-docs/
@@ -41,3 +40,8 @@ git.sh
 
 # generated at build time
 public/posts-index.json
+
+# vibe coding
+.codex*
+.claude
+.mimocode
