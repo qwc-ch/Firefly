@@ -1,0 +1,1 @@
+var i={enabled:!0,models:[{id:"minimax-m3",name:"MiniMax-M3",url:"https://i.520781.xyz/summarize",hasThinking:!1},{id:"minimax-m2",name:"MiniMax-M2.7",url:"https://i.520781.xyz/summarize2",hasThinking:!0}],defaultModel:0};export{i as t};
