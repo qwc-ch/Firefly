@@ -87,6 +87,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
+	// 音乐（外部链接）
+	links.push(LinkPresets.Music);
+
 	// 自定义导航栏链接
 	links.push({
 		name: "链接",
@@ -240,6 +243,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/circle/",
 		icon: "material-symbols:group",
 		pageKey: "circle",
+	},
+	Music: {
+		name: "音乐",
+		url: "https://music.amamo.top/",
+		external: true,
+		icon: "material-symbols:music-note",
 	},
 };
 
