@@ -1,12 +1,13 @@
 ---
-title: Firefly Wiki Link 内部链接示例
+title: "Firefly Wiki Link 内部链接示例"
 published: 1970-01-03
-description: 在 Firefly 文章中使用 Obsidian 风格的 Wiki Link 内部链接，并自动生成文章链接卡片。
-image: ""
-tags: [Markdown, Obsidian, Wiki-Link, 文章示例]
-category: 博客指南
-slug: guide/firefly-wiki-link
+draft: true
+description: "在 Firefly 文章中使用 Obsidian 风格的 Wiki Link 内部链接，并自动生成文章链接卡片。"
+tags: ['Markdown', 'Obsidian', 'Wiki-Link', '文章示例']
+category: '博客指南'
+author: 'Admin'
 ---
+
 
 Firefly 支持在 Markdown、MDX 文章中使用 Obsidian 风格的 Wiki Link 内部链接。链接目标填写文章的 slug 或文件路径，都不需要包含扩展名，具体匹配规则见下文「链接目标的三种写法」。
 
