@@ -136,11 +136,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "material-symbols:docs",
 			},
-			{
-				name: "管理",
-				url: "/config/",
-				icon: "material-symbols:settings",
-			},
 		],
 	});
 

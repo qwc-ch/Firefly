@@ -85,18 +85,14 @@ export const siteConfig: SiteConfig = {
 		guestbook: true,
 		bangumi: {
 			userId: "1186385",
-			mode: "dynamic",
+			mode: "static",
 			apiUrl: "https://bgmapi.anibt.net",
 			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
 			categoryOrder: ["anime", "book", "music", "game"],
 		},
 		gallery: true,
-		anime: {
-			bilibili: {
-				uid: "38932988",
-			},
-		},
-		chat: true,
+		anime: false,
+		chat: false,
 		dynamic: true,
 		circle: true,
 	},
@@ -153,7 +149,7 @@ export const siteConfig: SiteConfig = {
 		// 数据模式：static=构建时获取，dynamic=客户端实时获取
 		// static 模式在构建时获取数据并静态渲染，部署后数据不更新
 		// dynamic 模式在浏览器中实时请求 API，始终显示最新数据
-		mode: "dynamic",
+		mode: "static",
 		// Bangumi API 地址
 		apiUrl: "https://bgmapi.anibt.net",
 		// 详情页地址
@@ -199,7 +195,7 @@ export const siteConfig: SiteConfig = {
 		// - "avif": 仅输出 AVIF 格式（最新技术，最小体积，目前兼容性较低，构建时间较长）
 		// - "webp": 仅输出 WebP 格式（体积适中，兼容性好，构建时间短）
 		// - "both": 同时输出 AVIF 和 WebP（浏览器自动选择最佳格式）
-		formats: "webp",
+		formats: "avif",
 		quality: 85,
 		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
 	},

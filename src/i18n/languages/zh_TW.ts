@@ -413,12 +413,6 @@ export const zh_TW: Translation = {
 	[Key.passwordProtectedRss]: "本文已加密保護，請訪問網站查看。",
 
 	// AI摘要
-	[Key.aiSummary]: "AI 摘要",
-	[Key.aiSummaryReading]: "正在閱讀文章...",
-	[Key.aiSummaryError]: "AI 暫時無法服務，請稍後重新整理重試。",
-	[Key.aiSummaryThinking]: "思考過程",
-	[Key.aiSummaryReference]: "引用",
-	[Key.aiSummaryMoreAsk]: "繼續問 AI",
 
 	// 朋友圈
 	[Key.circle]: "朋友圈",

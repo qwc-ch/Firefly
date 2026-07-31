@@ -18,11 +18,9 @@ import { Icon } from "astro-icon/components";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import CoverImage from "@/components/common/CoverImage.astro";
-import AiSummary from "@/components/features/AiSummary.svelte";
 import PostMetadata from "@/components/layout/PostMeta.astro";
 import RecommendedPost from "@/components/misc/RecommendedPost.astro";
 import SharePoster from "@/components/misc/SharePoster.svelte";
-import { aiSummaryConfig } from "@/config/aiSummaryConfig";
 import { coverImageConfig } from "@/config/coverImageConfig";
 import { licenseConfig } from "@/config/licenseConfig";
 import { profileConfig } from "@/config/profileConfig";
@@ -107,7 +105,6 @@ const jsonLd = {
 };
 
 const relatedPosts = await getRelatedPosts(entry, 5);
-const tocItems = headings.map((h) => ({ id: h.slug, text: h.text }));
 ---
 
 <MainGridLayout
@@ -396,9 +393,6 @@ const tocItems = headings.map((h) => ({ id: h.slug, text: h.text }));
         </EncryptedPost>
       ) : (
         <>
-          {aiSummaryConfig.enabled && (
-            <AiSummary url={Astro.url.href} toc={tocItems} client:load />
-          )}
           <Markdown class="mb-6 markdown-content onload-animation">
             <Content />
           </Markdown>

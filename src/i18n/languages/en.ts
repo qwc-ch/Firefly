@@ -422,12 +422,6 @@ export const en: Translation = {
 		"This article is encrypted. Please visit the website to view it.",
 
 	// AI Summary
-	[Key.aiSummary]: "AI Summary",
-	[Key.aiSummaryReading]: "Reading article...",
-	[Key.aiSummaryError]: "AI is taking a break, please refresh later.",
-	[Key.aiSummaryThinking]: "Thinking Process",
-	[Key.aiSummaryReference]: "Ref",
-	[Key.aiSummaryMoreAsk]: "Ask AI More",
 
 	// Circle (Friends' Moments)
 	[Key.circle]: "Circle",

@@ -409,12 +409,6 @@ enum I18nKey {
 	passwordProtectedRss = "passwordProtectedRss",
 
 	// AI摘要
-	aiSummary = "aiSummary",
-	aiSummaryReading = "aiSummaryReading",
-	aiSummaryError = "aiSummaryError",
-	aiSummaryThinking = "aiSummaryThinking",
-	aiSummaryReference = "aiSummaryReference",
-	aiSummaryMoreAsk = "aiSummaryMoreAsk",
 
 	// 朋友圈
 	circle = "circle",
