@@ -393,7 +393,7 @@ export const friendsConfig: FriendLink[] = [
 	tags: [
 		"Blog",
 	],
-	weight: 8,
+	weight: 2,
 	enabled: true,
 	},
 ];
