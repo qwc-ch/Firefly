@@ -33,7 +33,6 @@ export const siteConfig: SiteConfig = {
 
 	// 主题色
 	themeColor: {
-		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		hue: 165,
 		defaultMode: "system",
 	},
@@ -53,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	// 如果启用了OpenGraph图片功能，数组中需要包含png格式的favicon图标
 	favicon: [
 		{
-			src: "/favicon/favicon2.png",
+		src: "/favicon/favicon2.png",
 		},
 	],
 
@@ -88,10 +87,19 @@ export const siteConfig: SiteConfig = {
 			mode: "static",
 			apiUrl: "https://bgmapi.anibt.net",
 			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-			categoryOrder: ["anime", "book", "music", "game"],
+			categoryOrder: [
+				"anime",
+				"book",
+				"music",
+				"game",
+			],
 		},
 		gallery: true,
-		anime: false,
+		anime: {
+			bilibili: {
+				uid: "38932988",
+			},
+		},
 		chat: false,
 		dynamic: true,
 		circle: true,
@@ -106,7 +114,6 @@ export const siteConfig: SiteConfig = {
 	// 文章列表布局配置
 	postListLayout: {
 		defaultMode: "list",
-		// 移动端默认布局模式，不设置则跟随 defaultMode
 		mobileDefaultMode: "grid",
 		descriptionLines: 2,
 		showStatsIcons: true,
@@ -191,13 +198,12 @@ export const siteConfig: SiteConfig = {
 	// Astro 仅能对 src 目录下的图像进行优化，src 目录下的图像越多，构建时间会越长
 	// Astro 图像文档 https://docs.astro.build/zh-cn/guides/images/
 	imageOptimization: {
-		// 输出图片格式
-		// - "avif": 仅输出 AVIF 格式（最新技术，最小体积，目前兼容性较低，构建时间较长）
-		// - "webp": 仅输出 WebP 格式（体积适中，兼容性好，构建时间短）
-		// - "both": 同时输出 AVIF 和 WebP（浏览器自动选择最佳格式）
 		formats: "avif",
 		quality: 85,
-		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
+		noReferrerDomains: [
+			"*.hdslb.com",
+			"*.bilibili.com",
+		],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
