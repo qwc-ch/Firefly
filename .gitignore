@@ -45,3 +45,4 @@ public/posts-index.json
 .codex*
 .claude
 .mimocode
+.env*
