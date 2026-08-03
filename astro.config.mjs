@@ -18,6 +18,7 @@ import katex from "katex";
 import "katex/dist/contrib/mhchem.mjs"; // 加载 mhchem 扩展
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeCallouts from "rehype-callouts";
+import rehypeCodeGroup from "rehype-code-group"; /* Tab 代码块 */
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
@@ -223,6 +224,7 @@ export default defineConfig({
 				},
 			},
 			frames: {
+				// 保留原生复制按钮，外观由 src/styles/expressive-code.css 覆盖成主题风格
 				showCopyToClipboardButton: true,
 			},
 		}),
@@ -281,6 +283,7 @@ export default defineConfig({
 				[rehypeKatex, { katex }],
 				[rehypeCallouts, { theme: siteConfig.post.rehypeCallouts.theme }],
 				rehypeSlug,
+				rehypeCodeGroup,
 				[rehypeMermaid, mermaidConfig],
 				rehypePlantuml,
 				rehypeDiagramPanZoom,

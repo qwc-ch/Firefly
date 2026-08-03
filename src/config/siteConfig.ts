@@ -52,15 +52,30 @@ export const siteConfig: SiteConfig = {
 	// 如果启用了OpenGraph图片功能，数组中需要包含png格式的favicon图标
 	favicon: [
 		{
+			// 图标文件路径
 			src: "/favicon/favicon2.png",
+			// 可选，指定主题 'light' | 'dark'
+			// theme: "light",
+			// 可选，图标大小
+			// sizes: "32x32",
 		},
 	],
 
 	// 导航栏配置
 	navbar: {
+		// 导航栏Logo
+		// 支持三种类型：
+		// 1. Astro图标库: { type: "icon", value: "material-symbols:home-pin-outline" }
+		// 2. 本地图片（public目录，不优化）: { type: "image", value: "/assets/images/logo.webp", alt: "Logo" }
+		// 3. 本地图片（src目录，自动优化但会增加构建时间）: { type: "image", value: "assets/images/logo.webp", alt: "Logo" }
+		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
+		// image 和 url 类型可额外设置 valueDark，用于暗色模式下显示另一张图片，不设置则亮暗色共用 value
+		// 例如: { type: "image", value: "assets/images/logo.png", valueDark: "assets/images/logo-dark.png", alt: "Logo" }
+		// 使用 Astro 图标库时不需要设置 valueDark，图标会自动跟随主题亮暗色切换
 		logo: {
 			type: "image",
-			value: "assets/images/firefly.png",
+			value: "assets/images/logo/firefly-light.png",
+			valueDark: "assets/images/logo/firefly-dark.png",
 			alt: "🍀",
 		},
 		title: "Firefly",
