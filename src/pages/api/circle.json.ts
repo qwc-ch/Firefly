@@ -2,7 +2,7 @@ import { friendsConfig } from "@/config";
 import type { FriendLink } from "@/types/friendsConfig";
 import { fetchAllFriendsRSS } from "@/utils/rss-utils";
 
-export async function GET() {
+export async function GET(): Promise<Response> {
 	const friendsWithRSS = friendsConfig
 		.filter((f: FriendLink) => f.enabled && f.rss)
 		.map((f: FriendLink) => ({
