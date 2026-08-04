@@ -408,6 +408,18 @@ export const friendsConfig: FriendLink[] = [
 	weight: 14,
 	enabled: true,
 	},
+	{
+	title: "星诺的博客",
+	imgurl: "https://blog.astrvow.com/_astro/logo.DuHgmi9I_1k5uPc.webp",
+	desc: "只要热爱，太阳就会升起！",
+	siteurl: "https://blog.astrvow.com/",
+	rss: "https://blog.astrvow.com/rss.xml",
+	tags: [
+		"Blog",
+	],
+	weight: 13,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
