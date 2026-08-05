@@ -3,6 +3,8 @@ name: Build to Branch
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "0 1,13 * * *"
   workflow_dispatch:
 
 permissions:
