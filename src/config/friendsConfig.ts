@@ -368,16 +368,14 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 	},
 	{
-	title: "拾玖的博客",
-	imgurl: "https://shijiucode.cn/avatar.jpg",
-	desc: "喜欢折腾，尝试创作。",
-	siteurl: "https://shijiucode.cn",
-	rss: "https://shijiucode.cn/shijiu-blog/api/rss.xml",
-	tags: [
-		"Blog",
-	],
-	weight: 10,
-	enabled: true,
+		title: "拾玖的博客",
+		imgurl: "https://shijiucode.cn/avatar.jpg",
+		desc: "喜欢折腾，尝试创作。",
+		siteurl: "https://shijiucode.cn",
+		rss: "https://shijiucode.cn/shijiu-blog/api/rss.xml",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
 	},
 ];
 
