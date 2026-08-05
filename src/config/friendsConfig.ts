@@ -420,6 +420,18 @@ export const friendsConfig: FriendLink[] = [
 	weight: 13,
 	enabled: true,
 	},
+	{
+	title: "倾听风雨",
+	imgurl: "https://q1.qlogo.cn/g?b=qq&nk=3931968261&s=640",
+	desc: "huh！",
+	siteurl: "https://blog.qtfyu.top/",
+	rss: "https://blog.qtfyu.top/rss.xml",
+	tags: [
+		"Blog",
+	],
+	weight: 12,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
