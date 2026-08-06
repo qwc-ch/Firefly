@@ -383,6 +383,7 @@ export const friendsConfig: FriendLink[] = [
 	],
 	weight: 9,
 	enabled: true,
+	rss: "https://090909.top/atom.xml",
 	},
 	{
 	title: "xane",
