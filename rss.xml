@@ -1,4 +1,121 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>年华</title><description>欢迎来到我的小破站</description><link>https://blog.amamo.top/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.15.5</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年8月7日 16:46:43</lastBuildDate><item><title>怎么用Netlify反代</title><link>https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/</link><guid isPermaLink="true">https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/</guid><pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;怎么反代&lt;a href=&quot;#怎么反代&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;首先去&lt;a href=&quot;https://app.netlify.com/&quot; target=&quot;_blank&quot;&gt;Netlify官网&lt;/a&gt; 注册账号。再去你的github新建一个仓库，只要写一个netlify.toml（在根目录下），内容如下&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;[[redirects]]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;from = &quot;/*&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;to = &quot;http://反代域名:反代端口/:splat&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;status = 200&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;force = true&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;你只要替换&lt;a href=&quot;http://%E5%8F%8D%E4%BB%A3%E5%9F%9F%E5%90%8D:%E5%8F%8D%E4%BB%A3%E7%AB%AF%E5%8F%A3/:splat&quot; target=&quot;_blank&quot;&gt;http://反代域名:反代端口/:splat&lt;/a&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>年华</title><description>欢迎来到我的小破站</description><link>https://blog.amamo.top/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.15.5</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年8月7日 19:10:49</lastBuildDate><item><title>Vercel 部署后全站 404 排查记</title><link>https://blog.amamo.top/posts/vercel-deploy-404/</link><guid isPermaLink="true">https://blog.amamo.top/posts/vercel-deploy-404/</guid><description>博客部署到 Vercel 后所有 HTML 页面都返回 404，静态资源却正常。本文记录了从现象、链路分析到定位根因（Vercel CLI cleanUrls 冲突与 l2s 上传 bug）的全过程，以及最终通过固定 CLI 版本解决的方案。</description><pubDate>Fri, 07 Aug 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;引言&lt;a href=&quot;#引言&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;本博客同时部署在 Vercel、Cloudflare Workers、EdgeOne Pages 等多个平台。某天发现：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;本地开发、Cloudflare、EdgeOne 访问全部正常；&lt;/li&gt;
+&lt;li&gt;唯独 &lt;strong&gt;Vercel 上的域名（blog.amamo.top）所有 HTML 页面都返回 404&lt;/strong&gt;，而非 HTML 资源（&lt;code&gt;_astro/*&lt;/code&gt;、图片、pagefind、rss.xml 等）全部正常。&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;CI 构建日志显示构建、部署、Alias 全部成功。这是一个”部署成功但内容缺失”的诡异问题，折腾了很久，记录下完整的排查思路和根因。&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;观察现象&lt;a href=&quot;#观察现象&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;对线上逐路径探测，得到如下行为矩阵：&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;路径&lt;/th&gt;&lt;th&gt;状态码&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/&lt;/code&gt;、&lt;code&gt;/about/&lt;/code&gt;、&lt;code&gt;/posts/xxx/&lt;/code&gt;&lt;/td&gt;&lt;td&gt;404（响应体是站点自定义 404 页）&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/_astro/*.css&lt;/code&gt;、&lt;code&gt;*.js&lt;/code&gt;、图片&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;robots.txt&lt;/code&gt;、&lt;code&gt;rss.xml&lt;/code&gt;、&lt;code&gt;pagefind/*&lt;/code&gt;&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/index.html&lt;/code&gt;、&lt;code&gt;/about.html&lt;/code&gt;&lt;/td&gt;&lt;td&gt;308 重定向到去扩展名路径&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;关键信息：&lt;/p&gt;&lt;ol&gt;
+&lt;li&gt;非 HTML 静态资源 200，说明部署确实上传了文件；&lt;/li&gt;
+&lt;li&gt;所有 HTML 页面 404，说明 HTML 部分出了问题；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*.html&lt;/code&gt; 请求被 308 重定向，说明存在 &lt;strong&gt;cleanUrls 风格的路由规则&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ol&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;排查过程&lt;a href=&quot;#排查过程&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;section&gt;&lt;h3&gt;第一步：确认是部署产物问题而非缓存&lt;a href=&quot;#第一步确认是部署产物问题而非缓存&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;本地 &lt;code&gt;pnpm dev&lt;/code&gt; 正常，&lt;code&gt;dist/&lt;/code&gt; 里 37 个 &lt;code&gt;index.html&lt;/code&gt; 都在。为了排除中间层 CDN 缓存，带随机 query 重新请求，仍然是 404。查看响应头：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;server: Vercel&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;x-vercel-cache: HIT&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;404 是&lt;strong&gt;源站（Vercel 边缘）自己返回的&lt;/strong&gt;，不是 CDN 缓存了旧响应。&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;第二步：对比「部署文件列表」与「本地产物」&lt;a href=&quot;#第二步对比部署文件列表与本地产物&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;通过 Vercel API 拉取最新部署的文件列表：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;curl&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-H&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;Authorization: Bearer &lt;/span&gt;&lt;span&gt;$TOKEN&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;\&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;&quot;https://api.vercel.com/v13/deployments/&amp;lt;id&amp;gt;/files&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;结果出乎意料：&lt;strong&gt;37 个 HTML 文件全部在部署里&lt;/strong&gt;，路径也都正确（&lt;code&gt;posts/astbot/index.html&lt;/code&gt;、&lt;code&gt;about/index.html&lt;/code&gt; 等）。文件在、路径对，线上却 404 —— 说明&lt;strong&gt;文件内容在服务端无效&lt;/strong&gt;。&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;第三步：找到 cleanUrls 冲突&lt;a href=&quot;#第三步找到-cleanurls-冲突&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;本地执行 &lt;code&gt;vercel build --prod&lt;/code&gt; 后检查生成的 &lt;code&gt;.vercel/output/config.json&lt;/code&gt;，发现 CLI 生成了大量 &lt;code&gt;overrides&lt;/code&gt; 和 308 重定向规则：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;{&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;&quot;overrides&quot;&lt;/span&gt;&lt;span&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;    &lt;/span&gt;&lt;span&gt;&quot;index.html&quot;&lt;/span&gt;&lt;span&gt;: { &lt;/span&gt;&lt;span&gt;&quot;path&quot;&lt;/span&gt;&lt;span&gt;: &lt;/span&gt;&lt;span&gt;&quot;index&quot;&lt;/span&gt;&lt;span&gt; },&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;    &lt;/span&gt;&lt;span&gt;&quot;about/index.html&quot;&lt;/span&gt;&lt;span&gt;: { &lt;/span&gt;&lt;span&gt;&quot;path&quot;&lt;/span&gt;&lt;span&gt;: &lt;/span&gt;&lt;span&gt;&quot;about/index&quot;&lt;/span&gt;&lt;span&gt; }&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;},&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;&quot;routes&quot;&lt;/span&gt;&lt;span&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;{ &lt;/span&gt;&lt;span&gt;&quot;src&quot;&lt;/span&gt;&lt;span&gt;: &lt;/span&gt;&lt;span&gt;&quot;^/(?:(.+)/)?index(?:&lt;/span&gt;&lt;span&gt;\\&lt;/span&gt;&lt;span&gt;.html)?/?$&quot;&lt;/span&gt;&lt;span&gt;, &lt;/span&gt;&lt;span&gt;&quot;headers&quot;&lt;/span&gt;&lt;span&gt;: { &lt;/span&gt;&lt;span&gt;&quot;Location&quot;&lt;/span&gt;&lt;span&gt;: &lt;/span&gt;&lt;span&gt;&quot;/$1&quot;&lt;/span&gt;&lt;span&gt; }, &lt;/span&gt;&lt;span&gt;&quot;status&quot;&lt;/span&gt;&lt;span&gt;: &lt;/span&gt;&lt;span&gt;308&lt;/span&gt;&lt;span&gt; }&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;这就是问题一&lt;/strong&gt;：&lt;code&gt;vercel.json&lt;/code&gt; 里的 &lt;code&gt;&quot;cleanUrls&quot;: true&lt;/code&gt; 会让 CLI 把所有 HTML 文件”改名为无扩展名”（&lt;code&gt;about/index.html&lt;/code&gt; → &lt;code&gt;about/index&lt;/code&gt;）。于是：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;请求 &lt;code&gt;/about/&lt;/code&gt; 走目录解析，找 &lt;code&gt;about/index.html&lt;/code&gt; —— 不存在（已被改名）；&lt;/li&gt;
+&lt;li&gt;请求 &lt;code&gt;/about/index&lt;/code&gt; —— 被 308 重定向规则切到 &lt;code&gt;/about&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/about&lt;/code&gt; 又找不到文件 —— 404。&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;而 &lt;code&gt;/404&lt;/code&gt; 之所以能 200，是因为它不在重定向规则里、能直接命中改名后的 &lt;code&gt;404&lt;/code&gt; 文件。&lt;/p&gt;&lt;p&gt;修复后，404 页面本身回归正确 404，&lt;code&gt;/&lt;/code&gt;、&lt;code&gt;/about/&lt;/code&gt; 等一级页面全部 200。&lt;strong&gt;但 &lt;code&gt;/posts/&lt;/code&gt;、&lt;code&gt;/gallery/&lt;/code&gt;、&lt;code&gt;/dynamic/&lt;/code&gt; 依旧 404&lt;/strong&gt; —— 还有第二个问题。&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;第四步：定位真正的元凶 —— l2s 上传 bug&lt;a href=&quot;#第四步定位真正的元凶--l2s-上传-bug&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;继续对比，发现一个奇怪规律：&lt;strong&gt;有一级子目录的「父目录」全部 404，纯叶子目录全部 200&lt;/strong&gt;：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;/about 200    /archive 200    /search 200&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;/posts 404    /gallery 404    /dynamic 404     （这三个目录里还有子目录）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;此时检查本地 &lt;code&gt;.vercel/output/static/&lt;/code&gt; 里的文件类型，真相大白：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;output/static/about/index.html      # 普通文件 529060 字节（正常）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;output/static/posts/astbot/index.html -&amp;gt; /home/qwc/Firefly/dist/posts/astbot/.l2s..l2s.index.html0001.00010001   （符号链接！）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Vercel CLI 58.7.1 的 l2s 上传优化在处理大文件时，把 &lt;code&gt;index.html&lt;/code&gt; 替换成了指向失效路径的符号链接（symlink），真实数据被写进了 &lt;code&gt;.l2s.index.html0001.0002&lt;/code&gt; 分片文件&lt;/strong&gt;。上传时 Vercel 把这些符号链接原样记录（目标路径在服务器上不存在），于是:&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;HTML 在文件列表里”存在”，但服务端读取时解析不到 → 404；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;about/index.html&lt;/code&gt; 是硬链接（保留真实文件）→ 正常；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;wrangler&lt;/code&gt;（Cloudflare）上传时会跟随符号链接读到真实内容 → CF 完全正常。&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;这也解释了为什么 CI 部署时上传只有 19.8MB（大量符号链接被跳过/去重），而实际产物有 52MB。&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;为什么新版本 CLI 有问题，旧版本没问题&lt;a href=&quot;#为什么新版本-cli-有问题旧版本没问题&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;这次问题的核心在 Vercel CLI 58.x 引入的 &lt;strong&gt;l2s（large-file storage）上传优化&lt;/strong&gt;。它的本意是把大文件切分成约 1MB 的小块（&lt;code&gt;.l2s.&amp;lt;文件名&amp;gt;0001&lt;/code&gt;、&lt;code&gt;0002&lt;/code&gt;…），以便内容寻址去重、并发上传、断点续传，服务器端再重组。&lt;strong&gt;57 和 58 都用了分片，但实现方式截然不同&lt;/strong&gt;：&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;分片后的原文件&lt;/th&gt;&lt;th&gt;上传结果&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;vercel@57&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;保留为&lt;strong&gt;真实文件&lt;/strong&gt;（与分片文件互为硬链接，link count = 2），&lt;code&gt;readFile&lt;/code&gt; 随时能读到完整内容&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;vercel@58.7.1&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;被替换成&lt;strong&gt;符号链接&lt;/strong&gt;，指向本地绝对路径（&lt;code&gt;/home/qwc/.../.l2s...&lt;/code&gt;），且出现嵌套分片（&lt;code&gt;.l2s..l2s.&lt;/code&gt; 双层前缀）&lt;/td&gt;&lt;td&gt;服务端解析不到 → 404&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;58.7.1 的具体问题有两个：&lt;/p&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;symlink 目标写死成本机绝对路径&lt;/strong&gt;：&lt;code&gt;posts/astbot/index.html -&amp;gt; /home/qwc/Firefly/dist/posts/astbot/.l2s..l2s.index.html0001.00010001&lt;/code&gt;。这个路径只在本机存在，上传到 Vercel 后无法解析，文件”在列表里、读不出内容”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;对已分片的文件再次分片&lt;/strong&gt;：正常的 l2s 分片命名是 &lt;code&gt;.l2s.index.html0001.0001&lt;/code&gt;，而 58.7.1 在部分文件上生成了&lt;strong&gt;嵌套前缀&lt;/strong&gt; &lt;code&gt;.l2s..l2s.index.html0001.00010001&lt;/code&gt;，说明分片逻辑对”分片产物”又跑了一遍，symlink 指向了错误的目标。&lt;/li&gt;
+&lt;/ol&gt;&lt;p&gt;而 57 的处理方式是&lt;strong&gt;硬链接&lt;/strong&gt;：&lt;code&gt;index.html&lt;/code&gt; 和 &lt;code&gt;.l2s.index.html0001.0002&lt;/code&gt; 是同一个 inode 的两个目录项，&lt;code&gt;index.html&lt;/code&gt; 始终是真实文件、内容完整。上传时 CLI 读到的就是完整数据，服务器端重组无需依赖符号链接。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;为什么”以前正常、某一天突然全站 404”&lt;/strong&gt;：CI 里用的是 &lt;code&gt;npx vercel&lt;/code&gt;（不带版本号），npx 每次拉取的都是&lt;strong&gt;最新版&lt;/strong&gt;。以前最新版还是 57.x（实现正确），某次升级到 58.7.1（实现有 bug）后，CI 的每一次部署都带着坏掉的符号链接上传——所以在 GitHub Actions 部署日志全部成功的情况下，线上依旧全站 404。&lt;/p&gt;&lt;section&gt;&lt;h3&gt;为什么 Cloudflare / EdgeOne 不受影响&lt;a href=&quot;#为什么-cloudflare--edgeone-不受影响&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;同一份 dist，三家平台的部署工具走的是完全不同的上传模型：&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;部署工具&lt;/th&gt;&lt;th&gt;上传模型&lt;/th&gt;&lt;th&gt;遇到 symlink&lt;/th&gt;&lt;th&gt;结果&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;wrangler&lt;/code&gt;（Cloudflare）&lt;/td&gt;&lt;td&gt;逐文件 &lt;code&gt;readFile&lt;/code&gt; 读取内容上传&lt;/td&gt;&lt;td&gt;自动跟随链接，读到真实字节&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;edgeone pages deploy&lt;/code&gt;&lt;/td&gt;&lt;td&gt;逐文件读取内容上传&lt;/td&gt;&lt;td&gt;自动跟随链接&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;vercel deploy&lt;/code&gt;（CLI 58）&lt;/td&gt;&lt;td&gt;本地预处理 + 内容寻址分片上传&lt;/td&gt;&lt;td&gt;把 symlink 当路径记录，不上传内容&lt;/td&gt;&lt;td&gt;404&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;wrangler / edgeone 是朴素的”文件内容上传”模型，没有本地预处理这一层，符号链接在读文件时就被解析掉了，自然不受影响。Vercel CLI 因为多了 l2s 预处理层，才把 bug 带进了部署产物。&lt;strong&gt;多平台部署（CF / EdgeOne / Vercel）在这种场景下相当于交叉验证：同一份 dist，别人正常、只有 Vercel 异常，问题几乎可以锁定在 Vercel 的部署链路上。&lt;/strong&gt;&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;根因总结&lt;a href=&quot;#根因总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;两个问题叠加：&lt;/p&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;cleanUrls: true&lt;/code&gt; 与 Astro 的 &lt;code&gt;trailingSlash: &quot;always&quot;&lt;/code&gt; 冲突&lt;/strong&gt; —— HTML 被改名导致带尾斜杠的路由全部 404；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vercel CLI 58.x 的 l2s 上传 bug&lt;/strong&gt; —— 更大的问题，大文件被替换成失效符号链接，导致部分目录的 HTML 无法读取。&lt;/li&gt;
+&lt;/ol&gt;&lt;p&gt;两个问题都只在 Vercel 这边出现，Cloudflare / EdgeOne 的部署链路不受影响。&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;解决方案&lt;a href=&quot;#解决方案&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;section&gt;&lt;h3&gt;直接修复&lt;a href=&quot;#直接修复&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;从 &lt;code&gt;vercel.json&lt;/code&gt; 删除 &lt;code&gt;cleanUrls: true&lt;/code&gt;&lt;/strong&gt;，HTML 文件保持原名，目录路由恢复正常；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;固定 Vercel CLI 版本到 57&lt;/strong&gt;：&lt;/p&gt;
+&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;npx&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-y&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;vercel@57&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;build&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;--prod&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;npx&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-y&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;vercel@57&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;deploy&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;--prebuilt&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;--prod&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;vercel@57&lt;/code&gt; 同样会生成 l2s 分片，但采用&lt;strong&gt;硬链接&lt;/strong&gt;（&lt;code&gt;index.html&lt;/code&gt; 保持真实文件），上传到 Vercel 后数据完整。58.7.1 则会被坏符号链接“阉割”掉大文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;CI workflow 中同步把 &lt;code&gt;npx vercel&lt;/code&gt; 改为 &lt;code&gt;npx vercel@57&lt;/code&gt;，防止自动升级到带 bug 的版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;&lt;/section&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;经验总结&lt;a href=&quot;#经验总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;部署”成功”不等于内容完整，排查时&lt;strong&gt;对比线上返回值与本地产物&lt;/strong&gt;而不是只看状态码；&lt;/li&gt;
+&lt;li&gt;对于知名 PaaS 的 CLI，&lt;strong&gt;锁定版本&lt;/strong&gt;是避免”莫名其妙” bug 的最有效手段（&lt;code&gt;npx vercel&lt;/code&gt; → &lt;code&gt;npx vercel@57&lt;/code&gt;）；&lt;/li&gt;
+&lt;li&gt;多平台部署（CF / EdgeOne / Vercel）有交叉验证的作用：同一份 dist，wrangler 正常、vercel CLI 异常，直接指向 CLI 本身的问题。&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;</content:encoded></item><item><title>怎么用Netlify反代</title><link>https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/</link><guid isPermaLink="true">https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/</guid><pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;怎么反代&lt;a href=&quot;#怎么反代&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;首先去&lt;a href=&quot;https://app.netlify.com/&quot; target=&quot;_blank&quot;&gt;Netlify官网&lt;/a&gt; 注册账号。再去你的github新建一个仓库，只要写一个netlify.toml（在根目录下），内容如下&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;[[redirects]]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;from = &quot;/*&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;to = &quot;http://反代域名:反代端口/:splat&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;status = 200&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;force = true&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;你只要替换&lt;a href=&quot;http://%E5%8F%8D%E4%BB%A3%E5%9F%9F%E5%90%8D:%E5%8F%8D%E4%BB%A3%E7%AB%AF%E5%8F%A3/:splat&quot; target=&quot;_blank&quot;&gt;http://反代域名:反代端口/:splat&lt;/a&gt;
 如果你实际要反代的url没有端口就不填，但一定要有端口后的 &lt;strong&gt;/&lt;/strong&gt;
 最后回netlify创建一个新项目，选择你刚创建的Github项目，部署即可 最后绑定一下你的域名。&lt;/p&gt;&lt;/section&gt;</content:encoded></item><item><title>留言页的群聊风格改造</title><link>https://blog.amamo.top/posts/%E7%95%99%E8%A8%80%E9%A1%B5%E7%9A%84%E7%BE%A4%E8%81%8A%E9%A3%8E%E6%A0%BC%E6%94%B9%E9%80%A0/</link><guid isPermaLink="true">https://blog.amamo.top/posts/%E7%95%99%E8%A8%80%E9%A1%B5%E7%9A%84%E7%BE%A4%E8%81%8A%E9%A3%8E%E6%A0%BC%E6%94%B9%E9%80%A0/</guid><description>把传统评论区改成即时通讯风格的聊天界面，聊聊这个改造过程中的思路和实现。</description><pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;博客的留言板应该是什么样子的？传统的评论区一层一层嵌套回复，看起来有点像论坛。但如果把它做成聊天软件那种气泡风格，会不会更有意思一点？&lt;/p&gt;
 &lt;p&gt;这篇文章就聊聊这个改造过程。&lt;/p&gt;
