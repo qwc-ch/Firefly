@@ -457,6 +457,18 @@ export const friendsConfig: FriendLink[] = [
 	weight: 12,
 	enabled: true,
 	},
+	{
+	title: "花海博客",
+	imgurl: "https://hhwzk.cc.cd/_astro/avatar.DSL-xax2_Z1E5RPs.webp",
+	desc: "记录生活，分享美好。",
+	siteurl: "https://hhwzk.cc.cd",
+	rss: "https://hhwzk.cc.cd/rss.xml",
+	tags: [
+		"Blog",
+	],
+	weight: 10,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
