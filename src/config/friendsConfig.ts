@@ -447,7 +447,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 	title: "StackMeow",
-	imgurl: "https://www.image2url.com/r2/default/images/1785780139063-ee590a50-83e0-499d-b3ad-bb1a6d536ff1.jpeg",
+	imgurl: "https://www.stackmeow.tech/assets/profile/avatar.jpeg",
 	desc: "人生是层层堆叠的经历，而内心永远保有一只自在小猫。",
 	siteurl: "https://www.stackmeow.tech",
 	rss: "https://www.stackmeow.tech/rss.xml",
