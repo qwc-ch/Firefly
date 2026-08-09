@@ -457,6 +457,18 @@ export const friendsConfig: FriendLink[] = [
 	weight: 12,
 	enabled: true,
 	},
+	{
+	title: "潇绪空のBlog",
+	imgurl: "https://reknal.com/assets/images/avatar.avif",
+	desc: "共同见证奇迹诞生！",
+	siteurl: "https://reknal.com",
+	rss: "https://reknal.com/rss.xml",
+	tags: [
+		"Blog",
+	],
+	weight: 9,
+	enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
