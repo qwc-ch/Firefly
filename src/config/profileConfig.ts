@@ -22,12 +22,6 @@ export const profileConfig: ProfileConfig = {
 	// showName: true 时显示图标和名称，false 时只显示图标
 	links: [
 		{
-			name: "qq",
-			icon: "fa7-brands:qq",
-			url: "https://qm.qq.com/q/O9NoCHWzKM",
-			showName: false,
-		},
-		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
 			url: "https://github.com/qwc-ch",
@@ -43,12 +37,6 @@ export const profileConfig: ProfileConfig = {
 			name: "RSS",
 			icon: "fa7-solid:rss",
 			url: "/rss/",
-			showName: false,
-		},
-		{
-			name: "bilbil",
-			icon: "fa7-brands:bilibili",
-			url: "https://b23.tv/E4s6Spg",
 			showName: false,
 		},
 	],
