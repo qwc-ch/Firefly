@@ -96,7 +96,7 @@ export const siteConfig: SiteConfig = {
 		// 相册页面开关
 		gallery: false,
 		anime: false,
-		
+
 		chat: false,
 		dynamic: true,
 		circle: true,
