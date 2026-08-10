@@ -64,7 +64,7 @@ export const siteConfig: SiteConfig = {
 			valueDark: "assets/images/logo/firefly-dark.png",
 			alt: "🍀",
 		},
-		title: "Firefly",
+		title: "Cyrene",
 		widthFull: false,
 		menuAlign: "center",
 		followTheme: false,
