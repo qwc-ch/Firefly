@@ -52,5 +52,17 @@
   "src:content/posts/guide/images/1.avif": "b5b0b3bcb6bbe0e0df",
   "public:assets/images/sponsor/wechat.png": "d5d5d5dad9d7dbd8cf",
   "public:assets/images/sponsor/alipay.png": "8ebbde91bedf93c0e0",
-  "public:assets/images/sponsor/ailpay2.png": "9291919191909b9b9b"
+  "public:assets/images/sponsor/ailpay2.png": "9291919191909b9b9b",
+  "src:assets/images/avatar.webp": "eedde4f0dfe4e3ccd2",
+  "src:assets/images/DesktopWallpaper/d5.webp": "816896735a87b997c9",
+  "src:assets/images/DesktopWallpaper/d4.webp": "725fb43c334c65579a",
+  "src:assets/images/DesktopWallpaper/d3.webp": "fbc3c5e796b5e9a8b3",
+  "src:assets/images/DesktopWallpaper/d2.webp": "66578370628c7865a1",
+  "src:assets/images/DesktopWallpaper/d1.webp": "846799a893b3b299c8",
+  "src:assets/images/MobileWallpaper/m6.webp": "d5cde6cccfe6e3d7e7",
+  "src:assets/images/MobileWallpaper/m5.webp": "e3d8e8e6ddecc1c2dc",
+  "src:assets/images/MobileWallpaper/m4.webp": "bba7b5b5a0afd0bcd0",
+  "src:assets/images/MobileWallpaper/m3.webp": "bed3eec5cce5e3d7e8",
+  "src:assets/images/MobileWallpaper/m2.webp": "554a676b5a7b322b50",
+  "src:assets/images/MobileWallpaper/m1.webp": "ba8eaecb9dbcc099af"
 }

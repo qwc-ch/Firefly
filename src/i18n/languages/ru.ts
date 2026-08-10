@@ -77,6 +77,11 @@ export const ru: Translation = {
 		"Вот мои друзья, добро пожаловать посетить и общаться друг с другом",
 	[Key.searchFriends]: "Поиск друзей...",
 	[Key.friendsEmpty]: "Друзей пока нет.",
+	[Key.booknav]: "Каталог закладок",
+	[Key.booknavDescription]:
+		"Подборка полезных сайтов, сгруппированных по категориям.",
+	[Key.searchBooknav]: "Поиск закладок...",
+	[Key.booknavEmpty]: "Закладок пока нет.",
 	[Key.guestbook]: "Гостевая книга",
 	[Key.guestbookDescription]:
 		"Добро пожаловать, оставьте свой след здесь, поделитесь своими мыслями и предложениями",
@@ -172,6 +177,38 @@ export const ru: Translation = {
 	[Key.bangumiUpdatedAt]: "Время сборки",
 	[Key.bangumiDataStatic]: "Статические данные",
 
+	// VNDB
+	[Key.vndb]: "VNDB",
+	[Key.vndbSubtitle]: "Мой список визуальных новелл VNDB",
+	[Key.vndbFilterAll]: "Все",
+	[Key.vndbFilterVoted]: "Оценено",
+	[Key.vndbFilterUnvoted]: "Без оценки",
+	[Key.vndbFilterNotes]: "С заметками",
+	[Key.vndbStatusWishlist]: "Хочу сыграть",
+	[Key.vndbStatusPlaying]: "Играю",
+	[Key.vndbStatusFinished]: "Пройдено",
+	[Key.vndbStatusStalled]: "Отложено",
+	[Key.vndbStatusDropped]: "Брошено",
+	[Key.vndbStatusUnknown]: "Неизвестно",
+	[Key.vndbNoData]: "Нет данных",
+	[Key.vndbNoDataDescription]: "В этой категории нет элементов",
+	[Key.vndbEmpty]: "Нет данных",
+	[Key.vndbEmptyReason]:
+		"Возможные причины: ID пользователя не существует, список закрыт, проблемы с сетью или ограничение API",
+	[Key.vndbFetchError]: "Ошибка загрузки данных VNDB",
+	[Key.vndbFetchErrorDesc]:
+		"Не удалось загрузить данные из VNDB API при сборке. Эта страница временно недоступна.",
+	[Key.vndbNotConfigured]: "ID пользователя VNDB не настроен",
+	[Key.vndbNotConfiguredDesc]:
+		"Укажите ID пользователя VNDB в src/config/siteConfig.ts",
+	[Key.vndbLastUpdated]: "Данные обновлены",
+	[Key.vndbVotes]: "голосов",
+	[Key.vndbLengthVeryShort]: "Очень короткая",
+	[Key.vndbLengthShort]: "Короткая",
+	[Key.vndbLengthMedium]: "Средняя",
+	[Key.vndbLengthLong]: "Длинная",
+	[Key.vndbLengthVeryLong]: "Очень длинная",
+
 	// Отслеживание аниме
 	[Key.anime]: "Аниме",
 	[Key.animeSubtitle]:
@@ -221,6 +258,7 @@ export const ru: Translation = {
 	[Key.paginationOf]: "из",
 	[Key.paginationTotal]: ", всего",
 	[Key.paginationRecords]: " записей",
+	[Key.paginationJump]: "Перейти к странице",
 
 	// 404 Страница
 	[Key.notFound]: "404",

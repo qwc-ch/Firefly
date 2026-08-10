@@ -108,6 +108,12 @@ enum I18nKey {
 	guestbookDescription = "guestbookDescription",
 	bangumi = "bangumi",
 
+	// 书签导航
+	booknav = "booknav",
+	booknavDescription = "booknavDescription",
+	searchBooknav = "searchBooknav",
+	booknavEmpty = "booknavEmpty",
+
 	// 番组计划筛选和状态文本
 	bangumiTitle = "bangumiTitle",
 	bangumiSubtitle = "bangumiSubtitle",
@@ -170,6 +176,35 @@ enum I18nKey {
 	bangumiUpdatedAt = "bangumiUpdatedAt",
 	bangumiDataStatic = "bangumiDataStatic",
 
+	// VNDB
+	vndb = "vndb",
+	vndbSubtitle = "vndbSubtitle",
+	vndbFilterAll = "vndbFilterAll",
+	vndbFilterVoted = "vndbFilterVoted",
+	vndbFilterUnvoted = "vndbFilterUnvoted",
+	vndbFilterNotes = "vndbFilterNotes",
+	vndbStatusWishlist = "vndbStatusWishlist",
+	vndbStatusPlaying = "vndbStatusPlaying",
+	vndbStatusFinished = "vndbStatusFinished",
+	vndbStatusStalled = "vndbStatusStalled",
+	vndbStatusDropped = "vndbStatusDropped",
+	vndbStatusUnknown = "vndbStatusUnknown",
+	vndbNoData = "vndbNoData",
+	vndbNoDataDescription = "vndbNoDataDescription",
+	vndbEmpty = "vndbEmpty",
+	vndbEmptyReason = "vndbEmptyReason",
+	vndbFetchError = "vndbFetchError",
+	vndbFetchErrorDesc = "vndbFetchErrorDesc",
+	vndbNotConfigured = "vndbNotConfigured",
+	vndbNotConfiguredDesc = "vndbNotConfiguredDesc",
+	vndbLastUpdated = "vndbLastUpdated",
+	vndbVotes = "vndbVotes",
+	vndbLengthVeryShort = "vndbLengthVeryShort",
+	vndbLengthShort = "vndbLengthShort",
+	vndbLengthMedium = "vndbLengthMedium",
+	vndbLengthLong = "vndbLengthLong",
+	vndbLengthVeryLong = "vndbLengthVeryLong",
+
 	// 追番
 	anime = "anime",
 	animeSubtitle = "animeSubtitle",
@@ -217,6 +252,7 @@ enum I18nKey {
 	paginationOf = "paginationOf",
 	paginationTotal = "paginationTotal",
 	paginationRecords = "paginationRecords",
+	paginationJump = "paginationJump",
 
 	// 404页面
 	notFound = "notFound",

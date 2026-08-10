@@ -65,11 +65,17 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			// 追番
 			LinkPresets.Anime,
 
+			// VNDB
+			LinkPresets.VNDB,
+
 			// 番组计划
 			LinkPresets.Bangumi,
 
 			// AI聊天
 			LinkPresets.Chat,
+
+			// 书签导航
+			LinkPresets.Booknav,
 		],
 	});
 
@@ -109,12 +115,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "fa7-regular:envelope",
 			},
-			{
-				name: "哔哩哔哩",
-				url: "【-晨光初照-的个人空间-哔哩哔哩】 https://b23.tv/3TdwFlo",
-				external: true,
-				icon: "fa7-brands:bilibili",
-			},
 		],
 	});
 
@@ -129,12 +129,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://umami.520781.xyz/share/uVEXU0CJbC0XUe0n",
 				external: true,
 				icon: "fa7-solid:chart-simple",
-			},
-			{
-				name: "Firefly文档",
-				url: "https://docs-firefly.cuteleaf.cn",
-				external: true,
-				icon: "material-symbols:docs",
 			},
 		],
 	});
@@ -215,6 +209,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:movie",
 		pageKey: "bangumi",
 	},
+	VNDB: {
+		name: "VNDB",
+		url: "/vndb/",
+		icon: "material-symbols:movie",
+		pageKey: "vndb",
+	},
 	Gallery: {
 		name: "相册",
 		url: "/gallery/",
@@ -244,6 +244,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "https://music.amamo.top/",
 		external: true,
 		icon: "material-symbols:music-note",
+	},
+	Booknav: {
+		name: "书签导航",
+		url: "/booknav/",
+		icon: "material-symbols:bookmarks",
+		pageKey: "booknav",
 	},
 };
 
