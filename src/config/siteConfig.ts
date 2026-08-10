@@ -81,7 +81,7 @@ export const siteConfig: SiteConfig = {
 	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
 	pages: {
 		friends: true,
-		sponsor: true,
+		sponsor: false,
 		guestbook: true,
 		// 番组计划页面开关，含追番、游戏、书籍和音乐
 		bangumi: {
@@ -92,14 +92,11 @@ export const siteConfig: SiteConfig = {
 			categoryOrder: ["anime", "book", "music", "game"],
 		},
 		// VNDB页面开关。
-		vndb: true,
+		vndb: false,
 		// 相册页面开关
-		gallery: true,
-		anime: {
-			bilibili: {
-				uid: "38932988",
-			},
-		},
+		gallery: false,
+		anime: false,
+		
 		chat: false,
 		dynamic: true,
 		circle: true,
