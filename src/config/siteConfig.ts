@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	// 如果启用了OpenGraph图片功能，数组中需要包含png格式的favicon图标
 	favicon: [
 		{
-			src: "/favicon/favicon2.png",
+		src: "/favicon/favicon2.png",
 		},
 	],
 
@@ -83,24 +83,36 @@ export const siteConfig: SiteConfig = {
 		friends: true,
 		sponsor: false,
 		guestbook: true,
-		// 番组计划页面开关，含追番、游戏、书籍和音乐
 		bangumi: {
 			userId: "1186385",
 			mode: "static",
 			apiUrl: "https://bgmapi.anibt.net",
 			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-			categoryOrder: ["anime", "book", "music", "game"],
+			categoryOrder: [
+				"anime",
+				"book",
+				"music",
+				"game",
+			],
 		},
-		// VNDB页面开关。
-		vndb: false,
-		// 相册页面开关
+		vndb: {
+			userId: "",
+			mode: "static",
+			downloadCovers: true,
+			apiUrl: "https://api.vndb.org/kana",
+			vnBaseUrl: "https://vndb.org/",
+			apiToken: "",
+			blurNsfw: true,
+		},
 		gallery: false,
-		anime: false,
-
+		anime: {
+			bilibili: {
+				uid: "",
+			},
+		},
 		chat: false,
 		dynamic: true,
 		circle: true,
-		// 书签导航页面开关
 		booknav: true,
 	},
 
@@ -124,25 +136,16 @@ export const siteConfig: SiteConfig = {
 	postListLayout: {
 		defaultMode: "list",
 		mobileDefaultMode: "grid",
-		// 列表模式下封面图显示在哪一侧："right" 右侧，"left" 左侧
-		// 网格模式的封面固定在卡片顶部，不受此项影响
 		coverPosition: "right",
-		// 文章简介显示行数，设为 0 则不截断
 		descriptionLines: 2,
 		showStatsIcons: true,
 		tagsPosition: "bottom",
-		// 底部标签样式，仅在 tagsPosition 为 "bottom" 时生效
-		// "chip"：按钮样式，形状跟随上方的 tagStyle 配置
-		// "text"：无底色，只有文字
 		tagsBottomStyle: "chip",
-		// PostMeta 元数据显示控制
 		meta: {
 			showPublished: true,
 			showCategory: true,
 			showTags: true,
-			// 标签数量，设为 0 则不限制
 			tagCount: 5,
-			// 是否显示字数
 			showWords: false,
 			showReadingTime: false,
 		},
@@ -154,9 +157,6 @@ export const siteConfig: SiteConfig = {
 		grid: {
 			masonry: true,
 			columnWidth: 320,
-			// 网格模式封面是否撑满卡片贴边
-			// true：封面顶到卡片左右和上边缘，只有上面两角是圆角
-			// false：封面按卡片内边距内缩，上、左、右留出间距，四角都是圆角
 			coverFullWidth: false,
 		},
 	},
@@ -244,7 +244,10 @@ export const siteConfig: SiteConfig = {
 	imageOptimization: {
 		formats: "avif",
 		quality: 85,
-		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
+		noReferrerDomains: [
+			"*.hdslb.com",
+			"*.bilibili.com",
+		],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
