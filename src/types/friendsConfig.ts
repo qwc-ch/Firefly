@@ -5,6 +5,7 @@ export type FriendLink = {
 	desc: string; // 友链描述
 	siteurl: string; // 友链地址
 	rss?: string; // RSS订阅地址（用于朋友圈）
+	linkpage?: string; // 友链页面URL（用于 check-flink 反链检测，留空则检测首页）
 	tags?: string[]; // 标签数组
 	weight: number; // 权重，数字越大排序越靠前
 	enabled: boolean; // 是否启用
