@@ -33,7 +33,9 @@ export const siteConfig: SiteConfig = {
 
 	// 主题色
 	themeColor: {
+		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		hue: 10,
+		// 默认模式："light" 亮色，"dark" 暗色，"system" 跟随系统
 		defaultMode: "system",
 	},
 
@@ -44,7 +46,9 @@ export const siteConfig: SiteConfig = {
 
 	// 网站Card样式配置
 	card: {
+		// 是否开启卡片边框和阴影，开启后让网站更有立体感
 		border: true,
+		// 是否让卡片风格跟随主题色相
 		followTheme: true,
 	},
 
@@ -52,22 +56,41 @@ export const siteConfig: SiteConfig = {
 	// 如果启用了OpenGraph图片功能，数组中需要包含png格式的favicon图标
 	favicon: [
 		{
-		src: "/favicon/favicon2.png",
+			// 图标文件路径
+			src: "/favicon/favicon2.png",
+			// 可选，指定主题 'light' | 'dark'
+			// theme: "light",
+			// 可选，图标大小
+			// sizes: "32x32",
 		},
 	],
 
 	// 导航栏配置
 	navbar: {
+		// 导航栏Logo
+		// 支持三种类型：
+		// 1. Astro图标库: { type: "icon", value: "material-symbols:home-pin-outline" }
+		// 2. 本地图片（public目录，不优化）: { type: "image", value: "/assets/images/logo.webp", alt: "Logo" }
+		// 3. 本地图片（src目录，自动优化但会增加构建时间）: { type: "image", value: "assets/images/logo.webp", alt: "Logo" }
+		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
+		// image 和 url 类型可额外设置 valueDark，用于暗色模式下显示另一张图片，不设置则亮暗色共用 value
+		// 例如: { type: "image", value: "assets/images/logo.png", valueDark: "assets/images/logo-dark.png", alt: "Logo" }
+		// 使用 Astro 图标库时不需要设置 valueDark，图标会自动跟随主题亮暗色切换
 		logo: {
 			type: "image",
 			value: "assets/images/logo/firefly-light.png",
 			valueDark: "assets/images/logo/firefly-dark.png",
 			alt: "🍀",
 		},
+		// 导航栏标题
 		title: "Cyrene",
+		// 全宽导航栏，导航栏是否占满屏幕宽度
 		widthFull: false,
+		// 导航菜单对齐方式，left：左对齐，center：居中
 		menuAlign: "center",
+		// 导航栏图标和标题是否跟随主题色
 		followTheme: false,
+		// 导航栏是否固定在顶部并始终可见
 		stickyNavbar: true,
 	},
 
@@ -80,39 +103,27 @@ export const siteConfig: SiteConfig = {
 
 	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
 	pages: {
+		// 友链页面开关
 		friends: true,
+		// 打赏页面开关
 		sponsor: false,
+		// 留言板页面开关，需要配置评论系统
 		guestbook: true,
-		bangumi: {
-			userId: "1186385",
-			mode: "static",
-			apiUrl: "https://bgmapi.anibt.net",
-			subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-			categoryOrder: [
-				"anime",
-				"book",
-				"music",
-				"game",
-			],
-		},
-		vndb: {
-			userId: "",
-			mode: "static",
-			downloadCovers: true,
-			apiUrl: "https://api.vndb.org/kana",
-			vnBaseUrl: "https://vndb.org/",
-			apiToken: "",
-			blurNsfw: true,
-		},
+		// 番组计划页面开关，含追番、游戏、书籍和音乐
+		bangumi: true,
+		// VNDB页面开关。
+		vndb: false,
+		// 相册页面开关
 		gallery: false,
-		anime: {
-			bilibili: {
-				uid: "",
-			},
-		},
+		// 追番页面开关
+		anime: false,
+		// AI聊天页面开关
 		chat: false,
+		// 动态页面开关
 		dynamic: true,
+		// 朋友圈页面开关
 		circle: true,
+		// 书签导航页面开关
 		booknav: true,
 	},
 
@@ -134,42 +145,80 @@ export const siteConfig: SiteConfig = {
 
 	// 文章列表布局配置
 	postListLayout: {
+		// 默认布局模式："list" 列表模式（单列布局），"grid" 网格模式（多列布局）
 		defaultMode: "list",
+		// 移动端默认布局模式，不设置则跟随 defaultMode
 		mobileDefaultMode: "grid",
+		// 列表模式下封面图显示在哪一侧："right" 右侧，"left" 左侧
+		// 网格模式的封面固定在卡片顶部，不受此项影响
 		coverPosition: "right",
+		// 文章简介显示行数，设为 0 则不截断
 		descriptionLines: 2,
+		// 文章卡片底部统计和发布日期是否显示图标
 		showStatsIcons: true,
+		// 标签显示位置
+		// 设置为"meta"：显示在文章标题下的元数据
+		// 设置为"bottom"：顶替stats在底部显示
 		tagsPosition: "bottom",
+		// 底部标签样式，仅在 tagsPosition 为 "bottom" 时生效
+		// "chip"：按钮样式，形状跟随上方的 tagStyle 配置
+		// "text"：无底色，只有文字
 		tagsBottomStyle: "chip",
+		// PostMeta 元数据显示控制
 		meta: {
+			// 是否显示发布日期
 			showPublished: true,
+			// 是否显示分类
 			showCategory: true,
+			// 是否显示标签
 			showTags: true,
+			// 标签数量，设为 0 则不限制
 			tagCount: 5,
+			// 是否显示字数
 			showWords: false,
+			// 是否显示阅读时间
 			showReadingTime: false,
 		},
+		// 底部 PostStats 统计信息显示控制
+		// 如果tagsPosition设置为"bottom"，则stats将不显示
 		stats: {
+			// 是否显示发布日期
 			showPublished: true,
+			// 是否显示字数
 			showWords: true,
+			// 是否显示阅读时间
 			showReadingTime: true,
 		},
+		// 网格布局配置，仅在 defaultMode 为 "grid" 或允许切换布局时生效
 		grid: {
+			// 是否开启瀑布流布局，同时有封面图和无封面图的混合文章推荐开启
 			masonry: true,
+			// 网格模式卡片最小宽度(px)，浏览器根据容器宽度自动计算列数
 			columnWidth: 320,
+			// 网格模式封面是否撑满卡片贴边
+			// true：封面顶到卡片左右和上边缘，只有上面两角是圆角
+			// false：封面按卡片内边距内缩，上、左、右留出间距，四角都是圆角
 			coverFullWidth: false,
 		},
 	},
 
 	// 文章内容页配置
 	post: {
+		// 提醒框（Admonitions）配置，修改后需要重启开发服务器才能生效
+		// 主题：'github' | 'obsidian' | 'vitepress' | 'docusaurus'，每个主题风格和语法不同，可根据喜好选择
 		rehypeCallouts: {
 			theme: "github",
+			// 是否启用兼容 Python-Markdown 风格的 admonition 语法（!!!和???语法）
+			// 注意：只有 theme 配置成 obsidian 主题才能基本支持这些语法，其他主题会有样式问题或不兼容的情况
 			enablePythonMarkdownAdmonitions: false,
 		},
+		// 文章页底部的"上次编辑时间"卡片开关
 		showLastModified: true,
+		// 文章过期阈值（天数），超过此天数才显示"上次编辑"卡片
 		outdatedThreshold: 180,
+		// 是否开启分享海报生成功能
 		sharePoster: true,
+		// OpenGraph图片功能，注意开启后要渲染很长时间，不建议本地调试的时候开启
 		generateOgImages: false,
 	},
 
@@ -233,6 +282,7 @@ export const siteConfig: SiteConfig = {
 
 	// 分页配置
 	pagination: {
+		// 每页显示的文章数量
 		postsPerPage: 10,
 	},
 
@@ -242,12 +292,17 @@ export const siteConfig: SiteConfig = {
 	// Astro 仅能对 src 目录下的图像进行优化，src 目录下的图像越多，构建时间会越长
 	// Astro 图像文档 https://docs.astro.build/zh-cn/guides/images/
 	imageOptimization: {
+		// 输出图片格式
+		// - "avif": 仅输出 AVIF 格式（最新技术，最小体积，目前兼容性较低，构建时间较长）
+		// - "webp": 仅输出 WebP 格式（体积适中，兼容性好，构建时间短）
+		// - "both": 同时输出 AVIF 和 WebP（浏览器自动选择最佳格式）
 		formats: "avif",
+		// 图片压缩质量 (1-100)，值越低体积越小但质量越差，推荐 70-85
 		quality: 85,
-		noReferrerDomains: [
-			"*.hdslb.com",
-			"*.bilibili.com",
-		],
+		// 为特定域名的图片添加 referrerpolicy="no-referrer" 属性
+		// 支持通配符 *，例如：["i0.hdslb.com", "*.bilibili.com"]
+		// 可解决指定域名图片加载时的 403 问题（如防盗链图片）
+		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
