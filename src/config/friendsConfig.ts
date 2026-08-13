@@ -121,7 +121,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://blog.nw177.cn/",
 		rss: "https://blog.nw177.cn/rss.xml",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 11, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
