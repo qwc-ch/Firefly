@@ -1,5 +1,5 @@
-import { friendsConfig } from "@/config";
 import type { APIRoute } from "astro";
+import { friendsConfig } from "@/config";
 
 /**
  * 友链数据 JSON 端点

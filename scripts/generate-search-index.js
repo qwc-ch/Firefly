@@ -37,7 +37,7 @@ async function main() {
 		const filePath = path.join(POSTS_DIR, file);
 		const content = fs.readFileSync(filePath, "utf-8");
 		const fm = extractFrontmatter(content);
-		if (!fm || !fm.title) continue;
+		if (!fm?.title) continue;
 
 		const slug = file.replace(/\.(md|mdx)$/, "");
 		posts.push({
