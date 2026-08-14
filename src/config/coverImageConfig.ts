@@ -31,7 +31,7 @@ export const coverImageConfig: CoverImageConfig = {
 		// 随机封面图功能开关
 		enable: true,
 		// 封面图API列表
-		apis: ["https://tu.520781.xyz/random?type=img&dir=api/cover"],
+		apis: ["https://tu.520781.xyz/random?type=img&dir=api"],
 		// API失败时的回退图片路径（相对于src目录或以/开头的public目录路径）
 		fallback: "assets/images/cover.avif",
 		// 是否显示加载动画
