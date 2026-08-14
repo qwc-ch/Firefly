@@ -146,8 +146,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "L!!!!ght",
-		imgurl:
-			"https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
+		imgurl: "https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
 		desc: "阳光正好，慢慢前行。",
 		siteurl: "https://sunlight.kejk.cn",
 		rss: "https://sunlight.kejk.cn/rss.xml",
@@ -328,8 +327,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "xane",
-		imgurl:
-			"https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
+		imgurl: "https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
 		desc: "Keep going.",
 		siteurl: "https://xane.eu.cc",
 		rss: "https://xane.eu.cc/rss.xml",
@@ -435,6 +433,16 @@ export const friendsConfig: FriendLink[] = [
 		rss: "https://tblog.mmzhiku.xyz/rss.xml",
 		tags: ["Blog"],
 		weight: 18, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
+	{
+		title: "锦木祈杰のblog",
+		imgurl: "https://oss.qijieya.cn/1/hutao_hai.gif",
+		desc: "敬....不完美的明天。",
+		siteurl: "https://qijieya.cn/",
+		rss: "https://qijieya.cn/rss.xml",
+		tags: ["Blog"],
+		weight: 12, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 ];
