@@ -146,8 +146,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "L!!!!ght",
-		imgurl:
-			"https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
+		imgurl: "https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
 		desc: "阳光正好，慢慢前行。",
 		siteurl: "https://sunlight.kejk.cn",
 		rss: "https://sunlight.kejk.cn/rss.xml",
@@ -328,8 +327,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "xane",
-		imgurl:
-			"https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
+		imgurl: "https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
 		desc: "Keep going.",
 		siteurl: "https://xane.eu.cc",
 		rss: "https://xane.eu.cc/rss.xml",
@@ -445,6 +443,17 @@ export const friendsConfig: FriendLink[] = [
 		rss: "https://qijieya.cn/rss.xml",
 		tags: ["Blog"],
 		weight: 12, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
+	{
+		title: "Silvaire",
+		imgurl:
+			"https://wsrv.nl/?url=avatars.githubusercontent.com/u/184231508?s=400&u=0a370792ba6bbb95a04d309171b562bcd7283a0f&v=4&mask=circle",
+		desc: "Per Aspera Ad Astra Blog",
+		siteurl: "https://silvaire.top/",
+		rss: "",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 ];
