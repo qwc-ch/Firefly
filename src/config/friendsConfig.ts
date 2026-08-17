@@ -466,6 +466,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 13, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "EGS-blog",
+		imgurl: "https://blog.egs.cc.cd/hero/avatar.png",
+		desc: "heron_i的小站",
+		siteurl: "https://blog.egs.cc.cd/",
+		rss: "https://blog.egs.cc.cd/index.xml",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
