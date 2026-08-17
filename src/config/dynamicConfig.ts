@@ -8,7 +8,7 @@ export const dynamicConfig: DynamicConfig = {
 	description: "",
 
 	// 动态头像和名称的跳转地址，支持站内路径或完整 URL
-	profileUrl: "https://tu.520781.xyz/file/blog/1778920994044_1768742143018.jpg",
+	profileUrl: "/about/",
 
 	// 是否为每条动态启用评论，需要先在 commentConfig.ts 启用评论系统
 	showComment: true,

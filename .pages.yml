@@ -39,7 +39,7 @@ content:
         path: src/content/posts
         format: yaml-frontmatter
         filename:
-          template: "{primary}.md"
+          template: "{year}-{month}-{day}-{primary}.md"
           field: create
         exclude: ["**/images/**", "**/*.avif", "**/*.webp", "**/*.png", "**/*.jpg"]
         view:
