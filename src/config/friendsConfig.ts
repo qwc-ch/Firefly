@@ -146,7 +146,8 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "L!!!!ght",
-		imgurl: "https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
+		imgurl:
+			"https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
 		desc: "阳光正好，慢慢前行。",
 		siteurl: "https://sunlight.kejk.cn",
 		rss: "https://sunlight.kejk.cn/rss.xml",
@@ -327,7 +328,8 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "xane",
-		imgurl: "https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
+		imgurl:
+			"https://cloudflare-imgbed-d88.pages.dev/file/1784102742642_头像.jpg",
 		desc: "Keep going.",
 		siteurl: "https://xane.eu.cc",
 		rss: "https://xane.eu.cc/rss.xml",
