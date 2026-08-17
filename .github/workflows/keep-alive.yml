@@ -1,0 +1,22 @@
+# Keeps the HF Space awake by pinging it periodically.
+# Free CPU Spaces sleep after 48h of inactivity; this resets the timer.
+name: Keep HF Space Alive
+
+on:
+  schedule:
+    - cron: "0 */8 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping HF Space
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer ${{ secrets.HF_TOKEN }}" \
+            https://qwc-ch-linux.hf.space/ || true)
+          echo "Space responded with HTTP $code"
+          if [ "$code" != "200" ] && [ "$code" != "302" ] && [ "$code" != "301" ]; then
+            echo "Unexpected response code, but continuing (space may still be waking up)."
+          fi
