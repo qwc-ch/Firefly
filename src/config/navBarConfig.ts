@@ -71,11 +71,11 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			// 番组计划
 			LinkPresets.Bangumi,
 
-			// AI聊天
-			LinkPresets.Chat,
-
 			// 书签导航
 			LinkPresets.Booknav,
+
+			// 关于页面
+			LinkPresets.About,
 		],
 	});
 
@@ -87,37 +87,10 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			// 打赏
 			LinkPresets.Sponsor,
-
-			// 关于页面
-			LinkPresets.About,
 		],
 	});
 
-	// 音乐（外部链接）
-	links.push(LinkPresets.Music);
-
-	// 自定义导航栏链接
-	links.push({
-		name: "链接",
-		url: "#",
-		icon: "material-symbols:link",
-		// 子菜单
-		children: [
-			{
-				name: "GitHub",
-				url: "https://github.com/qwc-ch/",
-				external: true,
-				icon: "fa7-brands:github",
-			},
-			{
-				name: "E-mail",
-				url: "mailto:zzzzzzxx2022@163.com",
-				external: true,
-				icon: "fa7-regular:envelope",
-			},
-		],
-	});
-
+	// 音乐与自定义链接移入其他菜单
 	links.push({
 		name: "其他",
 		url: "/others/",
@@ -129,6 +102,26 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://umami.520781.xyz/share/uVEXU0CJbC0XUe0n",
 				external: true,
 				icon: "fa7-solid:chart-simple",
+			},
+			// 音乐（外部链接）
+			LinkPresets.Music,
+			{
+				name: "主页",
+				url: "https://www.amamo.top/",
+				external: true,
+				icon: "material-symbols:home",
+			},
+			{
+				name: "GitHub",
+				url: "https://github.com/qwc-ch/",
+				external: true,
+				icon: "fa7-brands:github",
+			},
+			{
+				name: "E-mail",
+				url: "mailto:zzzzzzxx2022@163.com",
+				external: true,
+				icon: "fa7-regular:envelope",
 			},
 		],
 	});
