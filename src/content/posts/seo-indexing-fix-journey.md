@@ -86,12 +86,12 @@ IndexNow 是一个开放协议，Bing、Yandex、Naver、Seznam 都支持：网�
 
 **坑四：用"从 Google Search Console 导入"验证的域名，Bing 的 IndexNow 会拒绝。** 我在 Bing Webmaster Tools 里重新添加了站点，改用 XML 文件方式验证，之后 Bing 的 IndexNow 面板就能看到提交记录了（353 条）。
 
-**坑五：Bing 不解析 sitemap 索引文件。** 提交 `sitemap-index.xml` 只发现 1 个 URL，改成直接提交 `sitemap-0.xml` 后成功发现 39 个 URL。
+**坑五：搜索引擎不解析 sitemap 索引文件。** 先是在 Bing 上发现提交 `sitemap-index.xml` 只发现 1 个 URL；后来发现 Google Search Console 也一样——8/1 读过一次索引后 "Sitemaps read" 一直为 0。两个搜索引擎都改成**直接提交 `sitemap-0.xml`** 后，Bing 和 Google 均成功发现 39 个 URL。
 
 ## 现状与总结
 
-- Google 侧：canonical、meta description、robots.txt 均已修复，剩下的交给时间（新站收录慢是正常的）
-- Bing 侧：网站地图 ✅、IndexNow ✅，Yandex/Naver/Seznam 已收到提交
+- Google 侧：canonical、meta description、robots.txt 均已修复；sitemap-0.xml 已成功处理（39 个 URL）。剩下的交给时间（新站收录慢是正常的）
+- Bing 侧：网站地图 ✅（39 个 URL）、IndexNow ✅（353 条提交记录），Yandex/Naver/Seznam 也已收到提交
 - 后续发新文章，部署时自动提交 IndexNow，无需手动操作
 
 这次排查最大的感悟：**SEO 里 90% 的问题都是"少了一行标签"**。canonical、description、robots.txt 这些基础项做好，剩下的就是内容质量和耐心。
