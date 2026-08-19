@@ -5,7 +5,11 @@ export const en: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
 	[Key.archive]: "Archive",
+	[Key.archiveDescription]:
+		"Browse every post in chronological order — a quick way to revisit past posts.",
 	[Key.search]: "Search",
+	[Key.searchDescription]:
+		"Search all content on this site, including posts, tags, and keywords.",
 	[Key.searchNoResults]: "No results found.",
 	[Key.searchTypeSomething]: "Type something to search...",
 	[Key.searchLoading]: "Searching...",
@@ -18,7 +22,11 @@ export const en: Translation = {
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
 	[Key.allCategories]: "All Categories",
+	[Key.categoriesDescription]:
+		"Browse all posts by category to find topics you care about faster.",
 	[Key.allTags]: "All Tags",
+	[Key.tagsDescription]:
+		"Browse all posts by tag to quickly find topics you are interested in.",
 	[Key.recentPosts]: "Recent Posts",
 	[Key.postList]: "Post List",
 	[Key.tableOfContents]: "Table of Contents",

@@ -5,7 +5,10 @@ export const ja: Translation = {
 	[Key.home]: "ホーム",
 	[Key.about]: "について",
 	[Key.archive]: "アーカイブ",
+	[Key.archiveDescription]: "すべての投稿を時系列でまとめたアーカイブです。",
 	[Key.search]: "検索",
+	[Key.searchDescription]:
+		"サイト内のすべてのコンテンツ（投稿・タグ・キーワード）を検索します。",
 	[Key.searchNoResults]: "結果が見つかりません。",
 	[Key.searchTypeSomething]: "検索キーワードを入力してください。",
 	[Key.searchLoading]: "検索中...",
@@ -18,7 +21,11 @@ export const ja: Translation = {
 	[Key.tags]: "タグ",
 	[Key.categories]: "カテゴリ",
 	[Key.allCategories]: "すべてのカテゴリ",
+	[Key.categoriesDescription]:
+		"カテゴリ別に投稿を閲覧して、興味のあるテーマをすぐに見つけられます。",
 	[Key.allTags]: "すべてのタグ",
+	[Key.tagsDescription]:
+		"タグ別に投稿を閲覧して、興味のあるテーマをすぐに見つけられます。",
 	[Key.recentPosts]: "最近の投稿",
 	[Key.postList]: "投稿リスト",
 	[Key.tableOfContents]: "目次",

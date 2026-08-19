@@ -5,7 +5,10 @@ export const ru: Translation = {
 	[Key.home]: "Главная",
 	[Key.about]: "О нас",
 	[Key.archive]: "Архив",
+	[Key.archiveDescription]: "Архив всех постов в хронологическом порядке.",
 	[Key.search]: "Поиск",
+	[Key.searchDescription]:
+		"Поиск по всему содержимому сайта: посты, теги и ключевые слова.",
 	[Key.searchNoResults]: "Результаты не найдены.",
 	[Key.searchTypeSomething]: "Введите ключевое слово для поиска...",
 	[Key.searchLoading]: "Поиск...",
@@ -18,7 +21,11 @@ export const ru: Translation = {
 	[Key.tags]: "Теги",
 	[Key.categories]: "Категории",
 	[Key.allCategories]: "Все категории",
+	[Key.categoriesDescription]:
+		"Просматривайте посты по категориям, чтобы быстрее находить интересующие темы.",
 	[Key.allTags]: "Все теги",
+	[Key.tagsDescription]:
+		"Просматривайте посты по тегам, чтобы быстро находить интересующие темы.",
 	[Key.recentPosts]: "Последние посты",
 	[Key.postList]: "Список постов",
 	[Key.tableOfContents]: "Содержание",

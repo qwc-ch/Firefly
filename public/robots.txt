@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /*?tag=
 
 Sitemap: https://blog.amamo.top/sitemap-index.xml

@@ -146,6 +146,7 @@ const siteLang = lang.replace("_", "-");
     )}
 
     <title>{pageTitle}</title>
+    <link rel="canonical" href={Astro.url} />
     <meta
       name="description"
       content={description || siteConfig.description || pageTitle}

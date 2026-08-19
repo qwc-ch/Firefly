@@ -5,7 +5,10 @@ export const ko: Translation = {
 	[Key.home]: "홈",
 	[Key.about]: "소개",
 	[Key.archive]: "아카이브",
+	[Key.archiveDescription]: "모든 게시글을 시간순으로 모아보는 아카이브입니다.",
 	[Key.search]: "검색",
+	[Key.searchDescription]:
+		"사이트의 모든 콘텐츠(게시글, 태그, 키워드)를 검색합니다.",
 	[Key.searchNoResults]: "검색 결과가 없습니다.",
 	[Key.searchTypeSomething]: "검색어를 입력하세요...",
 	[Key.searchLoading]: "검색 중...",
@@ -18,7 +21,11 @@ export const ko: Translation = {
 	[Key.tags]: "태그",
 	[Key.categories]: "카테고리",
 	[Key.allCategories]: "모든 카테고리",
+	[Key.categoriesDescription]:
+		"카테고리별로 게시글을 둘러보고 관심 주제를 빠르게 찾아보세요.",
 	[Key.allTags]: "모든 태그",
+	[Key.tagsDescription]:
+		"태그별로 게시글을 둘러보고 관심 주제를 빠르게 찾아보세요.",
 	[Key.recentPosts]: "최근 게시글",
 	[Key.postList]: "게시글 목록",
 	[Key.tableOfContents]: "목차",

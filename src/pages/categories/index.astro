@@ -9,7 +9,10 @@ const categories = await getCategoryList();
 const totalPosts = categories.reduce((sum, cat) => sum + cat.count, 0);
 ---
 
-<MainGridLayout title={i18n(I18nKey.categories)}>
+<MainGridLayout
+  title={i18n(I18nKey.categories)}
+  description={i18n(I18nKey.categoriesDescription)}
+>
     <!-- 页面标题 -->
     <div class="card-base px-8 py-6 mb-4">
         <div class="text-2xl font-bold text-(--primary) mb-2">
