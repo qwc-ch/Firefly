@@ -59,7 +59,9 @@ async function main() {
 				anySuccess = true;
 				console.log(`⚡ OK   ${endpoint} -> ${res.status}`);
 			} else {
-				console.warn(`⚠ FAIL ${endpoint} -> ${res.status} ${body.slice(0, 120)}`);
+				console.warn(
+					`⚠ FAIL ${endpoint} -> ${res.status} ${body.slice(0, 120)}`,
+				);
 			}
 		} catch (err) {
 			console.warn(`⚠ ERR  ${endpoint} -> ${String(err)}`);
