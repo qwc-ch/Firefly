@@ -1,12 +1,15 @@
 // IndexNow 提交脚本：构建完成后把 sitemap 里的 URL 提交给 IndexNow
 // （Bing、Yandex 等搜索引擎会据此立即抓取，加速新页面收录）
 // 用法：npx tsx scripts/indexnow.ts （已接入 pnpm build 最后一步）
+//
+// 注意：本站用 POST 接口会稳定返回 403 (UserForbiddedToAccessSite)，
+// 即使 key 文件验证正常；改用 GET 接口（每 URL 一次请求）则正常返回 202。
 
 import fs from "node:fs/promises";
 
 const SITEMAP = "dist/sitemap-0.xml";
 // 与 public/<key>.txt 保持一致，该文件必须能通过 https://<host>/<key>.txt 访问
-const KEY = "e6950b10-2a82-497f-b285-dcabe051be53";
+const KEY = "964bdf1f-3f89-4680-bc50-af4392f896d9";
 const INDEXNOW_API = "https://api.indexnow.org/indexnow";
 
 async function main() {
@@ -27,25 +30,31 @@ async function main() {
 	}
 
 	const host = new URL(urlList[0]).host;
-	const payload = {
-		host,
-		key: KEY,
-		keyLocation: `https://${host}/${KEY}.txt`,
-		urlList,
-	};
+	let submitted = 0;
+	const failed: string[] = [];
 
-	const res = await fetch(INDEXNOW_API, {
-		method: "POST",
-		headers: { "Content-Type": "application/json; charset=utf-8" },
-		body: JSON.stringify(payload),
-	});
+	for (const url of urlList) {
+		const res = await fetch(
+			`${INDEXNOW_API}?url=${encodeURIComponent(url)}&key=${KEY}`,
+		);
+		if (res.ok || res.status === 202) {
+			submitted++;
+		} else {
+			failed.push(`${url} (${res.status})`);
+		}
+	}
 
-	if (!res.ok) {
+	if (failed.length > 0) {
 		// 提交失败只告警不阻断构建
-		console.warn(`⚠ IndexNow 提交失败: ${res.status} ${await res.text()}`);
+		console.warn(
+			`⚠ IndexNow 提交完成，${submitted} 成功 / ${failed.length} 失败:`,
+		);
+		for (const f of failed.slice(0, 5)) {
+			console.warn(`   ${f}`);
+		}
 		return;
 	}
-	console.log(`⚡ IndexNow 已提交 ${urlList.length} 个 URL (${host})`);
+	console.log(`⚡ IndexNow 已提交 ${submitted} 个 URL (${host})`);
 }
 
 main().catch((err) => {
