@@ -2,6 +2,7 @@
 export type FriendLink = {
 	title: string; // 友链标题
 	imgurl: string; // 头像图片URL
+	cover?: string; // 卡片封面图片URL（可选，显示在卡片顶部横幅）
 	desc: string; // 友链描述
 	siteurl: string; // 友链地址
 	rss?: string; // RSS订阅地址（用于朋友圈）
