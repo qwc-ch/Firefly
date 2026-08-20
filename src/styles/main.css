@@ -299,6 +299,11 @@ html {
         background-color: var(--card-bg-transparent) !important;
     }
 
+    .wallpaper-transparent .gb,
+    .wallpaper-transparent .gb__inp {
+        background-color: var(--card-bg-transparent) !important;
+    }
+
     .wallpaper-transparent .bg-\(--card-bg\) {
         background-color: var(--card-bg-transparent) !important;
     }

@@ -197,6 +197,10 @@
 	color: inherit;
 }
 
+body.wallpaper-transparent .circle-card {
+	background: var(--card-bg-transparent);
+}
+
 .circle-card:hover {
 	border-color: var(--primary);
 	box-shadow: var(--shadow-lg);
@@ -251,6 +255,14 @@
 
 :root.dark .circle-card-footer {
 	background: linear-gradient(transparent, var(--card-bg) 15%);
+}
+
+body.wallpaper-transparent .circle-card-footer {
+	background: linear-gradient(transparent, var(--card-bg-transparent) 40%);
+}
+
+:root.dark body.wallpaper-transparent .circle-card-footer {
+	background: linear-gradient(transparent, var(--card-bg-transparent) 15%);
 }
 
 .circle-card-author {
