@@ -28,7 +28,6 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 11.22.0
           run_install: false
 
       # 3. 再安装 Node.js，并告诉它用 pnpm 做缓存
