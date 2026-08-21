@@ -545,6 +545,28 @@ export const friendsConfig: FriendLink[] = [
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+{
+		title: "RAGNote",
+		imgurl: "https://ragnote.top/Avatar.png",
+		cover: "https://tu.520781.xyz/file/youlian/agnote.top.png",
+		desc: "Life is code. I will debug it.",
+		siteurl: "https://ragnote.top/",
+		rss: "https://ragnote.top/rss.xml",
+		tags: ["Blog"],
+		weight: 14, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
+{
+		title: "清羽飞扬",
+		imgurl: "https://blog.liushen.fun/info/avatar.ico",
+		cover: "https://blog.liushen.fun/info/siteshot.jpg",
+		desc: "柳影曳曳，清酒孤灯，扬笔撒墨，心境如霜",
+		siteurl: "https://blog.liushen.fun/",
+		rss: "https://blog.liushen.fun/atom.xml",
+		tags: ["Blog"],
+		weight: 13, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
