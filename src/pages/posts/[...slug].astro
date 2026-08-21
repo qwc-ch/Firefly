@@ -111,7 +111,6 @@ const relatedPosts = await getRelatedPosts(entry, 5);
 ---
 
 <MainGridLayout
-  banner={processedImage}
   title={entry.data.title}
   description={entry.data.description || remarkPluginFrontmatter.excerpt}
   lang={entry.data.lang}

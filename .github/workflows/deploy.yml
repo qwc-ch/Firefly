@@ -28,14 +28,15 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.14.4 # 或写 latest，避免小版本问题
+          version: 11.22.0
+          run_install: false
 
       # 3. 再安装 Node.js，并告诉它用 pnpm 做缓存
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'pnpm' # 此项现在会生效
+          cache: 'pnpm' # pnpm 需先安装，此项才会生效
 
       # 4. 现在可以安全使用 pnpm 命令了
       - name: Install Dependencies

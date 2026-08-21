@@ -93,17 +93,11 @@ export type SiteConfig = {
 					categoryOrder?: string[];
 			  };
 		vndb: boolean;
+		mal: boolean; // MyAnimeList 页面开关
 		gallery: boolean; // 相册页面开关
-		anime:
-			| boolean
-			| {
-					bilibili?: {
-						uid: string;
-					};
-			  };
-		chat?: boolean; // AI聊天页面开关
-		dynamic?: boolean; // 动态页面开关
-		circle?: boolean; // 朋友圈页面开关
+		bilibili: boolean; // 哔哩哔哩追番页面开关
+		dynamic: boolean; // 动态页面开关
+		circle?: boolean; // 朋友圈页面开关（本地自定义页面）
 	};
 
 	// 分类导航栏开关
@@ -112,8 +106,8 @@ export type SiteConfig = {
 	// 分类导航栏按钮样式："pill"=胶囊，"rectangle"=矩形（配色同胶囊）
 	categoryStyle?: "pill" | "rectangle";
 
-	// 标签样式："pill"=胶囊，"rectangle"=主题色矩形
-	tagStyle?: "pill" | "rectangle";
+	// 标签样式："pill"=主题色胶囊，"pill-gray"=中性灰胶囊，"rectangle"=主题色矩形
+	tagStyle?: "pill" | "pill-gray" | "rectangle";
 
 	// 归档页是否折叠非最新年份文章
 	foldArticle?: boolean;
@@ -201,15 +195,18 @@ export type SiteConfig = {
 		blurNsfw?: boolean; // 对Nsfw的游戏封面模糊化，默认为true
 	};
 
-	// 追番配置（Bilibili + TMDB）
-	anime?: {
-		bilibili?: {
-			uid: string; // Bilibili 用户 UID
-		};
-		tmdb?: {
-			apiKey: string; // TMDB API Key
-			listId: string; // TMDB 列表 ID
-		};
+	// MyAnimeList 配置
+	mal?: {
+		username?: string; // MyAnimeList 用户名，列表需为公开状态
+		clientId?: string; // MyAnimeList Client ID，从 https://myanimelist.net/apiconfig 注册免费应用后获取
+		apiUrl?: string; // MAL API 地址
+		animeBaseUrl?: string; // 动画条目详情页地址，末尾需要带 /
+		mangaBaseUrl?: string; // 漫画条目详情页地址，末尾需要带 /
+	};
+
+	// Bilibili 配置
+	bilibili?: {
+		uid?: string; // Bilibili 用户 UID
 	};
 
 	// 分页配置
