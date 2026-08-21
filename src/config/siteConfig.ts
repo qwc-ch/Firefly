@@ -65,6 +65,9 @@ export const siteConfig: SiteConfig = {
 		"技术博客",
 		"静态博客",
 		"生活",
+		"年华的博客",
+		"技术博主",
+		"年华的小破站",
 	],
 
 	// 主题色
