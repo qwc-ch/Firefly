@@ -545,7 +545,7 @@ export const friendsConfig: FriendLink[] = [
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
-{
+	{
 		title: "RAGNote",
 		imgurl: "https://ragnote.top/Avatar.png",
 		cover: "https://tu.520781.xyz/file/youlian/agnote.top.png",
@@ -556,7 +556,7 @@ export const friendsConfig: FriendLink[] = [
 		weight: 14, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
-{
+	{
 		title: "清羽飞扬",
 		imgurl: "https://blog.liushen.fun/info/avatar.ico",
 		cover: "https://blog.liushen.fun/info/siteshot.jpg",
