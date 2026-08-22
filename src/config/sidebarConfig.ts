@@ -59,6 +59,16 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			showOnPostPage: true,
 		},
 		{
+			// 组件类型：时段问候实时时钟组件
+			type: "timeGreeting",
+			// 是否启用该组件
+			enable: true,
+			// 组件位置
+			position: "top",
+			// 是否在文章详情页显示
+			showOnPostPage: false,
+		},
+		{
 			// 组件类型：音乐播放器
 			type: "music",
 			// 是否启用该组件
@@ -263,6 +273,14 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			enable: true,
 			// 是否在文章详情页显示
 			showOnPostPage: true,
+		},
+		{
+			// 组件类型：时段问候实时时钟组件
+			type: "timeGreeting",
+			// 是否启用该组件（移动端底部显示）
+			enable: true,
+			// 是否在文章详情页显示
+			showOnPostPage: false,
 		},
 		{
 			// 组件类型：分类组件
