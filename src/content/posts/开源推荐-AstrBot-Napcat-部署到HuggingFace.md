@@ -1,5 +1,6 @@
 ---
 title: "开源推荐：把 QQ 机器人搬到 Hugging Face 免费跑（AstrBot + NapCat）"
+description: "开源推荐：把 QQ 机器人搬到 Hugging Face 免费跑（AstrBot + NapCat）"
 published: 2026-08-19
 updated: 2026-08-19
 draft: false
