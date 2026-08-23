@@ -1,5 +1,5 @@
 ---
-title: "怎么用Netlify反代"
+title: "怎么用Netlify反代你的源站"
 published: 2026-08-05
 updated: 2026-08-05
 draft: false
@@ -7,6 +7,7 @@ tags: ['反向代理', 'netlify']
 category: '反向代理'
 author: 'Admin'
 ---
+
 
 ## 怎么反代
 
