@@ -165,7 +165,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://sunlight.kejk.cn",
 		rss: "https://sunlight.kejk.cn/rss.xml",
 		tags: ["Blog"],
-		weight: 11, // 权重，数字越大排序越靠前
+		weight: 88, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -409,7 +409,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://shijiucode.cn",
 		rss: "https://shijiucode.cn/shijiu-blog/api/rss.xml",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 66, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -420,7 +420,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://www.stackmeow.tech",
 		rss: "https://www.stackmeow.tech/rss.xml",
 		tags: ["Blog"],
-		weight: 12, // 权重，数字越大排序越靠前
+		weight: 65, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -431,7 +431,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://reknal.com",
 		rss: "https://reknal.com/rss.xml",
 		tags: ["Blog"],
-		weight: 9, // 权重，数字越大排序越靠前
+		weight: 64, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -453,7 +453,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://blog.liuhangyv.top",
 		rss: "https://blog.liuhangyv.top/rss.xml",
 		tags: ["Blog"],
-		weight: 8, // 权重，数字越大排序越靠前
+		weight: 63, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -464,7 +464,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://lxya.net",
 		rss: "",
 		tags: ["Blog"],
-		weight: 12, // 权重，数字越大排序越靠前
+		weight: 62, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -475,7 +475,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://tblog.mmzhiku.xyz/",
 		rss: "https://tblog.mmzhiku.xyz/rss.xml",
 		tags: ["Blog"],
-		weight: 18, // 权重，数字越大排序越靠前
+		weight: 61, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -486,7 +486,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://qijieya.cn/",
 		rss: "https://qijieya.cn/rss.xml",
 		tags: ["Blog"],
-		weight: 12, // 权重，数字越大排序越靠前
+		weight: 60, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -498,7 +498,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://silvaire.top/",
 		rss: "",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 59, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -509,7 +509,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://x1anyu.cn",
 		rss: "https://x1anyu.cn/rss.xml",
 		tags: ["Blog"],
-		weight: 13, // 权重，数字越大排序越靠前
+		weight: 58, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -520,7 +520,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://blog.egs.cc.cd/",
 		rss: "https://blog.egs.cc.cd/index.xml",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 57, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -531,7 +531,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://baiyangmu.xyz/",
 		rss: "https://baiyangmu.xyz/rss.xml",
 		tags: ["Blog"],
-		weight: 11, // 权重，数字越大排序越靠前
+		weight: 56, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -542,7 +542,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://xjc.ccwu.cc",
 		rss: "https://xjc.ccwu.cc/rss.xml",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 55, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -553,7 +553,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://ragnote.top/",
 		rss: "https://ragnote.top/rss.xml",
 		tags: ["Blog"],
-		weight: 14, // 权重，数字越大排序越靠前
+		weight: 54, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
@@ -564,7 +564,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://blog.liushen.fun/",
 		rss: "https://blog.liushen.fun/atom.xml",
 		tags: ["Blog"],
-		weight: 13, // 权重，数字越大排序越靠前
+		weight: 53, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 ];
