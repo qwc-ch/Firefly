@@ -2,7 +2,7 @@ import type { CommentConfig } from "../types/commentConfig";
 
 export const commentConfig: CommentConfig = {
 	// 评论系统类型: none, twikoo, waline, giscus, disqus, artalk，默认为none，即不启用评论系统
-	type: "twikoo",
+	type: "waline",
 
 	//twikoo评论系统配置
 	twikoo: {
@@ -39,6 +39,8 @@ export const commentConfig: CommentConfig = {
 		login: "enable",
 		// 是否启用文章访问量统计功能
 		visitorCount: true,
+		// Waline 自定义 CSS 文件地址，为空则不加载
+		cssUrl: "/assets/css/waline-custom.css",
 	},
 
 	// artalk评论系统配置

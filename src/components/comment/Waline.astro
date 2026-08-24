@@ -18,6 +18,9 @@ const config = {
 <div class="relative w-full">
   <div id="waline"></div>
   <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+  {commentConfig.waline?.cssUrl && (
+    <link rel="stylesheet" href={commentConfig.waline.cssUrl} />
+  )}
   <script type="module" is:inline define:vars={{ config }}>
     import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
     const requestedPath = new URLSearchParams(window.location.search).get("path");

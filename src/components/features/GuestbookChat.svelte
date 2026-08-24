@@ -1,667 +1,1460 @@
 <script lang="ts">
-import { onDestroy, onMount } from "svelte";
+import {
+	addComment,
+	deleteComment,
+	getComment,
+	login as loginWithWaline,
+	updateComment,
+} from "@waline/api";
+import {
+	AlertCircle,
+	Bell,
+	ChevronDown,
+	LoaderCircle,
+	RefreshCw,
+	RotateCcw,
+	Users,
+	WifiOff,
+	X,
+} from "lucide-svelte";
+import { onMount, tick } from "svelte";
 import { commentConfig } from "@/config/commentConfig";
+import { guestbookConfig } from "@/config/guestbookConfig";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import type { GuestbookAnnouncementItem } from "@/types/config";
+import type {
+	GuestbookAuthUser,
+	GuestbookImageAttachment,
+	GuestbookChatMessage as GuestbookMessage,
+	GuestbookProfile,
+} from "@/types/guestbook-chat";
+import {
+	appendGuestbookImage,
+	buildGuestbookEditedMessageBody,
+	buildGuestbookMessageBody,
+	flattenGuestbookComments,
+	getGuestbookErrorMessage,
+	getGuestbookInitials,
+	getGuestbookTextLength,
+	hasGuestbookImage,
+	hasGuestbookReplyMarker,
+	isGuestbookAuthError,
+	mergeGuestbookMessages,
+	normalizeGuestbookComment,
+} from "@/utils/guestbook-chat";
+import GuestbookChatComposer from "./GuestbookChatComposer.svelte";
+import GuestbookChatMessage from "./GuestbookChatMessage.svelte";
 
-type Profile = {
-	nick: string;
-	mail: string;
-	link: string;
-	mailHashes?: string[];
-};
+const CHANNEL_PATH = "/guestbook/";
+const PAGE_SIZE = 30;
+const POLL_INTERVAL = 30_000;
+const MIN_MESSAGE_LENGTH = 2;
+const MAX_MESSAGE_LENGTH = 300;
+const PROFILE_STORAGE_KEY = "guestbook-chat-profile";
+const AUTH_STORAGE_KEY = "guestbook-chat-auth";
+const DRAFT_STORAGE_KEY = "guestbook-chat-draft";
+const serverURL = commentConfig.waline?.serverURL ?? "";
+const lang = commentConfig.waline?.lang ?? "zh-CN";
+const loginMode = commentConfig.waline?.login ?? "enable";
+const announcements = guestbookConfig.announcements;
 
-const envId = commentConfig.twikoo.envId;
-const PATH = "/guestbook/";
+let messages = $state<GuestbookMessage[]>([]);
+let profile = $state<GuestbookProfile>({ nick: "", mail: "", link: "" });
+let authUser = $state<GuestbookAuthUser | null>(null);
+let draft = $state("");
+let replyTarget = $state<GuestbookMessage | null>(null);
+let initialLoading = $state(true);
+let initialError = $state("");
+let syncError = $state("");
+let composerError = $state("");
+let loadingOlder = $state(false);
+let syncing = $state(false);
+let loggingIn = $state(false);
+let isOffline = $state(false);
+let currentPage = $state(1);
+let totalPages = $state(0);
+let totalCount = $state(0);
+let newMessageCount = $state(0);
+let lastSyncedAt = $state<number | null>(null);
+let messageList = $state<HTMLDivElement | null>(null);
+let announcementDialog = $state<HTMLDialogElement | null>(null);
+let deleteDialog = $state<HTMLDialogElement | null>(null);
+let selectedAnnouncement = $state<GuestbookAnnouncementItem | null>(null);
+let announcementBarVisible = $state(true);
+let sidebarOpen = $state(false);
+let showScrollToBottom = $state(false);
+let editingMessageId = $state<string | null>(null);
+let editDraft = $state("");
+let mutatingMessageId = $state<string | null>(null);
+let messageActionError = $state<{ id: string; message: string } | null>(null);
+let deleteTarget = $state<GuestbookMessage | null>(null);
+let pollTimer: number | undefined;
+let dataController: AbortController | null = null;
+let syncQueued = false;
+let initialMediaCleanup: (() => void) | null = null;
 
-let messages = $state<CommentData[]>([]);
-let loading = $state(true);
-let text = $state("");
-let sending = $state(false);
-let error = $state("");
-let replyNick = $state("");
-let replyId = $state("");
-let profile = $state<Profile>({ nick: "", mail: "", link: "" });
-let profileOpen = $state(false);
-let msgEl: HTMLDivElement | undefined = $state();
-let textareaEl: HTMLTextAreaElement | undefined = $state();
-let autoScroll = $state(true);
-
-const KEY = "guestbook-profile";
-
-function md5(s: string): string {
-	const hex = (n: number) => (n >>> 0).toString(16).padStart(8, "0");
-	const add = (a: number, b: number) => (a + b) >>> 0;
-	const rot = (n: number, s: number) => ((n << s) | (n >>> (32 - s))) >>> 0;
-	const F = (x: number, y: number, z: number) => (x & y) | (~x & z);
-	const G = (x: number, y: number, z: number) => (x & z) | (y & ~z);
-	const H = (x: number, y: number, z: number) => x ^ y ^ z;
-	const I = (x: number, y: number, z: number) => y ^ (x | ~z);
-	const T = (i: number) => (Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0;
-	const pad = (s: string) => {
-		const l = s.length * 8;
-		const r: number[] = [];
-		for (let i = 0; i < s.length; i++) {
-			const c = s.charCodeAt(i);
-			r[i >> 2] = (r[i >> 2] || 0) + (c << ((i % 4) * 8));
-		}
-		const bitLen = s.length * 8;
-		r[bitLen >> 5] = (r[bitLen >> 5] || 0) | (0x80 << (bitLen % 32));
-		r[(((bitLen + 64) >>> 9) << 4) + 15] = bitLen;
-		return r;
-	};
-	const x = pad(s);
-	let a = 1732584193;
-	let b = -271733879;
-	let c = -1732584194;
-	let d = 271733878;
-	for (let blk = 0; blk < x.length; blk += 16) {
-		let aa = a;
-		let bb = b;
-		let cc = c;
-		let dd = d;
-		const X = (i: number) => x[blk + i];
-		const op = (
-			func: (x: number, y: number, z: number) => number,
-			k: number,
-			s: number,
-			idx: number,
-		) => {
-			a = add(b, rot(add(a, add(func(b, c, d), add(X(idx), T(k)))), s));
-			const t = d;
-			d = c;
-			c = b;
-			b = a;
-			a = t;
-		};
-		for (let j = 0; j < 16; j++) op(F, j, [7, 12, 17, 22][j % 4], j);
-		for (let j = 0; j < 16; j++)
-			op(G, j, [5, 9, 14, 20][j % 4], (1 + 5 * j) % 16);
-		for (let j = 0; j < 16; j++)
-			op(H, j, [4, 11, 16, 23][j % 4], (5 + 3 * j) % 16);
-		for (let j = 0; j < 16; j++) op(I, j, [6, 10, 15, 21][j % 4], (7 * j) % 16);
-		a = add(aa, a);
-		b = add(bb, b);
-		c = add(cc, c);
-		d = add(dd, d);
+const hasMore = $derived(currentPage < totalPages);
+const isSending = $derived(
+	messages.some((message) => message.localState === "sending"),
+);
+const chatMembers = $derived.by(() => {
+	const members = new Map<
+		string,
+		Pick<GuestbookMessage, "nick" | "avatar" | "link" | "label" | "isAdmin">
+	>();
+	for (const message of messages) {
+		const key = `${message.nick.trim().toLocaleLowerCase()}|${message.avatar}`;
+		const current = members.get(key);
+		members.set(key, {
+			nick: message.nick || current?.nick || i18n(I18nKey.gbAnonymousVisitor),
+			avatar: message.avatar || current?.avatar || "",
+			link: message.link || current?.link,
+			label: message.label || current?.label,
+			isAdmin: message.isAdmin || current?.isAdmin || false,
+		});
 	}
-	return hex(a) + hex(b) + hex(c) + hex(d);
-}
-
-async function mailHashes(mail: string): Promise<string[]> {
-	const str = mail.trim().toLowerCase();
-	const sha256 = Array.from(
-		new Uint8Array(
-			await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)),
-		),
-	)
-		.map((b) => b.toString(16).padStart(2, "0"))
-		.join("");
-	return [md5(str), sha256];
-}
-
-async function loadProfile() {
-	try {
-		const d = localStorage.getItem(KEY);
-		if (d) profile = JSON.parse(d);
-	} catch {}
-	if (profile.mail) {
-		if (!profile.mailHashes) {
-			profile.mailHashes = await mailHashes(profile.mail);
-			localStorage.setItem(KEY, JSON.stringify(profile));
-		}
-		return;
-	}
-	const twikooKeys = [
-		`twikoo-${envId}`,
-		"twikoo-commenter",
-		"twikooOverseaCommenter",
-		`twikoo-commenter-${envId}`,
-	];
-	for (const key of twikooKeys) {
-		try {
-			const d = localStorage.getItem(key);
-			if (d) {
-				const p = JSON.parse(d);
-				if (p.mail) {
-					profile = {
-						mail: p.mail,
-						nick: p.nick || profile.nick,
-						link: p.link || profile.link || "",
-					};
-					if (!profile.mailHashes) {
-						profile.mailHashes = await mailHashes(profile.mail);
-						localStorage.setItem(KEY, JSON.stringify(profile));
-					}
-					return;
-				}
-			}
-		} catch {}
-	}
-}
-async function saveProfile() {
-	profile.mailHashes = profile.mail ? await mailHashes(profile.mail) : [];
-	localStorage.setItem(KEY, JSON.stringify(profile));
-}
-function avatarUrl(mail: string | undefined, mailMd5?: string): string {
-	const e = mail || "";
-	const qq = e.match(/^(\d+)@qq\.com$/);
-	if (qq) return `https://thirdqq.qlogo.cn/g?b=sdk&nk=${qq[1]}&s=140`;
-	const hash = mailMd5 || "00000000000000000000000000000000";
-	return `https://weavatar.com/avatar/${hash}?d=mp&s=100`;
-}
-function initials(s: string) {
-	return s.slice(0, 2).toUpperCase();
-}
-function fmtTime(iso: string) {
-	const d = new Date(iso);
-	const n = Date.now();
-	const m = Math.floor((n - d.getTime()) / 60000);
-	if (m < 1) return "刚刚";
-	if (m < 60) return `${m}分钟前`;
-	if (m < 1440) return `${Math.floor(m / 60)}小时前`;
-	if (m < 10080) return `${Math.floor(m / 1440)}天前`;
-	return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
-function isSelf(msg: CommentData) {
-	if (profile.mail && msg.mail && msg.mail === profile.mail) return true;
-	if (msg.mailMd5 && profile.mailHashes?.includes(msg.mailMd5)) return true;
-	const ids: string[] = JSON.parse(localStorage.getItem("gb-self-ids") || "[]");
-	return ids.includes(msg.id);
-}
-function token(): string {
-	return localStorage.getItem("twikoo-access-token") || "";
-}
-function setToken(t: string) {
-	if (t) localStorage.setItem("twikoo-access-token", t);
-}
-
-async function api(event: string, data: Record<string, unknown> = {}) {
-	const body = {
-		event,
-		accessToken: token(),
-		envId,
-		path: PATH,
-		url: PATH,
-		...data,
-	};
-	const res = await fetch(envId, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(body),
-	});
-	let text2: string;
-	try {
-		text2 = await res.text();
-	} catch {
-		text2 = "";
-	}
-	// biome-ignore lint/suspicious/noExplicitAny: API response shape varies
-	let json: any;
-	try {
-		json = JSON.parse(text2);
-	} catch {
-		json = { raw: text2 };
-	}
-	setToken(json.accessToken);
-	if (!res.ok) throw new Error(json.message || json.msg || res.statusText);
-	return { result: json };
-}
-
-interface CommentData {
-	id: string;
-	nick: string;
-	comment: string;
-	content?: string;
-	created: string;
-	mail?: string;
-	mailMd5?: string;
-	link?: string;
-	pid?: string;
-	rid?: string;
-	ua?: string;
-	isAdmin?: boolean;
-	isSpam?: boolean;
-	children?: CommentData[];
-}
-
-function flatten(list: CommentData[]): CommentData[] {
-	const r: CommentData[] = [];
-	function walk(arr: CommentData[], parentNick?: string) {
-		for (const c of arr) {
-			const txt = c.comment ?? c.content ?? "";
-			const prefixed =
-				parentNick && !txt.startsWith(`@${parentNick}`)
-					? `@${parentNick} ${txt}`
-					: txt;
-			r.push({ ...c, comment: prefixed, children: [] });
-			if (c.children?.length) walk(c.children, c.nick);
-		}
-	}
-	walk(list);
-	r.sort(
-		(a, b) => new Date(a.created).getTime() - new Date(b.created).getTime(),
+	return [...members.values()].sort(
+		(left, right) => Number(right.isAdmin) - Number(left.isAdmin),
 	);
-	return r;
+});
+const stationMembers = $derived(chatMembers.filter((member) => member.isAdmin));
+const guestMembers = $derived(chatMembers.filter((member) => !member.isAdmin));
+
+function handleChatKeydown(event: KeyboardEvent) {
+	if (event.key !== "Escape") return;
+	sidebarOpen = false;
 }
 
-async function fetchAll() {
+function canManageMessage(message: GuestbookMessage): boolean {
+	if (!authUser?.token || !message.objectId || message.localState) return false;
+	return (
+		authUser.type === "administrator" ||
+		(typeof message.userId === "number" && message.userId === authUser.objectId)
+	);
+}
+
+async function openAnnouncement(announcement: GuestbookAnnouncementItem) {
+	selectedAnnouncement = announcement;
+	await tick();
+	if (!announcementDialog?.open) announcementDialog?.showModal();
+	document.body.style.overflow = "hidden";
+}
+
+function closeAnnouncement() {
+	if (announcementDialog?.open) announcementDialog.close();
+	document.body.style.overflow = "";
+}
+
+function closeDeleteDialog() {
+	if (deleteTarget && mutatingMessageId === deleteTarget.id) return;
+	if (deleteDialog?.open) deleteDialog.close();
+	deleteTarget = null;
+	document.body.style.overflow = "";
+}
+
+async function requestDeleteMessage(message: GuestbookMessage) {
+	if (!canManageMessage(message)) return;
+	messageActionError = null;
+	deleteTarget = message;
+	await tick();
+	if (!deleteDialog?.open) deleteDialog?.showModal();
+	document.body.style.overflow = "hidden";
+}
+
+function readStoredValue<T>(storage: Storage, key: string): T | null {
 	try {
-		const res = await api("COMMENT_GET", { per: 999, page: 1, sort: 0 });
-		const raw = res?.result?.data || [];
-		messages = flatten(raw);
-	} catch (e) {
-		console.error(e);
-		error = "加载失败";
-	} finally {
-		loading = false;
+		const raw = storage.getItem(key);
+		return raw ? (JSON.parse(raw) as T) : null;
+	} catch {
+		return null;
 	}
 }
 
-async function send() {
-	const content = text.trim();
-	if (!content || sending) return;
-	if (!profile.nick) {
-		profileOpen = true;
+function readStoredString(storage: Storage, key: string): string {
+	try {
+		return storage.getItem(key) ?? "";
+	} catch {
+		return "";
+	}
+}
+
+function writeStoredValue(storage: Storage, key: string, value: unknown) {
+	try {
+		storage.setItem(key, JSON.stringify(value));
+	} catch {
+		// Storage can be unavailable in private browsing or restrictive environments.
+	}
+}
+
+function writeStoredString(storage: Storage, key: string, value: string) {
+	try {
+		storage.setItem(key, value);
+	} catch {
+		// Keep the in-memory state when persistence is unavailable.
+	}
+}
+
+function removeStoredValue(storage: Storage, key: string) {
+	try {
+		storage.removeItem(key);
+	} catch {
+		// The in-memory state remains authoritative for the current page.
+	}
+}
+
+function isAuthUser(value: unknown): value is GuestbookAuthUser {
+	if (!value || typeof value !== "object") return false;
+	const user = value as Partial<GuestbookAuthUser>;
+	return (
+		typeof user.display_name === "string" &&
+		typeof user.email === "string" &&
+		typeof user.token === "string" &&
+		user.token.length > 0 &&
+		typeof user.objectId === "number" &&
+		(user.type === "administrator" || user.type === "guest")
+	);
+}
+
+function isProfile(value: unknown): value is GuestbookProfile {
+	if (!value || typeof value !== "object") return false;
+	const storedProfile = value as Partial<GuestbookProfile>;
+	return (
+		typeof storedProfile.nick === "string" &&
+		typeof storedProfile.mail === "string" &&
+		typeof storedProfile.link === "string"
+	);
+}
+
+function readAuthentication(): GuestbookAuthUser | null {
+	const sessionUser = readStoredValue<unknown>(
+		sessionStorage,
+		AUTH_STORAGE_KEY,
+	);
+	if (isAuthUser(sessionUser)) return sessionUser;
+	const persistentUser = readStoredValue<unknown>(
+		localStorage,
+		AUTH_STORAGE_KEY,
+	);
+	if (!isAuthUser(persistentUser)) return null;
+	if (persistentUser.type === "administrator") {
+		removeStoredValue(localStorage, AUTH_STORAGE_KEY);
+		writeStoredValue(sessionStorage, AUTH_STORAGE_KEY, persistentUser);
+	}
+	return persistentUser;
+}
+
+function persistAuthentication(user: GuestbookAuthUser) {
+	removeStoredValue(localStorage, AUTH_STORAGE_KEY);
+	removeStoredValue(sessionStorage, AUTH_STORAGE_KEY);
+	const storage =
+		user.type === "administrator"
+			? sessionStorage
+			: user.remember
+				? localStorage
+				: sessionStorage;
+	writeStoredValue(storage, AUTH_STORAGE_KEY, user);
+}
+
+function clearAuthentication() {
+	authUser = null;
+	editingMessageId = null;
+	editDraft = "";
+	deleteTarget = null;
+	messageActionError = null;
+	if (deleteDialog?.open) deleteDialog.close();
+	removeStoredValue(localStorage, AUTH_STORAGE_KEY);
+	removeStoredValue(sessionStorage, AUTH_STORAGE_KEY);
+}
+
+interface WalineTokenResponse {
+	errno: number;
+	errmsg?: string;
+	data?: unknown;
+}
+
+function removeLoginTokenFromURL() {
+	const url = new URL(window.location.href);
+	if (!url.searchParams.has("token")) return;
+	url.searchParams.delete("token");
+	window.history.replaceState(
+		window.history.state,
+		"",
+		`${url.pathname}${url.search}${url.hash}`,
+	);
+}
+
+async function restoreWalineRedirectLogin(token: string) {
+	if (!serverURL) throw new Error(i18n(I18nKey.gbServerNotConfiguredLogin));
+	const response = await fetch(
+		`${serverURL.replace(/\/+$/u, "")}/api/token?lang=${encodeURIComponent(lang)}`,
+		{ headers: { Authorization: `Bearer ${token}` } },
+	);
+	if (!response.ok) throw new Error(i18n(I18nKey.gbLoginVerifyFailed));
+
+	const result = (await response.json()) as WalineTokenResponse;
+	const user =
+		result.errno === 0 && result.data && typeof result.data === "object"
+			? { ...(result.data as Record<string, unknown>), token, remember: false }
+			: null;
+	if (!isAuthUser(user)) {
+		throw new Error(result.errmsg || i18n(I18nKey.gbLoginExpired));
+	}
+
+	authUser = user;
+	persistAuthentication(user);
+	composerError = "";
+}
+
+function finishDataRequest(controller: AbortController) {
+	if (dataController !== controller) return;
+	dataController = null;
+	if (!syncQueued) return;
+	syncQueued = false;
+	queueMicrotask(() => void syncLatest());
+}
+
+function queueLatestSync() {
+	if (dataController) {
+		syncQueued = true;
 		return;
 	}
-	sending = true;
-	error = "";
+	void syncLatest();
+}
+
+function handleAuthenticationError(error: unknown): boolean {
+	if (!authUser || !isGuestbookAuthError(error)) return false;
+	clearAuthentication();
+	composerError = i18n(I18nKey.gbAuthExpired);
+	return true;
+}
+
+async function fetchPage(page: number, signal?: AbortSignal) {
+	if (!serverURL) throw new Error(i18n(I18nKey.gbServerNotConfigured));
+	return getComment({
+		serverURL,
+		lang,
+		path: CHANNEL_PATH,
+		page,
+		pageSize: PAGE_SIZE,
+		sortBy: "insertedAt_desc",
+		token: authUser?.token,
+		signal,
+	});
+}
+
+async function loadInitial() {
+	if (isOffline) {
+		initialLoading = false;
+		initialError = i18n(I18nKey.gbOfflineInitial);
+		return;
+	}
+	dataController?.abort();
+	const controller = new AbortController();
+	dataController = controller;
+	syncing = false;
+	loadingOlder = false;
+	initialLoading = true;
+	initialError = "";
+	syncError = "";
+
 	try {
-		const body: Record<string, unknown> = {
-			comment: content,
-			nick: profile.nick,
-			mail: profile.mail || "",
-			link: profile.link || "",
-			ua: navigator.userAgent,
-		};
-		if (replyId) body.pid = replyId;
-		const res = await api("COMMENT_SUBMIT", body);
-		if (!res?.result?.id) {
-			console.error("submit failed", res);
-			throw new Error(res?.result?.message || "提交失败");
-		}
-		const selfIds: string[] = JSON.parse(
-			localStorage.getItem("gb-self-ids") || "[]",
+		const response = await fetchPage(1, controller.signal);
+		if (dataController !== controller) return;
+		messages = mergeGuestbookMessages(
+			messages,
+			flattenGuestbookComments(response.data),
 		);
-		selfIds.push(res.result.id);
-		localStorage.setItem("gb-self-ids", JSON.stringify(selfIds));
-		text = "";
-		replyNick = "";
-		replyId = "";
-		await fetchAll();
-		requestAnimationFrame(() => {
-			if (msgEl) msgEl.scrollTop = msgEl.scrollHeight;
-		});
-	} catch (e) {
-		console.error("send error", e);
-		error = `发送失败: ${(e as Error).message}`;
+		currentPage = 1;
+		totalPages = response.totalPages;
+		totalCount = response.count;
+		lastSyncedAt = Date.now();
+		initialLoading = false;
+		await tick();
+		scrollToBottom(false);
+		preserveInitialBottomWhileMediaLoads();
+	} catch (error) {
+		if (controller.signal.aborted || dataController !== controller) return;
+		const authenticationExpired = handleAuthenticationError(error);
+		if (authenticationExpired) syncQueued = true;
+		const message = getGuestbookErrorMessage(error);
+		if (message && !authenticationExpired) {
+			if (messages.length > 0) syncError = message;
+			else initialError = message;
+		}
 	} finally {
-		sending = false;
+		if (dataController === controller) {
+			initialLoading = false;
+			finishDataRequest(controller);
+		}
 	}
 }
 
-async function del(id: string) {
-	if (!confirm("删除这条留言？")) return;
+async function syncLatest() {
+	if (initialError && messages.length === 0) {
+		await loadInitial();
+		return;
+	}
+	if (initialLoading || isOffline) return;
+	if (dataController) {
+		syncQueued = true;
+		return;
+	}
+	const controller = new AbortController();
+	dataController = controller;
+	syncing = true;
+	syncError = "";
+	const wasNearBottom = isNearBottom();
+	const knownIds = new Set(
+		messages
+			.filter((message) => !message.localState)
+			.map((message) => message.id),
+	);
+
 	try {
-		await api("COMMENT_DELETE_FOR_USER", { id });
-		messages = messages.filter((m) => m.id !== id);
-	} catch {
-		error = "删除失败";
+		const response = await fetchPage(1, controller.signal);
+		if (dataController !== controller) return;
+		const incoming = flattenGuestbookComments(response.data);
+		const freshCount = incoming.filter(
+			(message) => !knownIds.has(message.id),
+		).length;
+		messages = mergeGuestbookMessages(messages, incoming);
+		totalPages = response.totalPages;
+		totalCount = response.count;
+		lastSyncedAt = Date.now();
+		await tick();
+
+		if (freshCount > 0 && wasNearBottom) scrollToBottom(true);
+		else if (freshCount > 0) newMessageCount += freshCount;
+	} catch (error) {
+		if (controller.signal.aborted || dataController !== controller) return;
+		const authenticationExpired = handleAuthenticationError(error);
+		if (authenticationExpired) syncQueued = true;
+		const message = getGuestbookErrorMessage(error);
+		if (message && !authenticationExpired) syncError = message;
+	} finally {
+		if (dataController === controller) {
+			syncing = false;
+			finishDataRequest(controller);
+		}
 	}
 }
 
-function onScroll() {
-	if (!msgEl) return;
-	const { scrollTop, scrollHeight, clientHeight } = msgEl;
-	autoScroll = scrollHeight - scrollTop - clientHeight < 100;
-}
+async function loadOlder() {
+	if (!hasMore || loadingOlder || !messageList || dataController) return;
+	const controller = new AbortController();
+	dataController = controller;
+	loadingOlder = true;
+	const previousHeight = messageList.scrollHeight;
+	const nextPage = currentPage + 1;
 
-function handleKey(e: KeyboardEvent) {
-	if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-		e.preventDefault();
-		send();
+	try {
+		const response = await fetchPage(nextPage, controller.signal);
+		if (dataController !== controller) return;
+		messages = mergeGuestbookMessages(
+			messages,
+			flattenGuestbookComments(response.data),
+		);
+		currentPage = nextPage;
+		totalPages = response.totalPages;
+		totalCount = response.count;
+		await tick();
+		messageList.scrollTop += messageList.scrollHeight - previousHeight;
+	} catch (error) {
+		if (controller.signal.aborted || dataController !== controller) return;
+		const authenticationExpired = handleAuthenticationError(error);
+		if (authenticationExpired) syncQueued = true;
+		const message = getGuestbookErrorMessage(error);
+		if (message && !authenticationExpired) syncError = message;
+	} finally {
+		if (dataController === controller) {
+			loadingOlder = false;
+			finishDataRequest(controller);
+		}
 	}
 }
 
-let timer: ReturnType<typeof setInterval>;
+function startPolling() {
+	if (pollTimer) window.clearInterval(pollTimer);
+	pollTimer = undefined;
+	if (document.visibilityState !== "visible" || !navigator.onLine) return;
+	pollTimer = window.setInterval(() => {
+		if (document.visibilityState === "visible" && navigator.onLine) {
+			void syncLatest();
+		}
+	}, POLL_INTERVAL);
+}
 
-onMount(async () => {
-	await loadProfile();
-	fetchAll();
-	timer = setInterval(fetchAll, 30000);
-});
-onDestroy(() => {
-	if (timer) clearInterval(timer);
-});
-$effect(() => {
-	if (messages.length && autoScroll && !loading) {
-		requestAnimationFrame(() => {
-			if (msgEl) msgEl.scrollTop = msgEl.scrollHeight;
+function handleVisibilityChange() {
+	if (document.visibilityState === "visible") {
+		queueLatestSync();
+		startPolling();
+		return;
+	}
+	if (pollTimer) window.clearInterval(pollTimer);
+	pollTimer = undefined;
+}
+
+function handleOnline() {
+	isOffline = false;
+	queueLatestSync();
+	startPolling();
+}
+
+function handleOffline() {
+	isOffline = true;
+	syncError = i18n(I18nKey.gbNetworkDisconnected);
+	if (pollTimer) window.clearInterval(pollTimer);
+	pollTimer = undefined;
+	dataController?.abort();
+}
+
+function isNearBottom(): boolean {
+	if (!messageList) return true;
+	return (
+		messageList.scrollHeight -
+			messageList.scrollTop -
+			messageList.clientHeight <
+		120
+	);
+}
+
+function scrollToBottom(smooth = true) {
+	if (!messageList) return;
+	const reduceMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	).matches;
+	messageList.scrollTo({
+		top: messageList.scrollHeight,
+		behavior: smooth && !reduceMotion ? "smooth" : "auto",
+	});
+	newMessageCount = 0;
+	showScrollToBottom = false;
+}
+
+function preserveInitialBottomWhileMediaLoads() {
+	initialMediaCleanup?.();
+	const list = messageList;
+	if (!list) return;
+
+	const listRect = list.getBoundingClientRect();
+	const pendingImages = Array.from(
+		list.querySelectorAll<HTMLImageElement>(".guestbook-message__body img"),
+	).filter((image) => {
+		if (image.complete) return false;
+		const imageRect = image.getBoundingClientRect();
+		return (
+			imageRect.bottom >= listRect.top - list.clientHeight &&
+			imageRect.top <= listRect.bottom + list.clientHeight
+		);
+	});
+	if (pendingImages.length === 0) return;
+
+	const handlers = new Map<HTMLImageElement, () => void>();
+	const cancel = () => cleanup();
+	const cleanup = () => {
+		for (const [image, handler] of handlers) {
+			image.removeEventListener("load", handler);
+			image.removeEventListener("error", handler);
+		}
+		handlers.clear();
+		list.removeEventListener("wheel", cancel);
+		list.removeEventListener("touchstart", cancel);
+		list.removeEventListener("pointerdown", cancel);
+		if (initialMediaCleanup === cleanup) initialMediaCleanup = null;
+	};
+
+	for (const image of pendingImages) {
+		const handler = () => {
+			image.removeEventListener("load", handler);
+			image.removeEventListener("error", handler);
+			handlers.delete(image);
+			scrollToBottom(false);
+			if (handlers.size === 0) cleanup();
+		};
+		handlers.set(image, handler);
+		image.addEventListener("load", handler, { once: true });
+		image.addEventListener("error", handler, { once: true });
+	}
+
+	list.addEventListener("wheel", cancel, { passive: true });
+	list.addEventListener("touchstart", cancel, { passive: true });
+	list.addEventListener("pointerdown", cancel);
+	initialMediaCleanup = cleanup;
+}
+
+function handleMessageScroll() {
+	if (!messageList) return;
+	if (messageList.scrollTop < 72 && hasMore) void loadOlder();
+	const nearBottom = isNearBottom();
+	showScrollToBottom = !nearBottom;
+	if (nearBottom) newMessageCount = 0;
+}
+
+function formatMessageTime(value: number): string {
+	return new Intl.DateTimeFormat("zh-CN", {
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+	}).format(value);
+}
+
+function formatSyncStatus(): string {
+	if (isOffline) return i18n(I18nKey.gbSyncOffline);
+	if (syncing) return i18n(I18nKey.gbSyncSyncing);
+	if (syncError) return i18n(I18nKey.gbSyncFailed);
+	if (!lastSyncedAt) return i18n(I18nKey.gbSyncWaiting);
+	return i18n(I18nKey.gbSyncedAt).replace(
+		"{time}",
+		new Intl.DateTimeFormat("zh-CN", {
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: false,
+		}).format(lastSyncedAt),
+	);
+}
+
+function dateKey(value: number): string {
+	return new Intl.DateTimeFormat("zh-CN", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(value);
+}
+
+function dateLabel(value: number): string {
+	const today = new Date();
+	const yesterday = new Date(today);
+	yesterday.setDate(today.getDate() - 1);
+	if (dateKey(value) === dateKey(today.getTime())) return i18n(I18nKey.gbToday);
+	if (dateKey(value) === dateKey(yesterday.getTime()))
+		return i18n(I18nKey.gbYesterday);
+	return dateKey(value);
+}
+
+function shouldShowDate(index: number): boolean {
+	return (
+		index === 0 ||
+		dateKey(messages[index - 1].createdAt) !==
+			dateKey(messages[index].createdAt)
+	);
+}
+
+function selectReply(message: GuestbookMessage) {
+	if (!message.localState) replyTarget = message;
+}
+
+async function jumpToQuotedMessage(message: GuestbookMessage) {
+	if (!message.replyToId) return;
+	let target = messages.find((candidate) => candidate.id === message.replyToId);
+
+	while (!target && hasMore && !loadingOlder) {
+		await loadOlder();
+		target = messages.find((candidate) => candidate.id === message.replyToId);
+	}
+
+	const element = document.getElementById(
+		`guestbook-message-${message.replyToId}`,
+	);
+	if (!element) return;
+	const reduceMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	).matches;
+	element.scrollIntoView({
+		behavior: reduceMotion ? "auto" : "smooth",
+		block: "center",
+	});
+	element.classList.remove("is-highlighted");
+	requestAnimationFrame(() => element.classList.add("is-highlighted"));
+	window.setTimeout(() => element.classList.remove("is-highlighted"), 1600);
+}
+
+function validateMessageBody(content: string): string {
+	const textLength = getGuestbookTextLength(content);
+	if (textLength < MIN_MESSAGE_LENGTH && !hasGuestbookImage(content)) {
+		return i18n(I18nKey.gbMsgMinLength).replace(
+			"{min}",
+			String(MIN_MESSAGE_LENGTH),
+		);
+	}
+	if (textLength > MAX_MESSAGE_LENGTH) {
+		return i18n(I18nKey.gbMsgMaxLength).replace(
+			"{max}",
+			String(MAX_MESSAGE_LENGTH),
+		);
+	}
+	if (hasGuestbookReplyMarker(content)) {
+		return i18n(I18nKey.gbMsgReplyMarker);
+	}
+	return "";
+}
+
+function validateComposer(content: string): string {
+	if (loginMode === "force" && !authUser) return i18n(I18nKey.gbLoginRequired);
+	if (!authUser && profile.nick.trim().length < 2) {
+		return profile.nick.trim()
+			? i18n(I18nKey.gbNicknameMinLength).replace("{min}", "2")
+			: loginMode === "disable"
+				? i18n(I18nKey.gbGuestProfileRequiredDisabled)
+				: i18n(I18nKey.gbGuestProfileRequired);
+	}
+	if (profile.mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(profile.mail)) {
+		return i18n(I18nKey.gbEmailInvalid);
+	}
+	if (profile.link) {
+		try {
+			const website = new URL(profile.link);
+			if (website.protocol !== "http:" && website.protocol !== "https:") {
+				return i18n(I18nKey.gbLinkProtocolInvalid);
+			}
+		} catch {
+			return i18n(I18nKey.gbLinkInvalid);
+		}
+	}
+	return validateMessageBody(content);
+}
+
+async function sendMessage(
+	replaceMessageId?: string,
+	attachment?: GuestbookImageAttachment,
+	contentOverride?: string,
+): Promise<boolean> {
+	if (isSending || isOffline) return false;
+	const content = appendGuestbookImage(
+		contentOverride ?? draft.trim(),
+		attachment,
+	);
+	composerError = validateComposer(content);
+	if (composerError) return false;
+
+	const selectedTarget = replyTarget;
+	const target = selectedTarget?.objectId ? selectedTarget : null;
+	const tempId = `local-${Date.now()}`;
+	const optimistic: GuestbookMessage = {
+		id: tempId,
+		nick: authUser?.display_name || profile.nick || i18n(I18nKey.gbVisitor),
+		avatar: authUser?.avatar || "",
+		link: authUser?.url || profile.link.trim() || undefined,
+		body: target ? `@${target.nick} ${content}` : content,
+		createdAt: Date.now(),
+		isAdmin: false,
+		replyToId: target?.id,
+		replyToNick: target?.nick,
+		localState: "sending",
+	};
+
+	const retainedMessages = replaceMessageId
+		? messages.filter((message) => message.id !== replaceMessageId)
+		: messages;
+	messages = [...retainedMessages, optimistic];
+	draft = "";
+	replyTarget = null;
+	removeStoredValue(localStorage, DRAFT_STORAGE_KEY);
+	await tick();
+	scrollToBottom(true);
+
+	try {
+		const response = await addComment({
+			serverURL,
+			lang,
+			token: authUser?.token,
+			comment: {
+				nick: authUser?.display_name || profile.nick.trim(),
+				mail: authUser?.email || profile.mail.trim() || undefined,
+				link: authUser?.url || profile.link.trim() || undefined,
+				comment: buildGuestbookMessageBody(content, target),
+				ua: navigator.userAgent,
+				url: CHANNEL_PATH,
+			},
 		});
+
+		if (response.errno || !response.data) {
+			throw new Error(response.errmsg || i18n(I18nKey.gbSendFailed));
+		}
+
+		messages = messages.filter((message) => message.id !== tempId);
+		messages = mergeGuestbookMessages(messages, [
+			normalizeGuestbookComment(response.data),
+		]);
+		totalCount += 1;
+		initialError = "";
+		syncError = "";
+		lastSyncedAt = Date.now();
+		await tick();
+		scrollToBottom(true);
+		queueLatestSync();
+	} catch (error) {
+		handleAuthenticationError(error);
+		const failureReason =
+			getGuestbookErrorMessage(error) || i18n(I18nKey.gbSendFailed);
+		messages = messages.map((message) =>
+			message.id === tempId
+				? { ...message, localState: "failed", failureReason }
+				: message,
+		);
 	}
-});
-$effect(() => {
-	void text;
-	if (textareaEl) {
-		textareaEl.style.height = "auto";
-		textareaEl.style.height = `${Math.min(textareaEl.scrollHeight, 150)}px`;
+	return true;
+}
+
+async function retryMessage(message: GuestbookMessage) {
+	const target = message.replyToId
+		? (messages.find((candidate) => candidate.id === message.replyToId) ?? null)
+		: null;
+	replyTarget = target;
+	const prefix = target ? `@${target.nick} ` : "";
+	const content =
+		prefix && message.body.startsWith(prefix)
+			? message.body.slice(prefix.length)
+			: message.body;
+	await sendMessage(message.id, undefined, content);
+}
+
+function discardMessage(message: GuestbookMessage) {
+	messages = messages.filter((candidate) => candidate.id !== message.id);
+}
+
+function startEditingMessage(message: GuestbookMessage) {
+	if (!canManageMessage(message) || mutatingMessageId) return;
+	messageActionError = null;
+	editingMessageId = message.id;
+	editDraft = message.body;
+}
+
+function cancelEditingMessage() {
+	if (mutatingMessageId === editingMessageId) return;
+	editingMessageId = null;
+	editDraft = "";
+	messageActionError = null;
+}
+
+async function saveEditedMessage(message: GuestbookMessage) {
+	if (
+		!authUser?.token ||
+		!message.objectId ||
+		!canManageMessage(message) ||
+		mutatingMessageId
+	) {
+		return;
 	}
+	const content = editDraft.trim();
+	const validationError = validateMessageBody(content);
+	if (validationError) {
+		messageActionError = { id: message.id, message: validationError };
+		return;
+	}
+	if (content === message.body) {
+		cancelEditingMessage();
+		return;
+	}
+
+	mutatingMessageId = message.id;
+	messageActionError = null;
+	try {
+		const response = await updateComment({
+			serverURL,
+			lang,
+			token: authUser.token,
+			objectId: message.objectId,
+			comment: {
+				comment: buildGuestbookEditedMessageBody(content, message),
+			},
+		});
+		const normalized = normalizeGuestbookComment(response.data);
+		messages = messages.map((candidate) =>
+			candidate.id === message.id
+				? { ...normalized, userId: normalized.userId ?? message.userId }
+				: candidate,
+		);
+		editingMessageId = null;
+		editDraft = "";
+		queueLatestSync();
+	} catch (error) {
+		handleAuthenticationError(error);
+		messageActionError = {
+			id: message.id,
+			message: getGuestbookErrorMessage(error) || i18n(I18nKey.gbEditFailed),
+		};
+	} finally {
+		mutatingMessageId = null;
+	}
+}
+
+async function confirmDeleteMessage() {
+	const target = deleteTarget;
+	if (
+		!target ||
+		!authUser?.token ||
+		!target.objectId ||
+		!canManageMessage(target) ||
+		mutatingMessageId
+	) {
+		return;
+	}
+
+	mutatingMessageId = target.id;
+	messageActionError = null;
+	try {
+		await deleteComment({
+			serverURL,
+			lang,
+			token: authUser.token,
+			objectId: target.objectId,
+		});
+		messages = messages.filter((message) => message.id !== target.id);
+		totalCount = Math.max(0, totalCount - 1);
+		if (replyTarget?.id === target.id) replyTarget = null;
+		if (editingMessageId === target.id) {
+			editingMessageId = null;
+			editDraft = "";
+		}
+		mutatingMessageId = null;
+		deleteTarget = null;
+		if (deleteDialog?.open) deleteDialog.close();
+		document.body.style.overflow = "";
+		queueLatestSync();
+	} catch (error) {
+		handleAuthenticationError(error);
+		messageActionError = {
+			id: target.id,
+			message: getGuestbookErrorMessage(error) || i18n(I18nKey.gbDeleteFailed),
+		};
+	} finally {
+		mutatingMessageId = null;
+	}
+}
+
+async function handleLogin() {
+	if (loggingIn) return;
+	if (!serverURL) {
+		composerError = i18n(I18nKey.gbServerNotConfiguredLogin);
+		return;
+	}
+	loggingIn = true;
+	composerError = "";
+
+	try {
+		const user = await loginWithWaline({ serverURL, lang });
+		if (!isAuthUser(user))
+			throw new Error(i18n(I18nKey.gbLoginInvalidResponse));
+		authUser = user;
+		persistAuthentication(user);
+		await loadInitial();
+	} catch (error) {
+		composerError =
+			error instanceof Error && error.message
+				? error.message
+				: i18n(I18nKey.gbLoginFailed);
+	} finally {
+		loggingIn = false;
+	}
+}
+
+async function initializeGuestbook(returnedToken: string | null) {
+	if (returnedToken && loginMode !== "disable") {
+		loggingIn = true;
+		try {
+			await restoreWalineRedirectLogin(returnedToken);
+		} catch (error) {
+			composerError =
+				error instanceof Error && error.message
+					? error.message
+					: i18n(I18nKey.gbLoginVerifyFailed);
+		} finally {
+			removeLoginTokenFromURL();
+			loggingIn = false;
+		}
+	} else if (returnedToken) {
+		removeLoginTokenFromURL();
+	}
+
+	if (isOffline) {
+		initialLoading = false;
+		initialError = i18n(I18nKey.gbOfflineInitial);
+	} else if (document.visibilityState === "visible") {
+		await loadInitial();
+	} else {
+		initialLoading = false;
+		initialError = i18n(I18nKey.gbHiddenUntilVisible);
+	}
+}
+
+function handleLogout() {
+	clearAuthentication();
+	void loadInitial();
+}
+
+function handleProfileChange(nextProfile: GuestbookProfile) {
+	profile = nextProfile;
+	writeStoredValue(localStorage, PROFILE_STORAGE_KEY, nextProfile);
+	composerError = "";
+}
+
+function handleDraftChange(nextDraft: string) {
+	draft = nextDraft;
+	writeStoredString(localStorage, DRAFT_STORAGE_KEY, nextDraft);
+	composerError = "";
+}
+
+onMount(() => {
+	const storedProfile = readStoredValue<unknown>(
+		localStorage,
+		PROFILE_STORAGE_KEY,
+	);
+	if (isProfile(storedProfile)) profile = storedProfile;
+	if (loginMode === "disable") clearAuthentication();
+	else authUser = readAuthentication();
+	draft = readStoredString(localStorage, DRAFT_STORAGE_KEY);
+	isOffline = !navigator.onLine;
+	const returnedToken = new URL(window.location.href).searchParams.get("token");
+	void initializeGuestbook(returnedToken);
+	if (announcements[0]) void openAnnouncement(announcements[0]);
+	startPolling();
+	document.addEventListener("visibilitychange", handleVisibilityChange);
+	window.addEventListener("online", handleOnline);
+	window.addEventListener("offline", handleOffline);
+
+	return () => {
+		if (pollTimer) window.clearInterval(pollTimer);
+		dataController?.abort();
+		initialMediaCleanup?.();
+		if (announcementDialog?.open) announcementDialog.close();
+		if (deleteDialog?.open) deleteDialog.close();
+		document.body.style.overflow = "";
+		document.removeEventListener("visibilitychange", handleVisibilityChange);
+		window.removeEventListener("online", handleOnline);
+		window.removeEventListener("offline", handleOffline);
+	};
 });
 </script>
 
-<div class="gb">
-	<div class="gb__head">
-		<span class="gb__title">留言板</span>
-		<span class="gb__count">{messages.length} 条留言</span>
-	</div>
+<svelte:window onkeydown={handleChatKeydown} />
 
-	<div class="gb__msgs" bind:this={msgEl} onscroll={onScroll}>
-		{#if loading}
-			<div class="gb__ld">
-				<span class="gb__sp"></span> 加载中...
-			</div>
-		{:else if messages.length === 0}
-			<div class="gb__empty">
-				<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-				<p>还没有留言</p>
-				<span>来说点什么吧 👋</span>
-			</div>
-		{:else}
-			{#each messages as msg (msg.id)}
-				<div class="gb__row" class:gb__row--self={isSelf(msg)} class:gb__row--admin={msg.isAdmin}>
-					<div class="gb__av" class:gb__av--self={isSelf(msg)} class:gb__av--admin={msg.isAdmin}>
-						<img src={avatarUrl(msg.mail, msg.mailMd5)} alt={msg.nick} onerror={(e) => { const el = e.target as HTMLElement; el.style.display = "none"; (el.nextElementSibling as HTMLElement).style.display = ""; }} />
-						<span style="display:none">{initials(msg.nick)}</span>
-					</div>
-					<div class="gb__body">
-						<div class="gb__meta" class:gb__meta--self={isSelf(msg)}>
-							<span class="gb__nick" class:gb__nick--admin={msg.isAdmin}>{msg.nick}</span>
-							{#if msg.isAdmin}<span class="gb__badge">站长</span>{/if}
-							<span class="gb__time">{fmtTime(msg.created)}</span>
+<section class="guestbook-chat" aria-label={i18n(I18nKey.gbTitle)}>
+	<header class="guestbook-chat__header">
+		<div class="guestbook-chat__channel">
+			<button
+				class:is-syncing={syncing}
+				class="guestbook-chat__mobile-channel-refresh"
+				type="button"
+				onclick={() => void syncLatest()}
+				disabled={syncing || initialLoading || isOffline}
+				aria-label={syncing
+					? i18n(I18nKey.gbRefreshingAria)
+					: i18n(I18nKey.gbRefreshAria)}
+				aria-busy={syncing}
+			>
+				<span>{i18n(I18nKey.gbTitle)}</span>
+				<span class:is-visible={syncing} class="guestbook-chat__mobile-refresh-icon">
+					<RefreshCw size={15} aria-hidden="true" />
+				</span>
+			</button>
+			<div class="guestbook-chat__desktop-channel-details">
+				<div class="guestbook-chat__title-row">
+					<h2>{i18n(I18nKey.gbTitle)}</h2>
+					<span>
+						· {i18n(I18nKey.gbMessageCount).replace(
+							"{count}",
+							initialLoading ? "--" : String(totalCount),
+						)}
+					</span>
+					<div class="guestbook-chat__sync">
+						<div
+							class:is-failed={Boolean(syncError)}
+							class="guestbook-chat__status"
+							aria-live="polite"
+						>
+							<span class:is-offline={isOffline}></span>
+							{formatSyncStatus()} {i18n(I18nKey.gbSyncIntervalSuffix)}
 						</div>
-						<div class="gb__bub" class:gb__bub--self={isSelf(msg)} class:gb__bub--admin={msg.isAdmin}>{@html msg.comment}</div>
-						<div class="gb__act" class:gb__act--self={isSelf(msg)}>
-							<button onclick={() => { replyNick = msg.nick; replyId = msg.id; text = `@${msg.nick} `; textareaEl?.focus(); if (msgEl) msgEl.scrollTo({ top: msgEl.scrollHeight, behavior: "smooth" }); }}>回复</button>
-							{#if isSelf(msg)}<button class="gb__del" onclick={() => del(msg.id)}>删除</button>{/if}
-						</div>
+						<button
+							class:is-syncing={syncing} class="guestbook-chat__refresh"
+							type="button"
+							onclick={() => void syncLatest()}
+							disabled={syncing || initialLoading || isOffline}
+							aria-label={i18n(I18nKey.gbRefreshNowAria)}
+							title={i18n(I18nKey.gbRefreshNowTitle)}
+						>
+							<RefreshCw size={17} aria-hidden="true" />
+						</button>
 					</div>
 				</div>
-			{/each}
-		{/if}
-	</div>
+			</div>
+		</div>
 
-	{#if replyNick}
-		<div class="gb__rep">
-			<span>回复 @{replyNick}</span>
-			<button onclick={() => { replyNick = ""; replyId = ""; }}>
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+		<div class="guestbook-chat__actions">
+			<button
+				class="guestbook-chat__sidebar-toggle"
+				type="button"
+				onclick={() => (sidebarOpen = !sidebarOpen)}
+				aria-expanded={sidebarOpen}
+				aria-controls="guestbook-chat-sidebar"
+				title={i18n(I18nKey.gbMembers)}
+			>
+				<Users size={18} aria-hidden="true" />
+				<span>{chatMembers.length}</span>
 			</button>
 		</div>
-	{/if}
+	</header>
 
-	{#if error}
-		<div class="gb__err">{error}</div>
-	{/if}
-
-	<div class="gb__inp">
-		<button class="gb__usr" onclick={() => (profileOpen = true)} title="设置昵称">
-			{#if profile.nick}
-				{initials(profile.nick)}
-			{:else}
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+	<div
+		class:has-announcement-bar={announcementBarVisible && announcements.length > 0}
+		class="guestbook-chat__workspace"
+	>
+		<div class="guestbook-chat__conversation">
+			{#if announcementBarVisible && announcements.length > 0}
+				<aside class="guestbook-chat__announcement-bar" aria-label={i18n(I18nKey.announcement)}>
+					<div class="guestbook-chat__announcement-bar-label">
+						<Bell size={16} aria-hidden="true" />
+						<strong>{i18n(I18nKey.announcement)}</strong>
+					</div>
+					<div class="guestbook-chat__announcement-bar-items">
+						{#each announcements as announcement}
+							<button type="button" onclick={() => void openAnnouncement(announcement)}>
+								{announcement.title}
+							</button>
+						{/each}
+					</div>
+					<button
+						class="guestbook-chat__announcement-bar-close"
+						type="button"
+						onclick={() => (announcementBarVisible = false)}
+						aria-label={i18n(I18nKey.gbCloseAnnouncement)}
+						title={i18n(I18nKey.gbCloseAnnouncement)}
+					>
+						<X size={17} aria-hidden="true" />
+					</button>
+				</aside>
 			{/if}
-		</button>
-		<textarea bind:value={text} bind:this={textareaEl} placeholder="说点什么..." onkeydown={handleKey} rows="1"></textarea>
-		<button class="gb__send" onclick={send} disabled={sending || !text.trim()}>
-			{#if sending}
-				<span class="gb__sp"></span>
-			{:else}
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-			{/if}
-		</button>
-	</div>
-</div>
 
-{#if profileOpen}
-	<div class="gb__over" onclick={() => (profileOpen = false)}>
-		<div class="gb__modal" onclick={(e) => e.stopPropagation()}>
-			<div class="gb__mt">设置昵称</div>
-			<div class="gb__mb">
-				<label><span>昵称 *</span><input type="text" bind:value={profile.nick} placeholder="你的昵称" maxlength="20" /></label>
-				<label><span>邮箱</span><input type="email" bind:value={profile.mail} placeholder="邮箱" /></label>
-				<label><span>网站</span><input type="url" bind:value={profile.link} placeholder="https://" /></label>
-			</div>
-			<div class="gb__mf">
-				<button onclick={async () => { if (profile.nick.trim()) { await saveProfile(); profileOpen = false; } }}>确认</button>
+			{#if initialLoading}
+				<div
+					class="guestbook-chat__loading"
+					aria-label={i18n(I18nKey.gbLoadingAria)}
+					aria-busy="true"
+				>
+					{#each Array(6) as _, index}
+						<div class:is-admin={index % 3 === 2} class="guestbook-chat__skeleton">
+							<div class="guestbook-chat__skeleton-avatar"></div>
+							<div class="guestbook-chat__skeleton-copy">
+								<div class="guestbook-chat__skeleton-name"></div>
+								<div class="guestbook-chat__skeleton-bubble"></div>
+								<div class="guestbook-chat__skeleton-meta"></div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			{:else if initialError && messages.length === 0}
+				<div class="guestbook-chat__state" role="alert">
+					<AlertCircle size={34} aria-hidden="true" />
+					<h3>{i18n(I18nKey.gbLoadFailedTitle)}</h3>
+					<p>{initialError}</p>
+					<button type="button" onclick={() => void loadInitial()}>
+						<RotateCcw size={17} aria-hidden="true" />{i18n(I18nKey.gbReload)}
+					</button>
+				</div>
+			{:else}
+				<div
+					class="guestbook-chat__messages custom-scrollbar"
+					bind:this={messageList}
+					onscroll={handleMessageScroll}
+					aria-live="polite"
+					aria-relevant="additions"
+				>
+					<div class="guestbook-chat__history">
+						{#if hasMore}
+							<button
+								type="button"
+								onclick={() => void loadOlder()}
+								disabled={loadingOlder}
+							>
+								{#if loadingOlder}
+									<LoaderCircle class="is-spinning" size={15} aria-hidden="true" />
+								{/if}
+								{loadingOlder
+									? i18n(I18nKey.gbLoadingOlder)
+									: i18n(I18nKey.gbLoadOlder)}
+							</button>
+						{:else if messages.length > 0}
+							<span>{i18n(I18nKey.gbNoMoreMessages)}</span>
+						{/if}
+					</div>
+
+					{#if messages.length === 0}
+						<div class="guestbook-chat__empty">
+							<div class="guestbook-chat__empty-mark">GB</div>
+							<h3>{i18n(I18nKey.gbEmptyTitle)}</h3>
+							<p>{i18n(I18nKey.gbEmptyBody)}</p>
+						</div>
+					{/if}
+
+					{#each messages as message, index (message.id)}
+						{#if shouldShowDate(index)}
+							<div class="guestbook-chat__date">
+								<span>{dateLabel(message.createdAt)}</span>
+							</div>
+						{/if}
+
+						<GuestbookChatMessage
+							{message}
+							referencedMessage={message.replyToId
+								? messages.find((candidate) => candidate.id === message.replyToId)
+								: undefined}
+							timeLabel={formatMessageTime(message.createdAt)}
+							canManage={canManageMessage(message)}
+							isEditing={editingMessageId === message.id}
+							isMutating={mutatingMessageId === message.id}
+							{editDraft}
+							actionError={messageActionError?.id === message.id
+								? messageActionError.message
+								: undefined}
+							onReply={selectReply}
+							onEdit={startEditingMessage}
+							onEditDraftChange={(value) => (editDraft = value)}
+							onEditCancel={cancelEditingMessage}
+							onEditSave={(target) => void saveEditedMessage(target)}
+							onDelete={(target) => void requestDeleteMessage(target)}
+							onJump={(target) => void jumpToQuotedMessage(target)}
+							onRetry={(target) => void retryMessage(target)}
+							onDiscard={discardMessage}
+							onCopyError={(errorText) => {
+								messageActionError = { id: message.id, message: errorText };
+							}}
+						/>
+					{/each}
+				</div>
+			{/if}
+
+			<div class="guestbook-chat__composer-area">
+				{#if !initialLoading && !initialError && (showScrollToBottom || newMessageCount > 0)}
+					<button
+						class="guestbook-chat__new-messages"
+						type="button"
+						onclick={() => scrollToBottom(true)}
+						aria-label={newMessageCount > 0
+							? i18n(I18nKey.gbNewMessagesAria).replace(
+									"{count}",
+									String(newMessageCount),
+								)
+							: i18n(I18nKey.gbBackToBottom)}
+					>
+						<ChevronDown size={20} aria-hidden="true" />
+					</button>
+				{/if}
+
+				{#if syncError || isOffline}
+					<div class="guestbook-chat__sync-error" role="status">
+						<WifiOff size={15} aria-hidden="true" />
+						<span>{syncError || i18n(I18nKey.gbOffline)}</span>
+						{#if !isOffline}
+							<button type="button" onclick={() => void syncLatest()}>{i18n(I18nKey.gbRetrySync)}</button>
+						{/if}
+					</div>
+				{/if}
+
+				<GuestbookChatComposer
+					{profile}
+					{authUser}
+					{draft}
+					{replyTarget}
+					{composerError}
+					{isOffline}
+					{isSending}
+					{loggingIn}
+					{loginMode}
+					onProfileChange={handleProfileChange}
+					onDraftChange={handleDraftChange}
+					onReplyCancel={() => (replyTarget = null)}
+					onLogin={() => void handleLogin()}
+					onLogout={handleLogout}
+				onSend={(content, attachment) =>
+					sendMessage(undefined, attachment, content)}
+					onToolError={(message) => (composerError = message)}
+				/>
 			</div>
 		</div>
+
+		{#if sidebarOpen}
+			<button
+				class="guestbook-chat__sidebar-overlay"
+				type="button"
+				onclick={() => (sidebarOpen = false)}
+				aria-label={i18n(I18nKey.gbCloseMembers)}
+			></button>
+		{/if}
+
+		<aside
+			id="guestbook-chat-sidebar"
+			class:is-open={sidebarOpen}
+			class="guestbook-chat__sidebar"
+			aria-label={i18n(I18nKey.gbMembers)}
+		>
+			<div class="guestbook-chat__sidebar-heading">
+				<strong>{i18n(I18nKey.gbMembers)}</strong>
+				<button
+					type="button"
+					onclick={() => (sidebarOpen = false)}
+					aria-label={i18n(I18nKey.gbCloseMembers)}
+				>
+					<X size={18} aria-hidden="true" />
+				</button>
+			</div>
+
+			<section class="guestbook-chat__members" aria-label={i18n(I18nKey.gbMembersListAria)}>
+				<div class="guestbook-chat__member-list custom-scrollbar">
+					{#each [
+						{ title: i18n(I18nKey.gbAdmin), members: stationMembers },
+						{ title: i18n(I18nKey.gbMembers), members: guestMembers },
+					] as group (group.title)}
+						<div class="guestbook-chat__member-group">
+							<div class="guestbook-chat__member-group-title">
+								<strong>{group.title}</strong>
+								<span aria-label={i18n(I18nKey.gbMemberCountAria).replace("{count}", String(group.members.length))}>— {group.members.length}</span>
+							</div>
+
+							<div class="guestbook-chat__member-group-list">
+								{#each group.members as member (`${member.nick}-${member.avatar}`)}
+									{#if member.link}
+										<a
+											class="guestbook-chat__member"
+											href={member.link}
+											target="_blank"
+											rel="nofollow noopener noreferrer"
+										>
+											<span class="guestbook-chat__member-avatar">
+												<span>{getGuestbookInitials(member.nick)}</span>
+												{#if member.avatar}<img src={member.avatar} alt="" loading="lazy" />{/if}
+											</span>
+											<span class="guestbook-chat__member-identity">
+												{#if member.label}<small>{member.label}</small>{/if}
+												<span class="guestbook-chat__member-name">{member.nick}</span>
+											</span>
+										</a>
+									{:else}
+										<div class="guestbook-chat__member">
+											<span class="guestbook-chat__member-avatar">
+												<span>{getGuestbookInitials(member.nick)}</span>
+												{#if member.avatar}<img src={member.avatar} alt="" loading="lazy" />{/if}
+											</span>
+											<span class="guestbook-chat__member-identity">
+												{#if member.label}<small>{member.label}</small>{/if}
+												<span class="guestbook-chat__member-name">{member.nick}</span>
+											</span>
+										</div>
+									{/if}
+								{/each}
+							</div>
+						</div>
+					{/each}
+				</div>
+			</section>
+		</aside>
 	</div>
-{/if}
 
-<style>
-	.gb {
-		background: var(--card-bg);
-		border-radius: var(--radius-large);
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-	}
-	.gb__head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 16px;
-		border-bottom: 1px solid var(--line-divider);
-	}
-	.gb__title { font-size: 15px; font-weight: 700; color: var(--deep-text); }
-	.gb__count { font-size: 12px; color: var(--content-meta); }
+	<dialog
+		bind:this={announcementDialog}
+		class="privacy-modal guestbook-announcement-modal"
+		aria-labelledby="guestbook-announcement-title"
+		onclose={() => (document.body.style.overflow = "")}
+		oncancel={(event) => {
+			event.preventDefault();
+			closeAnnouncement();
+		}}
+	>
+		<div class="privacy-overlay" onclick={closeAnnouncement}></div>
+		{#if selectedAnnouncement}
+			<div class="privacy-panel">
+				<div class="privacy-header">
+					<h2 id="guestbook-announcement-title" class="privacy-title">
+						{selectedAnnouncement.title}
+					</h2>
+					<button
+						class="privacy-close"
+						type="button"
+						onclick={closeAnnouncement}
+					aria-label={i18n(I18nKey.gbCloseAnnouncement)}
+					>
+						<X size={20} aria-hidden="true" />
+					</button>
+				</div>
+				<div class="privacy-body guestbook-announcement-modal__body custom-scrollbar">
+					<p>{selectedAnnouncement.summary}</p>
+					{#if selectedAnnouncement.lead}<p>{selectedAnnouncement.lead}</p>{/if}
+					<ul>
+						{#each selectedAnnouncement.rules as rule}
+							<li>{rule}</li>
+						{/each}
+					</ul>
+				</div>
+				<div class="privacy-footer">
+					<button class="privacy-confirm-btn" type="button" onclick={closeAnnouncement}>
+						{i18n(I18nKey.gotIt)}
+					</button>
+				</div>
+			</div>
+		{/if}
+	</dialog>
 
-	.gb__msgs {
-		flex: 1;
-		overflow-y: auto;
-		padding: 12px 16px;
-		min-height: 280px;
-		max-height: 520px;
-	}
-	.gb__ld {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		padding: 48px 0;
-		color: var(--content-meta);
-		font-size: 14px;
-	}
-	.gb__sp {
-		width: 14px; height: 14px;
-		border: 2px solid var(--line-divider);
-		border-top-color: var(--primary);
-		border-radius: 50%;
-		animation: gbspin 0.6s linear infinite;
-		display: inline-block;
-	}
-	@keyframes gbspin { to { transform: rotate(360deg); } }
-	.gb__empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		padding: 48px 0;
-		color: var(--content-meta);
-	}
-	.gb__empty p { font-weight: 600; margin: 0; }
-	.gb__empty span { font-size: 13px; opacity: 0.7; }
-
-	.gb__row {
-		display: flex;
-		gap: 10px;
-		margin-bottom: 16px;
-		animation: gbfade 0.2s ease;
-	}
-	.gb__row--self {
-		flex-direction: row-reverse;
-	}
-	@keyframes gbfade {
-		from { opacity: 0; transform: translateY(8px); }
-		to { opacity: 1; transform: translateY(0); }
-	}
-
-	.gb__av {
-		width: 36px; height: 36px; min-width: 36px;
-		border-radius: 50%;
-		background: var(--btn-regular-bg);
-		color: var(--btn-content);
-		display: flex; align-items: center; justify-content: center;
-		font-size: 13px; font-weight: 700;
-		flex-shrink: 0;
-	}
-	.gb__av img {
-		width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
-	}
-	.gb__av--admin {
-		background: var(--primary);
-		color: #fff;
-	}
-	:root.dark .gb__av--admin { color: #000; }
-
-	.gb__body { flex: 1; min-width: 0; }
-	.gb__row--self .gb__body {
-		display: flex; flex-direction: column; align-items: flex-end;
-	}
-
-	.gb__meta {
-		display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
-	}
-	.gb__meta--self {
-		flex-direction: row-reverse;
-	}
-	.gb__nick {
-		font-size: 13px; font-weight: 600; color: var(--deep-text);
-	}
-	.gb__nick--admin { color: var(--primary); }
-	.gb__badge {
-		font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
-		background: var(--primary); color: #fff; line-height: 1.4;
-	}
-	:root.dark .gb__badge { color: #000; }
-	.gb__time { font-size: 11px; color: var(--content-meta); }
-
-	.gb__bub {
-		display: inline-block;
-		padding: 8px 14px;
-		border-radius: 12px 12px 12px 4px;
-		background: var(--btn-regular-bg);
-		color: var(--deep-text);
-		font-size: 14px; line-height: 1.55;
-		word-break: break-word;
-		max-width: 85%;
-	}
-	.gb__bub--self {
-		background: var(--primary); color: #fff;
-		border-radius: 12px 12px 4px 12px;
-	}
-	:root.dark .gb__bub--self { color: #000; }
-	.gb__bub--admin {
-		background: var(--primary); color: #fff;
-		border-radius: 12px 12px 4px 12px;
-	}
-	:root.dark .gb__bub--admin { color: #000; }
-	.gb__bub :global(p) { margin: 0 0 4px; }
-	.gb__bub :global(p:last-child) { margin-bottom: 0; }
-	.gb__bub :global(br) { display: inline; }
-	.gb__bub :global(img) { max-width: 100%; border-radius: 6px; margin: 4px 0; }
-
-	.gb__act {
-		display: flex; gap: 4px; margin-top: 2px;
-		opacity: 0; transition: opacity 0.15s;
-	}
-	.gb__act--self {
-		justify-content: flex-end;
-	}
-	.gb__row:hover .gb__act { opacity: 1; }
-	.gb__act button {
-		font-size: 11px; padding: 2px 6px; border: none; background: none;
-		color: var(--content-meta); cursor: pointer; border-radius: 4px;
-	}
-	.gb__act button:hover { color: var(--primary); background: var(--btn-regular-bg); }
-	.gb__del:hover { color: #ef4444 !important; }
-
-	.gb__rep {
-		display: flex; align-items: center; justify-content: space-between;
-		padding: 6px 16px; background: var(--btn-regular-bg);
-		font-size: 12px; color: var(--primary); font-weight: 600;
-		border-top: 1px solid var(--line-divider);
-	}
-	.gb__rep button {
-		border: none; background: none; color: var(--content-meta);
-		cursor: pointer; display: flex; padding: 2px; border-radius: 4px;
-	}
-	.gb__rep button:hover { color: var(--deep-text); background: var(--btn-regular-bg); }
-
-	.gb__err {
-		padding: 6px 16px; font-size: 12px; color: #ef4444;
-		background: #fef2f2; border-top: 1px solid #fecaca;
-	}
-	:root.dark .gb__err { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); }
-
-	.gb__inp {
-		display: flex; align-items: center; gap: 8px;
-		padding: 10px 12px; border-top: 1px solid var(--line-divider);
-		background: var(--card-bg);
-	}
-	.gb__usr {
-		width: 32px; height: 32px; min-width: 32px;
-		border-radius: 50%; border: 1px dashed var(--line-divider);
-		background: none; color: var(--content-meta);
-		display: flex; align-items: center; justify-content: center;
-		cursor: pointer; font-size: 12px; font-weight: 700;
-	}
-	.gb__usr:hover { border-color: var(--primary); color: var(--primary); background: var(--btn-regular-bg); }
-	.gb__inp textarea {
-		flex: 1; border: none; padding: 7px 12px; font-size: 14px; line-height: 1.5;
-		background: none; color: var(--deep-text); resize: none; outline: none;
-		font-family: inherit; min-height: 32px;
-	}
-	.gb__inp textarea::placeholder { color: var(--content-meta); opacity: 0.6; }
-	.gb__send {
-		width: 34px; height: 34px; min-width: 34px;
-		border-radius: 50%; border: none; background: none;
-		color: var(--deep-text); cursor: pointer;
-		display: flex; align-items: center; justify-content: center;
-	}
-	.gb__send:disabled { opacity: 0.3; cursor: not-allowed; }
-	.gb__send:not(:disabled):hover { color: var(--primary); background: var(--btn-regular-bg); }
-
-	.gb__over {
-		position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-		display: flex; align-items: center; justify-content: center;
-		z-index: 1000; padding: 16px;
-	}
-	.gb__modal {
-		background: var(--card-bg); border-radius: var(--radius-large);
-		padding: 24px; width: 100%; max-width: 340px;
-	}
-	.gb__mt { font-size: 16px; font-weight: 700; color: var(--deep-text); margin-bottom: 16px; }
-	.gb__mb { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-	.gb__mb label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--content-meta); }
-	.gb__mb input {
-		padding: 8px 12px; border: 1px solid var(--line-divider);
-		border-radius: 8px; font-size: 14px; background: var(--card-bg);
-		color: var(--deep-text); outline: none;
-	}
-	.gb__mb input:focus { border-color: var(--primary); }
-	.gb__mf { display: flex; justify-content: flex-end; }
-	.gb__mf button {
-		padding: 8px 24px; border-radius: 8px; border: none;
-		background: var(--primary); color: #fff; font-size: 14px;
-		font-weight: 600; cursor: pointer;
-	}
-	:root.dark .gb__mf button { color: #000; }
-	.gb__mf button:hover { opacity: 0.9; }
-
-	@media (max-width: 768px) {
-		.gb__msgs { padding: 10px 12px; min-height: 220px; max-height: 380px; }
-		.gb__bub { max-width: 92%; font-size: 13px; }
-		.gb__act { opacity: 1; }
-	}
-</style>
+	<dialog
+		bind:this={deleteDialog}
+		class="privacy-modal guestbook-delete-modal"
+		aria-labelledby="guestbook-delete-title"
+		onclose={() => {
+			document.body.style.overflow = "";
+			if (!mutatingMessageId) deleteTarget = null;
+		}}
+		oncancel={(event) => {
+			event.preventDefault();
+			closeDeleteDialog();
+		}}
+	>
+		<div class="privacy-overlay" onclick={closeDeleteDialog}></div>
+		{#if deleteTarget}
+			<div class="privacy-panel guestbook-delete-modal__panel">
+				<div class="privacy-header">
+					<h2 id="guestbook-delete-title" class="privacy-title">{i18n(I18nKey.gbDeleteMessage)}</h2>
+					<button
+						class="privacy-close"
+						type="button"
+						onclick={closeDeleteDialog}
+						disabled={mutatingMessageId === deleteTarget.id}
+						aria-label={i18n(I18nKey.gbCloseDeleteConfirm)}
+					>
+						<X size={20} aria-hidden="true" />
+					</button>
+				</div>
+				<div class="privacy-body guestbook-delete-modal__body">
+					<p>{i18n(I18nKey.gbDeleteWarning)}</p>
+					<blockquote>{deleteTarget.body.slice(0, 160)}</blockquote>
+					{#if messageActionError?.id === deleteTarget.id}
+						<p class="guestbook-delete-modal__error" role="alert">
+							{messageActionError.message}
+						</p>
+					{/if}
+				</div>
+				<div class="privacy-footer guestbook-delete-modal__actions">
+					<button
+						class="guestbook-delete-modal__cancel"
+						type="button"
+						onclick={closeDeleteDialog}
+						disabled={mutatingMessageId === deleteTarget.id}
+						>
+							{i18n(I18nKey.cancel)}
+						</button>
+					<button
+						class="guestbook-delete-modal__confirm"
+						type="button"
+						onclick={() => void confirmDeleteMessage()}
+						disabled={mutatingMessageId === deleteTarget.id}
+					>
+						{mutatingMessageId === deleteTarget.id
+							? i18n(I18nKey.deleting)
+							: i18n(I18nKey.deleteLabel)}
+					</button>
+				</div>
+			</div>
+		{/if}
+	</dialog>
+</section>

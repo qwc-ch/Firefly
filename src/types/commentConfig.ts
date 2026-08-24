@@ -26,6 +26,10 @@ export type CommentConfig = {
 		emoji: string[];
 		login?: "enable" | "force" | "disable";
 		visitorCount?: boolean; // 是否统计访问量，true 启用访问量，false 关闭
+		/**
+		 * Waline 自定义 CSS 文件地址，为空则不加载
+		 */
+		cssUrl?: string;
 	};
 	artalk?: {
 		// 后端程序 API 地址

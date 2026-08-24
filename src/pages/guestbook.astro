@@ -1,40 +1,27 @@
 ---
-import { getEntry, render } from "astro:content";
-import Markdown from "@components/common/Markdown.astro";
 import GuestbookChat from "@components/features/GuestbookChat.svelte";
+import GuestbookChatFallback from "@components/features/GuestbookChatFallback.astro";
 import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
 
+// 检查页面是否启用
 if (!siteConfig.pages.guestbook) {
 	return Astro.redirect("/404/");
 }
 
-const guestbookPost = await getEntry("spec", "guestbook");
-
-if (!guestbookPost) {
-	throw new Error("guestbook page content not found");
-}
-
-const { Content } = await render(guestbookPost);
-
+// 页面标题和描述
 const title = i18n(I18nKey.guestbook);
 const description = i18n(I18nKey.guestbookDescription);
 ---
 
-<MainGridLayout title={title} description={description}>
-  <div
-    class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32"
-  >
-    <div class="card-base z-10 px-9 py-6 relative w-full">
-      <Markdown class="mt-2">
-        <Content />
-      </Markdown>
-    </div>
-  </div>
 
-  <div class="mt-4">
-    <GuestbookChat client:only="svelte" />
-  </div>
+<MainGridLayout title={title} description={description}>
+	<h1 class="sr-only">{title}</h1>
+	<div class="guestbook-page">
+		<GuestbookChat client:only="svelte">
+			<GuestbookChatFallback slot="fallback" />
+		</GuestbookChat>
+	</div>
 </MainGridLayout>
