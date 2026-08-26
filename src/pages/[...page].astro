@@ -16,9 +16,19 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 
 const len = page.data.length;
+
+// 分页页使用带页码的独立标题/描述，避免与首页产生重复 meta
+const pageTitle =
+	page.currentPage > 1
+		? `${siteConfig.subtitle ?? siteConfig.title}·第 ${page.currentPage} 页`
+		: undefined;
+const pageDescription =
+	page.currentPage > 1
+		? `${siteConfig.description} 文章列表第 ${page.currentPage} 页 / 共 ${page.lastPage} 页。`
+		: siteConfig.description;
 ---
 
-<MainGridLayout>
+<MainGridLayout title={pageTitle} description={pageDescription}>
   <PostPage page={page} />
   {
     page.total > page.size && (
