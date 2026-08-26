@@ -16,10 +16,9 @@ const GET_ENDPOINTS = [
 	"https://www.bing.com/indexnow",
 ];
 // 这些端点 POST 批量提交可正常接受
+// 注：Naver（韩国）/ Seznam（捷克）已对境外站稳定 403，且中文站受众不涉及，已移除
 const POST_ENDPOINTS = [
 	"https://yandex.com/indexnow",
-	"https://searchadvisor.naver.com/indexnow",
-	"https://search.seznam.cz/indexnow",
 ];
 
 let xml;
