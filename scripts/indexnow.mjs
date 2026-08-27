@@ -17,9 +17,7 @@ const GET_ENDPOINTS = [
 ];
 // 这些端点 POST 批量提交可正常接受
 // 注：Naver（韩国）/ Seznam（捷克）已对境外站稳定 403，且中文站受众不涉及，已移除
-const POST_ENDPOINTS = [
-	"https://yandex.com/indexnow",
-];
+const POST_ENDPOINTS = ["https://yandex.com/indexnow"];
 
 let xml;
 try {
@@ -40,7 +38,12 @@ if (urlList.length === 0) {
 const host = new URL(urlList[0]).host;
 
 // POST 批量提交（Yandex / Naver / Seznam）
-const payload = JSON.stringify({ host, key: KEY, keyLocation: `https://${host}/${KEY}.txt`, urlList });
+const payload = JSON.stringify({
+	host,
+	key: KEY,
+	keyLocation: `https://${host}/${KEY}.txt`,
+	urlList,
+});
 for (const endpoint of POST_ENDPOINTS) {
 	try {
 		const res = await fetch(endpoint, {
@@ -48,7 +51,11 @@ for (const endpoint of POST_ENDPOINTS) {
 			headers: { "Content-Type": "application/json; charset=utf-8" },
 			body: payload,
 		});
-		console.log(res.ok || res.status === 202 ? `⚡ OK   ${endpoint} -> ${res.status}` : `⚠ FAIL ${endpoint} -> ${res.status}`);
+		console.log(
+			res.ok || res.status === 202
+				? `⚡ OK   ${endpoint} -> ${res.status}`
+				: `⚠ FAIL ${endpoint} -> ${res.status}`,
+		);
 	} catch (err) {
 		console.warn(`⚠ ERR  ${endpoint} -> ${err.message}`);
 	}
@@ -59,11 +66,17 @@ let submitted = 0;
 for (const url of urlList) {
 	for (const endpoint of GET_ENDPOINTS) {
 		try {
-			const res = await fetch(`${endpoint}?url=${encodeURIComponent(url)}&key=${KEY}`);
+			const res = await fetch(
+				`${endpoint}?url=${encodeURIComponent(url)}&key=${KEY}`,
+			);
 			if (res.ok || res.status === 202) submitted++;
-		} catch { /* 单条失败忽略 */ }
+		} catch {
+			/* 单条失败忽略 */
+		}
 	}
 }
 
-console.log(`✔ IndexNow 提交完成：${urlList.length} 个 URL，Bing 系端点成功 ${submitted} 条 (${host})`);
+console.log(
+	`✔ IndexNow 提交完成：${urlList.length} 个 URL，Bing 系端点成功 ${submitted} 条 (${host})`,
+);
 process.exit(0);

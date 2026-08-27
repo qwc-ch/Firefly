@@ -26,10 +26,11 @@
 	position: relative;
 	display: flex;
 	justify-content: center;
-	width: 100vw;
+	/* 留言页已通过 html:has(.guestbook-page) #main-grid 变为单列全宽，
+	   直接占满主内容列即可；不要用 width:100vw + calc(50% - 50vw) 突破，
+	   父级有 px-2/md:px-4 内边距且 100vw 含滚动条宽，会导致负左边距把内容推出可视区（左侧被裁、整体不居中） */
+	width: 100%;
 	height: calc(100dvh - var(--guestbook-viewport-offset));
-	margin-right: calc(50% - 50vw);
-	margin-left: calc(50% - 50vw);
 }
 
 html:has(.guestbook-page) #category-bar-wrapper {
@@ -47,6 +48,14 @@ html:has(.guestbook-page) #mobile-bottom-sidebar {
 
 html:has(.guestbook-page) #main-grid {
 	grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/* 留言页全宽：还原主内容列在单列网格中的占位（清除双侧栏模式下 md/xl:col-start-2 等类），
+   否则内容会被推到屏幕右侧 */
+html:has(.guestbook-page) #main-grid > [class*="col-start-"],
+html:has(.guestbook-page) #main-grid > [class*="col-end-"] {
+	grid-column-start: 1 !important;
+	grid-column-end: 2 !important;
 }
 
 /* ===== 弹窗基础样式 ===== */
@@ -164,17 +173,14 @@ dialog.privacy-modal::backdrop {
 	font-weight: 700;
 }
 
-/* 公告弹窗：靠左上弹出，盖住留言区（留言在弹窗下方照常加载） */
+/* 公告弹窗：屏幕正中弹出，盖住留言区（留言在弹窗下方照常加载） */
 dialog.guestbook-announcement-modal[open] {
-	place-items: start;
-	padding-top: calc(var(--space-8) + var(--space-2));
-	padding-left: var(--space-4);
+	place-items: center;
 }
 
 @media (max-width: 768px) {
 	dialog.guestbook-announcement-modal[open] {
 		padding: var(--space-3);
-		padding-top: calc(3.5rem + var(--space-2));
 	}
 
 	dialog.guestbook-announcement-modal .privacy-panel {
