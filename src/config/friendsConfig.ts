@@ -567,6 +567,18 @@ export const friendsConfig: FriendLink[] = [
 		weight: 53, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "Lin Blog",
+		imgurl:
+			"https://linlog.top/api/uploads/2026/09/1788411216332767920-dca59196a965c5e8.jpg",
+		cover: "https://tu.520781.xyz/file/youlian/linlog.top.png",
+		desc: "记录技术、互联网与日常观察",
+		siteurl: "https://linlog.top/",
+		rss: "",
+		tags: ["Blog"],
+		weight: 52, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
