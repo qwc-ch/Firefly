@@ -56,6 +56,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:person",
 		children: [
+			// 课程表
+			LinkPresets.Timetable,
+
 			// 动态
 			LinkPresets.Dynamic,
 
@@ -169,6 +172,11 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		name: "标签",
 		url: "/tags/",
 		icon: "material-symbols:tag-rounded",
+	},
+	Timetable: {
+		name: "课程表",
+		url: "/timetable/",
+		icon: "material-symbols:calendar-month",
 	},
 	Friends: {
 		name: "友链",

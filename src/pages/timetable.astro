@@ -1,0 +1,341 @@
+---
+import { Icon } from "astro-icon/components";
+import type { WeekRule } from "@/data/timetable";
+import { courses, periods, semester } from "@/data/timetable";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+
+const WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"];
+const PALETTE = 8;
+
+/** 展开周次规则为周次数组 */
+function expandWeeks(rules: WeekRule[], total: number): number[] {
+	const nums: number[] = [];
+	for (const r of rules) {
+		for (let w = r.start; w <= Math.min(r.end, total); w++) {
+			if (w < 1) continue;
+			if (r.parity === "odd" && w % 2 === 0) continue;
+			if (r.parity === "even" && w % 2 === 1) continue;
+			if (!nums.includes(w)) nums.push(w);
+		}
+	}
+	return nums.sort((a, b) => a - b);
+}
+
+function ruleText(r: WeekRule): string {
+	const p = r.parity === "odd" ? "单" : r.parity === "even" ? "双" : "";
+	return r.start === r.end ? `${r.start}周${p}` : `${r.start}-${r.end}周${p}`;
+}
+
+const weeksLabel = (rules: WeekRule[]) => rules.map(ruleText).join("，");
+
+// 课程名 → 颜色下标
+const colorMap = new Map<string, number>();
+const colorOf = (name: string) => {
+	if (!colorMap.has(name)) colorMap.set(name, colorMap.size % PALETTE);
+	return colorMap.get(name) as number;
+};
+
+const enriched = courses.map((c) => ({
+	...c,
+	color: colorOf(c.name),
+	weeksNums: expandWeeks(c.weeks, semester.totalWeeks),
+	weeksText: weeksLabel(c.weeks),
+}));
+
+const legend = [...colorMap.entries()].map(([name, i]) => ({ name, i }));
+
+// grid[day][slot] = course | undefined
+const days = [1, 2, 3, 4, 5, 6, 7];
+const hasWeekend = enriched.some((c) => c.day > 5);
+const shownDays = hasWeekend ? days : days.slice(0, 5);
+
+const maxSlot = Math.max(periods.length - 1, ...enriched.map((c) => c.slot));
+
+const title = semester.title;
+const description = `${semester.term} · ${semester.startDate} 起，共 ${semester.totalWeeks} 周`;
+---
+
+<MainGridLayout title={title} description={description}>
+	<div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+		<div class="card-base z-10 px-4 md:px-9 py-6 relative w-full" id="timetable-root"
+			data-start={semester.startDate} data-total={semester.totalWeeks}>
+
+			<!-- 页头 -->
+			<div class="flex flex-wrap items-center gap-3 mb-1">
+				<div class="h-8 w-8 rounded-lg bg-(--primary) flex items-center justify-center text-white dark:text-black/70">
+					<Icon is:inline name="material-symbols:calendar-month" class="text-[1.5rem]" />
+				</div>
+				<h1 class="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100">{title}</h1>
+				<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-(--primary)/10 text-(--primary)">{semester.term}</span>
+			</div>
+			<p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+				{semester.startDate} 起，共 {semester.totalWeeks} 周 · 当前第 <span data-current-week class="font-semibold text-(--primary)">?</span> 周
+			</p>
+
+			<!-- 课程图例 -->
+			<div class="flex flex-wrap gap-x-4 gap-y-2 mb-5">
+				{legend.map(({ name, i }) => (
+					<span class="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+						<span class={`size-2 rounded-full course-dot-${i}`} aria-hidden="true" />
+						{name}
+					</span>
+				))}
+			</div>
+
+			<!-- 实时时钟卡片 -->
+			<div class="mb-5 rounded-xl border border-(--line-divider) p-4">
+				<div class="flex items-center gap-2 text-lg font-medium text-neutral-900 dark:text-neutral-100">
+					<Icon is:inline name="material-symbols:schedule" class="text-base" />
+					<span data-clock-weekday>加载中</span>
+					<span data-clock-time class="font-mono text-sm text-neutral-500 dark:text-neutral-400">--:--:--</span>
+				</div>
+				<p data-today-summary class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"></p>
+			</div>
+
+			<!-- 桌面端：表格视图 -->
+			<div class="hidden lg:block overflow-x-auto rounded-xl border border-(--line-divider) p-2">
+				<table class="w-full table-fixed border-separate border-spacing-1 text-left">
+					<thead>
+						<tr>
+							<th class="w-16 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400">节次</th>
+							{shownDays.map((d) => (
+								<th class="text-center text-xs font-medium text-neutral-500 dark:text-neutral-400" data-day-col={d}>
+									星期{WEEKDAYS[d - 1]} <span data-day-date={d} class="block font-mono text-[0.65rem] text-neutral-400 dark:text-neutral-500"></span>
+								</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{periods.slice(0, maxSlot + 1).map((p, slot) => (
+							<tr>
+								<td class="rounded-md bg-neutral-500/5 dark:bg-white/5 text-center align-middle px-1 py-2">
+									<div class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{p.part}</div>
+									<div class="text-sm font-medium text-neutral-800 dark:text-neutral-200">{p.label}</div>
+									<div class="text-[0.7rem] text-neutral-500 dark:text-neutral-400">{p.sessions}</div>
+									<div class="font-mono text-[0.65rem] text-neutral-400 dark:text-neutral-500">{p.start}</div>
+									<div class="font-mono text-[0.65rem] text-neutral-400 dark:text-neutral-500">{p.end}</div>
+								</td>
+								{shownDays.map((d) => {
+									const cell = enriched.filter((c) => c.day === d && c.slot === slot);
+									return (
+										<td class="align-top" data-day-cell={d}>
+											<div class="flex min-h-24 flex-col gap-1">
+												{cell.map((c) => (
+													<div class="course-card" data-weeks={c.weeksNums.join(",")}>
+														<span class={`course-bar course-bg-${c.color}`} aria-hidden="true" />
+														<div class="flex flex-col gap-0.5 py-2 pe-2 min-w-0">
+															<p class={`text-xs leading-snug font-semibold course-text-${c.color}`}>{c.name}</p>
+															<p class="text-[0.7rem] leading-snug text-neutral-500 dark:text-neutral-400">{c.weeksText}</p>
+															<p class="text-[0.7rem] leading-snug text-neutral-500 dark:text-neutral-400">{c.location}</p>
+															<p class="text-[0.7rem] leading-snug text-neutral-500 dark:text-neutral-400">
+																{c.teacher}{c.className ? ` · ${c.className}` : ""}
+															</p>
+														</div>
+													</div>
+												))}
+											</div>
+										</td>
+									);
+								})}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+
+			<!-- 移动端：按天列表 -->
+			<div class="lg:hidden flex flex-col gap-4">
+				{shownDays.map((d) => {
+					const dayCourses = enriched
+						.filter((c) => c.day === d)
+						.sort((a, b) => a.slot - b.slot);
+					return (
+						<div class="rounded-xl border border-(--line-divider) overflow-hidden" data-day-card={d}>
+							<div class="flex items-center gap-2 px-4 py-2.5 border-b border-(--line-divider) bg-neutral-500/5 dark:bg-white/5">
+								<Icon is:inline name="material-symbols:calendar-today" class="text-base text-(--primary)" />
+								<span class="font-medium text-neutral-900 dark:text-neutral-100">星期{WEEKDAYS[d - 1]}</span>
+								<span data-day-date={d} class="font-mono text-xs text-neutral-400 dark:text-neutral-500"></span>
+								<span class="ms-auto text-xs text-neutral-400 dark:text-neutral-500">共 {dayCourses.length} 门</span>
+							</div>
+							<div class="flex flex-col gap-3 p-3">
+								{dayCourses.length === 0 && (
+									<p class="text-sm text-neutral-400 dark:text-neutral-500 py-2 text-center">这一天没有课 🎉</p>
+								)}
+								{dayCourses.map((c) => {
+									const p = periods[c.slot];
+									return (
+										<div class="flex flex-col gap-1.5">
+											<div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+												<span>{p?.part}</span>
+												<span>第{p?.label}大节 · {p?.sessions}</span>
+												<span class="font-mono">{p?.start}-{p?.end}</span>
+											</div>
+											<div class="course-card" data-weeks={c.weeksNums.join(",")}>
+												<span class={`course-bar course-bg-${c.color}`} aria-hidden="true" />
+												<div class="flex flex-col gap-1 py-2.5 pe-3 min-w-0">
+													<p class={`text-sm font-semibold course-text-${c.color}`}>{c.name}</p>
+													<p class="text-xs text-neutral-500 dark:text-neutral-400">{c.weeksText}</p>
+													<p class="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+														<Icon is:inline name="material-symbols:location-on-outline" class="text-xs shrink-0" />
+														{c.location}
+													</p>
+													<p class="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+														<Icon is:inline name="material-symbols:person-outline" class="text-xs shrink-0" />
+														{c.teacher}{c.className ? ` · ${c.className}` : ""}
+													</p>
+												</div>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	</div>
+
+	<style is:global>
+		/* 课程配色（8 色循环），亮暗主题下均可读 */
+		.course-bg-0, .course-dot-0 { background-color: hsl(210 80% 50%); }
+		.course-bg-1, .course-dot-1 { background-color: hsl(160 70% 38%); }
+		.course-bg-2, .course-dot-2 { background-color: hsl(280 60% 55%); }
+		.course-bg-3, .course-dot-3 { background-color: hsl(25 85% 50%); }
+		.course-bg-4, .course-dot-4 { background-color: hsl(340 70% 55%); }
+		.course-bg-5, .course-dot-5 { background-color: hsl(190 75% 38%); }
+		.course-bg-6, .course-dot-6 { background-color: hsl(45 80% 42%); }
+		.course-bg-7, .course-dot-7 { background-color: hsl(120 45% 42%); }
+		.course-text-0 { color: hsl(210 80% 45%); }
+		.course-text-1 { color: hsl(160 70% 32%); }
+		.course-text-2 { color: hsl(280 60% 50%); }
+		.course-text-3 { color: hsl(25 85% 45%); }
+		.course-text-4 { color: hsl(340 70% 50%); }
+		.course-text-5 { color: hsl(190 75% 32%); }
+		.course-text-6 { color: hsl(45 80% 35%); }
+		.course-text-7 { color: hsl(120 45% 36%); }
+		:root.dark .course-text-0 { color: hsl(210 85% 68%); }
+		:root.dark .course-text-1 { color: hsl(160 65% 55%); }
+		:root.dark .course-text-2 { color: hsl(280 70% 72%); }
+		:root.dark .course-text-3 { color: hsl(25 90% 65%); }
+		:root.dark .course-text-4 { color: hsl(340 75% 68%); }
+		:root.dark .course-text-5 { color: hsl(190 75% 60%); }
+		:root.dark .course-text-6 { color: hsl(45 85% 60%); }
+		:root.dark .course-text-7 { color: hsl(120 50% 60%); }
+
+		.course-card {
+			display: flex;
+			gap: 0.5rem;
+			overflow: hidden;
+			border-radius: 0.375rem;
+			background: color-mix(in srgb, var(--card-bg, #fff) 55%, transparent);
+			border: 1px solid var(--line-divider);
+			transition: opacity 0.3s;
+		}
+		:root.dark .course-card {
+			background: rgb(255 255 255 / 0.03);
+		}
+		.course-card.not-this-week {
+			opacity: 0.4;
+		}
+		.course-bar {
+			width: 0.25rem;
+			flex-shrink: 0;
+		}
+		[data-day-col].is-today,
+		[data-day-cell].is-today {
+			background: color-mix(in srgb, var(--primary) 7%, transparent);
+			border-radius: 0.375rem;
+		}
+		[data-day-card].is-today {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 1px var(--primary);
+		}
+	</style>
+
+	<script is:inline data-astro-rerun>
+		(() => {
+			const root = document.getElementById("timetable-root");
+			if (!root) return;
+			const start = new Date(root.dataset.start + "T00:00:00");
+			const total = Number(root.dataset.total);
+
+			function currentWeek(now) {
+				const diff = now.getTime() - start.getTime();
+				return Math.floor(diff / (7 * 86400000)) + 1;
+			}
+			function mondayOfWeek(n) {
+				const d = new Date(start);
+				d.setDate(d.getDate() + (n - 1) * 7);
+				return d;
+			}
+			function fmt(d) {
+				return `${d.getMonth() + 1}/${d.getDate()}`;
+			}
+
+			function render() {
+				const now = new Date();
+				const week = currentWeek(now);
+				const clamped = Math.min(Math.max(week, 1), total);
+				// 当前周文本
+				root.querySelectorAll("[data-current-week]").forEach((el) => {
+					el.textContent = week < 1 ? "未开学" : week > total ? "已结课" : String(week);
+				});
+
+				// 时钟
+				const wd = ["日", "一", "二", "三", "四", "五", "六"][now.getDay()];
+				const pad = (n) => String(n).padStart(2, "0");
+				root.querySelectorAll("[data-clock-weekday]").forEach((el) => {
+					el.textContent = `星期${wd}`;
+				});
+				root.querySelectorAll("[data-clock-time]").forEach((el) => {
+					el.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+				});
+
+				// 今天的课程汇总
+				const todayDay = now.getDay() === 0 ? 7 : now.getDay();
+				const cards = [...root.querySelectorAll(".course-card")];
+				let todayCount = 0;
+				cards.forEach((card) => {
+					const weeks = (card.dataset.weeks || "").split(",").filter(Boolean).map(Number);
+					const activeWeek = week >= 1 && week <= total && weeks.includes(week);
+					card.classList.toggle("not-this-week", !activeWeek);
+				});
+				// 统计今日课程（桌面/移动各渲染了一份，去重计数）
+				const mobileCards = [...root.querySelectorAll("[data-day-card]")];
+				const todayCard = mobileCards.find((el) => Number(el.dataset.dayCard) === todayDay);
+				if (todayCard) {
+					todayCount = [...todayCard.querySelectorAll(".course-card")].filter((c) => !c.classList.contains("not-this-week")).length;
+				}
+				root.querySelectorAll("[data-today-summary]").forEach((el) => {
+					if (week < 1) el.textContent = "假期中，还没开学。";
+					else if (week > total) el.textContent = "本学期已结束。";
+					else el.textContent = todayCount > 0 ? `今天是第 ${week} 周，有 ${todayCount} 门课。` : `今天是第 ${week} 周，今天没课 🎉`;
+				});
+
+				// 高亮今天列 / 卡片
+				root.querySelectorAll("[data-day-col],[data-day-cell],[data-day-card]").forEach((el) => {
+					const d = Number(el.dataset.dayCol ?? el.dataset.dayCell ?? el.dataset.dayCard);
+					el.classList.toggle("is-today", d === todayDay && week >= 1 && week <= total);
+				});
+
+				// 每个工作日的日期标注
+				root.querySelectorAll("[data-day-date]").forEach((el) => {
+					const d = Number(el.dataset.dayDate);
+					const m = mondayOfWeek(clamped);
+					m.setDate(m.getDate() + d - 1);
+					el.textContent = fmt(m);
+				});
+			}
+
+			render();
+			const timer = setInterval(() => {
+				if (!document.getElementById("timetable-root")) {
+					clearInterval(timer);
+					return;
+				}
+				render();
+			}, 1000);
+		})();
+	</script>
+</MainGridLayout>
