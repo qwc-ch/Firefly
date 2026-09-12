@@ -579,7 +579,7 @@ export const friendsConfig: FriendLink[] = [
 		weight: 52, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
-{
+	{
 		title: "星宇安全实验室",
 		imgurl:
 			"https://bk.zhaozhiqiang.pw/wp-content/uploads/2026/07/1784847314130_148x148.png",
