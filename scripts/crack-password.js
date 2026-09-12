@@ -11,7 +11,7 @@ const IV_LEN = 12;
 const TAG_LEN = 16;
 
 const DICTIONARY = [
-  '我爱你', '宝贝', '亲爱的', '爱你', '爱', '520', '1314',
+  '我爱你', '宝贝', '亲爱的', '爱你', '爱', '520', '1314', '521', '5211314', '1314520',
   'woaibiaozhidao', 'wodeaima', 'love', 'loveyou', 'iloveyou',
   '我爱你啊', '亲爱的我', '宝贝我爱你', '爱你一生', '永远爱你',
   'wode', 'miaomia', 'mimi', '秘密', 'password', '123456',
@@ -25,17 +25,12 @@ const DICTIONARY = [
   'woaima666', 'loveme', 'iwantyou', 'missyou', '想你',
   'wodeaima2026', 'aima', 'aima2026', 'bilibili',
   'bly2026', 'qwc', 'qwcch', '1q2w3e4r', 'zxcvbn',
+  // Additional candidates
+  '5211314', 'love521', 'love1314', 'loveyou521', 'iloveyou521',
+  'aima521', 'aima1314', 'woaima521', 'wodeaima521',
+  'bailu521', 'firefly521', 'bly521',
+  '表达爱的方式~', '表达爱', '情书', '表白',
 ];
-
-function fetchText(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve(data));
-    }).on('error', reject);
-  });
-}
 
 async function loadDictionary() {
   if (WORDLIST_URL) {
@@ -48,6 +43,16 @@ async function loadDictionary() {
     return text.split(/\s+/).filter(w => w.length > 0);
   }
   return DICTIONARY;
+}
+
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve(data));
+    }).on('error', reject);
+  });
 }
 
 function fetchHtml(url) {
