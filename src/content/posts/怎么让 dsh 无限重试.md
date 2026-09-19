@@ -3,7 +3,7 @@ title: 怎么让 dsh 无限重试
 published: 2026-08-21
 updated: 2026-08-21
 description: dsh 默认只会重试 5 次且间隔很快；本文展示通过配置 retryPolicy 为 always，实现指数退避的无限重试。
-image: ''
+image: 'api'
 tags: [dsh, AI, 重试]
 category: '运维'
 draft: false

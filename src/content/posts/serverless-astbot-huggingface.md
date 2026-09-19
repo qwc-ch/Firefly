@@ -1,6 +1,7 @@
 ---
 title: 无服务器部署 AstrBot：Hugging Face 免费方案
 published: 2026-08-18
+image: 'api'
 description: 把 AstrBot + NapCat 整套机器人塞进 Hugging Face 免费 Docker Space，零服务器成本，配合 GitHub 自动备份防止数据丢失，再加一个 Actions 定时请求防休眠
 tags: [教程, AstrBot, 无服务器, HuggingFace]
 category: 'Astbot,无服务器'

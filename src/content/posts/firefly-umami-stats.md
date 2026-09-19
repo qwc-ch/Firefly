@@ -1,6 +1,7 @@
 ---
 title: 为 Firefly 添加 Umami 访问统计卡片
 published: 2026-05-29
+image: 'api'
 updated: 2026-05-31
 description: 在 Firefly 博客侧边栏集成 Umami 访问统计，实时展示浏览量、访问数和游客数
 tags: [Firefly, Umami, Astro]

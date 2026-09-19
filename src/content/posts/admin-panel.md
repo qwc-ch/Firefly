@@ -1,6 +1,7 @@
 ---
 title: 给博客写了个后台管理
 published: 2026-06-27
+image: 'api'
 description: 一个简单顺手的博客后台，从零到一的实践记录
 tags: [Firefly, admin, 开源]
 category: 开发

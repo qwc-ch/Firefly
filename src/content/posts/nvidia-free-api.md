@@ -1,6 +1,7 @@
 ---
 title: NVIDIA Build：免费 AI API
 published: 2026-05-29
+image: 'api'
 updated: 2026-05-31
 description: 白嫖 NVIDIA 的免费 AI API，额度够用，模型够多
 tags: [AI, nvidia]

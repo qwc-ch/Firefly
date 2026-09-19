@@ -2,6 +2,7 @@
 title: "怎么用Netlify反代你的源站"
 description: "怎么用Netlify反代你的源站"
 published: 2026-08-05
+image: 'api'
 updated: 2026-08-05
 draft: false
 tags: ['反向代理', 'netlify']

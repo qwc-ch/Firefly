@@ -1,6 +1,7 @@
 ---
 title: "headless Chrome 截图 WebGL 黑块问题排查"
 published: 2026-08-14
+image: 'api'
 draft: false
 description: "友链截图工具在 headless Chrome 下遇到 Spline/Live2D 站点渲染失败、出现带报错信息的黑块，通过启用 swiftshader 软件渲染解决。"
 tags: ['selenium', 'WebGL', 'headless', '截图']

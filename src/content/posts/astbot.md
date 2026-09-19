@@ -1,6 +1,7 @@
 ---
 title: Linux 上安装和使用 AstrBot
 published: 2026-04-25
+image: 'api'
 updated: 2026-05-31
 description: 在 Linux 系统上安装 AstrBot 聊天机器人并做基础设置
 tags: [Linux, 教程, Astbot]

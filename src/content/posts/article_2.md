@@ -1,6 +1,7 @@
 ---
 title: 转载止战之殇
 published: 2026-05-13
+image: 'api'
 description: '神了'
 tags: [转载]
 category: '转载'

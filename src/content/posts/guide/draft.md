@@ -1,6 +1,7 @@
 ---
 title: 草稿示例
 published: 1970-01-01
+image: 'api'
 tags: [Markdown, 博客, 演示]
 category: 文章示例
 draft: true
@@ -17,6 +18,7 @@ slug: draft
 ---
 title: 草稿示例
 published: 2024-01-11T04:40:26.381Z
+image: 'api'
 tags: [Markdown, 博客, 演示]
 category: 示例
 draft: false

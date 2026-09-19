@@ -1,6 +1,7 @@
 ---
 title: 一个非常NB的IP优选
 published: 2026-05-24
+image: 'api'
 updated: 2026-05-31
 description: 推荐一个开源免费的 Cloudflare IP 优选工具
 tags: [cloudflare, Worker, ip优选]

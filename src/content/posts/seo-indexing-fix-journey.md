@@ -1,6 +1,7 @@
 ---
 title: 记一次博客收录优化：从 1 个页面到全部可收录
 published: 2026-08-19
+image: 'api'
 description: 分享为博客排查 Google/Bing 收录问题的全过程：canonical 缺失、重复页面判定、meta description 雷同，以及 IndexNow 接入时踩过的各种坑。
 tags: [SEO, 收录, IndexNow, Astro, Bing]
 category: 'blog'

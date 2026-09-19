@@ -2,7 +2,7 @@
 title: "Vercel 部署后全站 404 排查记"
 published: 2026-08-07
 description: "博客部署到 Vercel 后所有 HTML 页面都返回 404，静态资源却正常。本文记录了从现象、链路分析到定位根因（Vercel CLI cleanUrls 冲突与 l2s 上传 bug）的全过程，以及最终通过固定 CLI 版本解决的方案。"
-image: ''
+image: 'api'
 tags: ['Vercel', '排错', '部署']
 category: 'Vercel,部署'
 draft: false

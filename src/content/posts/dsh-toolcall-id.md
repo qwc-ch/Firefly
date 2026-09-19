@@ -2,7 +2,7 @@
 title: dsh-toolcall-id：一个插件修好 dsh 的历史加载失败
 published: 2026-08-21
 description: dsh Web GUI 重开多步会话时报 "received more than one start Match"，排源发现是工具调用 id 每步重号撞车。写了个开源插件挂在官方钩子上修掉它，升级 dsh 不会被覆盖
-image: ''
+image: 'api'
 tags: [dsh, AI, 插件, 开源]
 category: '开源'
 draft: false

@@ -1,6 +1,7 @@
 ---
 title: "Cloudflare VS Vercel？！"
 published: 2026-07-03
+image: 'api'
 draft: false
 description: "简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。"
 tags: ['Cloudflare', 'Vercel']

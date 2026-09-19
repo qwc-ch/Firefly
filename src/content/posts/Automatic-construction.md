@@ -1,6 +1,7 @@
 ---
 title: GitHub Actions 自动构建并部署 Cloudflare Workers 实现思路
 published: 2026-06-04
+image: 'api'
 description: 讲解如何用 GitHub Actions 实现推送代码后自动构建 Astro 项目，将产物推送到 build 分支，并部署到 Cloudflare Workers
 tags: [GitHub Actions, Cloudflare Workers, Astro, CI/CD]
 category: 'blog'

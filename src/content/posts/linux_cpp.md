@@ -1,6 +1,7 @@
 ---
 title: Linux（Debian 系）上搭建 C++ 开发环境
 published: 2026-05-02
+image: 'api'
 updated: 2026-05-31
 description: 用 VS Code、Clang、CMake、Ninja 和 vcpkg 搭建一个现代化的 C++ 开发环境
 tags: [cpp, Linux, 教程]
