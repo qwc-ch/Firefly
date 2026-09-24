@@ -591,6 +591,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 51, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "You Markdown",
+		imgurl: "https://yun52.top/apilogo.png",
+		cover: "https://tu.520781.xyz/file/youlian/yun52.top.png",
+		desc: "轻量、优雅、简洁的 Markdown 在线阅读器",
+		siteurl: "https://yun52.top/",
+		rss: "https://yun52.top/rss.php",
+		tags: ["Blog"],
+		weight: 50, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
