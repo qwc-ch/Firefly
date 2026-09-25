@@ -124,10 +124,10 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true, // 是否启用
 	},
 	{
-		title: "十三",
-		imgurl: "https://img.nw177.cn/blog/100.assets/avatar.webp",
+		title: "张萌萌",
+		imgurl: "https://blog.nw177.cn/assets/avatar.webp",
 		cover: "https://tu.520781.xyz/file/youlian/blog.nw177.cn.png",
-		desc: "欲买桂花同载酒，终不似，少年游。",
+		desc: "春风得意马蹄疾 一日看尽长安花",
 		siteurl: "https://blog.nw177.cn/",
 		rss: "https://blog.nw177.cn/rss.xml",
 		tags: ["Blog"],
