@@ -602,6 +602,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 50, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "super-mortal",
+		imgurl: "https://q1.qlogo.cn/g?b=qq&nk=2169702639&s=640",
+		cover: "https://tu.520781.xyz/file/youlian/supermortal.cn.png",
+		desc: "super-mortal 技术博客：记录一个凡人程序员在 AI Agent、全栈开发与 DevOps 中的踩坑实录与开源实践，欢迎一起交流进步。",
+		siteurl: "https://supermortal.cn",
+		tags: ["Blog"],
+		weight: 49,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
