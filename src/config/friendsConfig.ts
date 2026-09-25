@@ -293,9 +293,9 @@ export const friendsConfig: FriendLink[] = [
 	{
 		title: "JerryLife",
 		imgurl: "https://free.picui.cn/free/2026/07/16/6a58eb63ecbd1.png",
-		cover: "https://tu.520781.xyz/file/youlian/wee.jerry-nis.top.png",
+		cover: "https://tu.520781.xyz/file/youlian/www.jerry-nis.top.png",
 		desc: "Enjoy life",
-		siteurl: "https://wee.jerry-nis.top/",
+		siteurl: "https://www.jerry-nis.top/",
 		rss: "https://www.jerry-nis.top/rss.xml",
 		tags: ["Blog"],
 		weight: 76, // 权重，数字越大排序越靠前
