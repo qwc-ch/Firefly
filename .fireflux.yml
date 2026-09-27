@@ -1,0 +1,64 @@
+# Firefly 博客的后台配置（推送到 blog 仓库根，命名 .fireflux.yml）
+# 集合 = 内容目录；configs = src/config 下的 TS 配置文件（与 Fireflux registry 25 项对应）。
+collections:
+  posts:
+    label: 文章
+    path: src/content/posts
+    filename: "{slug}.md"            # 也兼容 {slug}/index.md 目录式
+    fields:
+      title:       { type: string, label: 标题, required: true }
+      published:   { type: date,   label: 发布日期, required: true }
+      updated:     { type: date,   label: 更新日期 }
+      draft:       { type: boolean, label: 草稿, default: false }
+      description: { type: text,   label: 摘要 }
+      image:       { type: image,  label: 封面图 }
+      tags:        { type: list,   label: 标签 }
+      category:    { type: string, label: 分类 }
+      lang:        { type: string, label: 语言 }
+      pinned:      { type: boolean, label: 置顶 }
+      author:      { type: string, label: 作者 }
+      sourceLink:  { type: string, label: 原文链接 }
+      licenseName: { type: string, label: 版权协议名 }
+      licenseUrl:  { type: string, label: 版权协议链接 }
+      comment:     { type: boolean, label: 开启评论, default: true }
+      password:    { type: string, label: 访问密码 }
+      passwordHint: { type: string, label: 密码提示 }
+    features: [clone, rename_id, soft_delete, git_log, atomic_commit]
+
+  dynamic:
+    label: 动态
+    path: src/content/dynamic
+    fields:
+      published: { type: date, label: 发布时间, required: true }
+      pinned:    { type: boolean, label: 置顶 }
+      location:  { type: string, label: 位置 }
+    features: [soft_delete, git_log]
+
+configs:
+  site:         { path: src/config/siteConfig.ts,            label: 站点信息,     exports: [siteConfig],               group: 基础 }
+  profile:      { path: src/config/profileConfig.ts,         label: 个人资料,     exports: [profileConfig],            group: 基础 }
+  nav:          { path: src/config/navBarConfig.ts,          label: 导航栏,       exports: [navBarConfig, navBarSearchConfig, LinkPresets], group: 基础 }
+  footer:       { path: src/config/footerConfig.ts,          label: 页脚开关,     exports: [footerConfig],             group: 基础 }
+  footer-html:  { path: src/config/FooterConfig.html,        label: 页脚 HTML,    exports: [],                         group: 基础 }
+  wallpaper:    { path: src/config/backgroundWallpaper.ts,   label: 壁纸与背景视频, exports: [backgroundWallpaper],     group: 外观 }
+  sidebar:      { path: src/config/sidebarConfig.ts,         label: 边栏布局,     exports: [sidebarLayoutConfig],      group: 外观 }
+  display:      { path: src/config/displaySettingsConfig.ts, label: 显示设置,     exports: [displaySettingsConfig],    group: 外观 }
+  cover:        { path: src/config/coverImageConfig.ts,      label: 文章封面图,   exports: [coverImageConfig],         group: 外观 }
+  effects:      { path: src/config/effectsConfig.ts,         label: 樱花特效,     exports: [sakuraConfig],             group: 外观 }
+  font:         { path: src/config/fontConfig.ts,            label: 字体,         exports: [fontsList, fontConfig],    group: 外观 }
+  gallery:      { path: src/config/galleryConfig.ts,         label: 相册,         exports: [galleryConfig],            group: 外观 }
+  pio:          { path: src/config/pioConfig.ts,             label: 看板娘,       exports: [spineModelConfig, live2dWidgetConfig], group: 外观 }
+  expressive:   { path: src/config/expressiveCodeConfig.ts,  label: 代码高亮,     exports: [expressiveCodeConfig],     group: 功能 }
+  mermaid:      { path: src/config/mermaidConfig.ts,         label: Mermaid 图表, exports: [mermaidConfig],            group: 功能 }
+  plantuml:     { path: src/config/plantumlConfig.ts,        label: PlantUML,     exports: [plantumlConfig],           group: 功能 }
+  license:      { path: src/config/licenseConfig.ts,         label: 文章版权,     exports: [licenseConfig],            group: 功能 }
+  comment:      { path: src/config/commentConfig.ts,         label: 评论系统,     exports: [commentConfig],            group: 功能 }
+  analytics:    { path: src/config/analyticsConfig.ts,       label: 访问统计,     exports: [analyticsConfig],          group: 功能 }
+  music:        { path: src/config/musicConfig.ts,           label: 背景音乐,     exports: [musicPlayerConfig],        group: 功能 }
+  dynamic:      { path: src/config/dynamicConfig.ts,         label: 动态页面,     exports: [dynamicConfig],            group: 功能 }
+  announcement: { path: src/config/announcementConfig.ts,    label: 公告栏,       exports: [announcementConfig],       group: 功能 }
+  booknav:      { path: src/config/booknavConfig.ts,         label: 书签导航,     exports: [booknavPageConfig, booknavConfig], group: 功能 }
+  sponsor:      { path: src/config/sponsorConfig.ts,         label: 打赏,         exports: [sponsorConfig],            group: 功能 }
+  friends:      { path: src/config/friendsConfig.ts,         label: 友链,         exports: [friendsPageConfig, friendsConfig], group: 内容 }
+
+media: { type: external_imgbed }
