@@ -612,6 +612,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 49,
 		enabled: true,
 	},
+	{
+		title: "风起",
+		imgurl: "https://blog.windstart.top/_astro/avatar.BcAu2wMi_yT6PR.webp",
+		desc: "你未看此花时，此花与汝同归于寂；",
+		siteurl: "https://blog.windstart.top",
+		tags: ["Blog"],
+		weight: 48, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+		cover: "https://tu.520781.xyz/file/youlian/blog.windstart.top.png",
+		rss: "https://blog.windstart.top/rss.xml",
+	},
 ];
 
 // 获取启用的友链并进行排序
