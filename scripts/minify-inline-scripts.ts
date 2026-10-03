@@ -33,11 +33,27 @@ function shouldMinify(attrs: string): boolean {
 	return JS_TYPES.has(type);
 }
 
+/**
+ * 是否包含控制字符（0x00-0x08、0x0e-0x1f、0x7f）。
+ * 不写成正则字面量：Biome 的 noControlCharactersInRegex 禁止在正则里写控制字符转义。
+ * 这类脚本多半含压缩过的二进制字面量，esbuild 无法解析，跳过即可。
+ */
+function hasControlChar(code: string): boolean {
+	for (let i = 0; i < code.length; i++) {
+		const c = code.charCodeAt(i);
+		if ((c >= 0 && c <= 8) || (c >= 14 && c <= 31) || c === 127) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function minifyInline(code: string, file: string): string {
 	if (!code.trim()) return code;
 	// 有些内联脚本包含非文本字节（如成品站里被压缩过的二进制字面量），
-	// esbuild 会报 "Unexpected \\x7f" 且无法解析，直接跳过这类脚本。
-	if (/[\x00-\x08\x0e-\x1f\x7f]/u.test(code)) return code;
+	// esbuild 会报 "Unexpected \x7f" 且无法解析，直接跳过这类脚本。
+	// 注意：不用控制字符正则（Biome noControlCharactersInRegex 禁止），改用码点扫描。
+	if (hasControlChar(code)) return code;
 	try {
 		const result = transformSync(code, {
 			loader: "js",

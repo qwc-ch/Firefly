@@ -707,7 +707,7 @@ export const en: Translation = {
 	[Key.gbCopyMessage]: "Copy message",
 	[Key.gbEditMessage]: "Edit message",
 	[Key.gbConnecting]: "Connecting to guestbook service",
-// Immersive Reading
+	// Immersive Reading
 	[Key.immersiveReading]: "Immersive Reading",
 	[Key.enterImmersiveReading]: "Enter Immersive Reading",
 	[Key.exitImmersiveReading]: "Exit Immersive Reading",

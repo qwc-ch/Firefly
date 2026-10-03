@@ -165,9 +165,7 @@ const jsonLd = {
 				entry.data.description ||
 				remarkPluginFrontmatter.excerpt ||
 				entry.data.title,
-			keywords: entry.data.tags.length
-				? entry.data.tags.join(", ")
-				: undefined,
+			keywords: entry.data.tags.length ? entry.data.tags.join(", ") : undefined,
 			author: { "@id": authorPerson["@id"] },
 			publisher: { "@id": publisher["@id"] },
 			...(coverImage
