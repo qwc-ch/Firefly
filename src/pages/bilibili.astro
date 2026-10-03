@@ -5,9 +5,11 @@ import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import "@/styles/pages/common.css";
+import "@/styles/pages/media-grid.css";
 import type { StandardizedAnime } from "@/types/bilibili";
 import { fetchBilibiliList } from "@/utils/bilibili-utils";
-import { formatDateI18nWithTime } from "@/utils/date-utils";
+import { formatDateI18n } from "@/utils/date-utils";
 
 // 检查页面是否启用
 if (!siteConfig.pages.bilibili) {
@@ -15,7 +17,7 @@ if (!siteConfig.pages.bilibili) {
 }
 
 // 获取构建时间
-const buildTime = formatDateI18nWithTime(new Date());
+const buildTime = formatDateI18n(new Date());
 
 // Bilibili 配置
 const BILIBILI_UID = siteConfig.bilibili?.uid;
@@ -49,27 +51,26 @@ const bilibiliAverageRating =
       <!-- 页面标题 -->
       <div class="relative w-full mb-8">
         <div class="mb-6">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="h-8 w-8 rounded-lg bg-(--primary) flex items-center justify-center text-white dark:text-black/70">
-              <Icon is:inline name="fa7-brands:bilibili" class="text-[1.5rem]"></Icon>
+          <div class="page-heading">
+            <div class="page-icon" aria-hidden="true">
+              <Icon name="fa7-brands:bilibili" />
             </div>
-            <div class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-              {i18n(I18nKey.bilibili)}
+            <div>
+              <h2>{i18n(I18nKey.bilibili)}</h2>
+              <p>{i18n(I18nKey.bilibiliSubtitle)}</p>
             </div>
+            <p class="page-updated">
+              <span>{i18n(I18nKey.animeLastUpdated)}</span>
+              <span>{buildTime}</span>
+            </p>
           </div>
-          <p class="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-            {i18n(I18nKey.bilibiliSubtitle)}
-          </p>
-          <p class="text-xs text-neutral-500 dark:text-neutral-500 mt-2">
-            {i18n(I18nKey.animeLastUpdated)} {buildTime}
-          </p>
         </div>
 
         {!isConfigured ? (
           /* 未配置提示 */
           <div class="text-center py-16">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-(--btn-regular-bg) rounded-full mb-6 border border-(--line-divider)">
-              <Icon is:inline name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
+              <Icon name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
             </div>
             <h2 class="text-xl font-semibold text-black/80 dark:text-white/80 mb-3">
               {i18n(I18nKey.bilibiliNotConfigured)}
@@ -85,7 +86,7 @@ const bilibiliAverageRating =
               <div class="bg-(--card-bg) rounded-xl p-3 sm:p-4 border border-(--line-divider)">
                 <div class="flex items-center gap-2 sm:gap-3">
                   <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-(--primary)/10 flex items-center justify-center shrink-0">
-                    <Icon is:inline name="material-symbols:movie-filter" class="text-[1rem] sm:text-[1.25rem] text-(--primary)" />
+                    <Icon name="material-symbols:movie-filter" class="text-[1rem] sm:text-[1.25rem] text-(--primary)" />
                   </div>
                   <div class="min-w-0">
                     <div class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">{i18n(I18nKey.animeTotal)}</div>
@@ -96,7 +97,7 @@ const bilibiliAverageRating =
               <div class="bg-(--card-bg) rounded-xl p-3 sm:p-4 border border-(--line-divider)">
                 <div class="flex items-center gap-2 sm:gap-3">
                   <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0">
-                    <Icon is:inline name="material-symbols:favorite" class="text-[1rem] sm:text-[1.25rem] text-pink-500" />
+                    <Icon name="material-symbols:favorite" class="text-[1rem] sm:text-[1.25rem] text-pink-500" />
                   </div>
                   <div class="min-w-0">
                     <div class="text-[10px] sm:text-xs text-neutral-500 dark:text-neutral-400">{i18n(I18nKey.animeBilibiliAvg)}</div>

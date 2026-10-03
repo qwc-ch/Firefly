@@ -5,11 +5,14 @@ import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import "@/styles/pages/common.css";
+import "@/styles/pages/media-grid.css";
 import type {
 	UserSubjectCollection,
 	UserSubjectCollectionResponse,
 } from "@/types/bangumi";
-import { formatDateI18nWithTime } from "@/utils/date-utils";
+import { formatDateI18n } from "@/utils/date-utils";
+import { filterNsfw, isBangumiNsfw } from "@/utils/nsfw-utils";
 
 //参考：霞葉 https://kasuha.com/posts/fuwari-enhance-ep2/
 
@@ -19,7 +22,7 @@ if (!siteConfig.pages.bangumi) {
 }
 
 // 获取构建时间
-const buildTime = formatDateI18nWithTime(new Date());
+const buildTime = formatDateI18n(new Date());
 
 ////////////// Bangumi 配置 ////////////////////////
 const bangumiConfig = {
@@ -42,6 +45,8 @@ const bangumiConfig = {
 		delay: 50, // 请求间隔毫秒数，避免频率限制
 		maxTotal: 1000, // 最大获取总数，防止无限循环（0=无限制）
 	},
+	// NSFW 处理："off" | "blur" | "hide"
+	nsfw: siteConfig.bangumi?.nsfw ?? "off",
 };
 //////////////////////////////////////////////////
 
@@ -167,11 +172,17 @@ if (!isDynamic) {
 					bangumiConfig.username!,
 					categoryInfo.subjectType,
 				);
-				bangumiData[categoryKey] = data;
+				// NSFW 拦截：hide 模式下过滤掉 NSFW 条目，保持标签页计数一致
+				const filteredData = filterNsfw(
+					data,
+					bangumiConfig.nsfw,
+					isBangumiNsfw,
+				);
+				bangumiData[categoryKey] = filteredData;
 				tabs.push({
 					id: categoryKey,
 					name: categoryInfo.name,
-					count: data.length,
+					count: filteredData.length,
 				});
 			} catch (error) {
 				console.error(
@@ -212,22 +223,21 @@ const activeTab = tabs[0]?.id || "anime";
         <!-- 页面标题 -->
         <div class="relative w-full mb-8">
             <div class="mb-6">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="h-8 w-8 rounded-lg bg-(--primary) flex items-center justify-center text-white dark:text-black/70">
-                        <Icon is:inline name="material-symbols:movie" class="text-[1.5rem]"></Icon>
+                <div class="page-heading">
+                    <div class="page-icon" aria-hidden="true">
+                        <Icon name="material-symbols:movie" />
                     </div>
-                    <div class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-                        {i18n(I18nKey.bangumi)}
+                    <div>
+                        <h2>{i18n(I18nKey.bangumi)}</h2>
+                        <p>{i18n(I18nKey.bangumiSubtitle)}</p>
                     </div>
+                    {!isDynamic && (
+                    <p class="page-updated">
+                        <span>{i18n(I18nKey.bangumiLastUpdated)}</span>
+                        <span>{buildTime}</span>
+                    </p>
+                    )}
                 </div>
-                <p class="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    {i18n(I18nKey.bangumiSubtitle)}
-                </p>
-                {!isDynamic && (
-                <p class="text-xs text-neutral-500 dark:text-neutral-500 mt-2">
-                    {i18n(I18nKey.bangumiLastUpdated)} {buildTime}
-                </p>
-                )}
             </div>
 
       {isDynamic ? (
@@ -236,7 +246,7 @@ const activeTab = tabs[0]?.id || "anime";
           {!isUserIdConfigured ? (
             <div class="text-center py-16">
               <div class="inline-flex items-center justify-center w-16 h-16 bg-(--btn-regular-bg) rounded-full mb-6 border border-(--line-divider)">
-                <Icon is:inline name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
+                <Icon name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
               </div>
               <h2 class="text-xl font-semibold text-black/80 dark:text-white/80 mb-3">
                 未配置 Bangumi 用户ID
@@ -255,6 +265,7 @@ const activeTab = tabs[0]?.id || "anime";
                 categories: bangumiConfig.categories,
                 categoryOrder: siteConfig.bangumi?.categoryOrder || [],
                 pagination: bangumiConfig.pagination,
+                nsfw: bangumiConfig.nsfw,
               }}
             />
           )}
@@ -265,7 +276,7 @@ const activeTab = tabs[0]?.id || "anime";
       {fetchFailed ? (
         <div class="text-center py-16">
           <div class="inline-flex items-center justify-center w-16 h-16 bg-(--btn-regular-bg) rounded-full mb-6 border border-(--line-divider)">
-            <Icon is:inline name="material-symbols:error-outline" class="text-[2rem] text-red-500" />
+            <Icon name="material-symbols:error-outline" class="text-[2rem] text-red-500" />
           </div>
           <h2 class="text-xl font-semibold text-black/80 dark:text-white/80 mb-3">
             {i18n(I18nKey.bangumiFetchError)}
@@ -276,12 +287,12 @@ const activeTab = tabs[0]?.id || "anime";
         </div>
       ) : tabs.length > 0 ? (
         <>
-          <BangumiGrid client:load tabs={tabs} initialActiveTab={activeTab} bangumiData={bangumiData} subjectBaseUrl={bangumiConfig.subjectBaseUrl} />
+          <BangumiGrid client:load tabs={tabs} initialActiveTab={activeTab} bangumiData={bangumiData} subjectBaseUrl={bangumiConfig.subjectBaseUrl} nsfw={bangumiConfig.nsfw} />
         </>
       ) : (
         <div class="text-center py-16">
           <div class="inline-flex items-center justify-center w-16 h-16 bg-(--btn-regular-bg) rounded-full mb-6 border border-(--line-divider)">
-            <Icon is:inline name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
+            <Icon name="material-symbols:settings" class="text-[2rem] text-(--btn-content)" />
           </div>
           <h2 class="text-xl font-semibold text-black/80 dark:text-white/80 mb-3">
             {isUserIdConfigured ? i18n(I18nKey.bangumiEmpty) : "未配置 Bangumi 用户ID"}

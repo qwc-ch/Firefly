@@ -1,7 +1,5 @@
-import { expressiveCodeConfig, siteConfig } from "@/config";
-import { BANNER_HEIGHT_HOME } from "@/constants/constants";
+import { expressiveCodeConfig, navbarMode, siteConfig } from "@/config";
 import type { WALLPAPER_MODE } from "@/types/config";
-import { isBannerMode } from "@/utils/banner-utils";
 import { scheduleContentOverflowEnhancements } from "@/utils/content-overflow-utils";
 import { initializeFloatingPanels } from "@/utils/floating-panel-utils";
 import {
@@ -20,7 +18,44 @@ import {
 } from "@/utils/setting-utils";
 import { pathsEqual, url } from "@/utils/url-utils";
 
-const stickyNavbar = siteConfig.navbar.stickyNavbar ?? false;
+/**
+ * 进度条：WAAPI 驱动 transform/opacity（合成线程动画）。
+ * 替代原 width 关键帧 + `void offsetWidth` 强制回流方案——后者在大型文章 DOM 上
+ * 会触发整棵布局树同步重排，正是切页卡顿来源之一。
+ */
+function startProgressBar(): void {
+	const bar = document.getElementById("progress-bar");
+	if (!bar) return;
+	bar.getAnimations().forEach((a) => {
+		a.cancel();
+	});
+	bar.animate(
+		[
+			{ transform: "scaleX(0)", opacity: 1 },
+			{ transform: "scaleX(0.95)", opacity: 1 },
+		],
+		{
+			duration: 8000,
+			easing: "cubic-bezier(0.1, 0.05, 0.1, 1)",
+			fill: "forwards",
+		},
+	);
+}
+
+function finishProgressBar(): void {
+	const bar = document.getElementById("progress-bar");
+	if (!bar) return;
+	bar.getAnimations().forEach((a) => {
+		a.cancel();
+	});
+	bar.animate(
+		[
+			{ transform: "scaleX(1)", opacity: 1 },
+			{ transform: "scaleX(1)", opacity: 0 },
+		],
+		{ duration: 500, easing: "ease-out", fill: "forwards" },
+	);
+}
 
 /**
  * Swup 页面切换编排（从 Layout.astro 迁出）。
@@ -55,21 +90,22 @@ function registerSwupHooks(): void {
 			}
 
 			const navbar = document.getElementById("navbar-wrapper");
-			if (navbar && stickyNavbar) {
+			if (navbar && navbarMode === "dynamic") {
+				// 切页时先显示导航栏，避免新页从隐藏态开始；滚动逻辑会随滚动位置重新判断
 				navbar.classList.remove("navbar-hidden");
-			} else if (isBannerMode() && navbar) {
-				const threshold = window.innerHeight * (BANNER_HEIGHT_HOME / 100) - 88;
-				if (document.documentElement.scrollTop >= threshold) {
-					navbar.classList.add("navbar-hidden");
-				}
+				document.body.classList.remove("dynamic-navbar-hidden");
+			} else if (navbar) {
+				// fixed / static：切页时先显示导航栏，避免残留上一页（如滚到底部时隐藏）的 navbar-hidden，
+				// 否则从其它页面切回首页时导航栏会保持隐藏、不再跨壁纸显示
+				navbar.classList.remove("navbar-hidden");
 			}
 		},
 	);
 	window.swup.hooks.on("content:replace", () => {
 		initializeFloatingPanels();
 
-		// 更新侧边栏组件的可见性（根据新页面的 URL）
-		updateSidebarComponentsVisibility();
+		// 侧边栏组件可见性由 page:view 统一更新（含 refreshSidebarStickyState 的
+		// offsetHeight 布局读取），content:replace 不重复执行，避免每趟切页强制布局两次
 
 		// 只处理katex元素的容器，使用浏览器原生滚动条
 		scheduleContentOverflowEnhancements();
@@ -78,21 +114,6 @@ function registerSwupHooks(): void {
 		import("@/utils/icon-loader").then(({ initIconLoader }) => {
 			initIconLoader();
 		});
-
-		// 检查当前页面是否为文章页面（有TOC元素）
-		const tocWrapper = document.getElementById("toc-wrapper");
-		const isArticlePage = tocWrapper !== null;
-
-		// 只在文章页面重新初始化桌面端 TOC 组件
-		if (isArticlePage) {
-			const tocElement = document.querySelector("table-of-contents");
-			const tocInit = tocElement?.init;
-			if (tocElement && typeof tocInit === "function") {
-				setTimeout(() => {
-					tocInit();
-				}, 100);
-			}
-		}
 
 		// 重新初始化semifull模式的滚动检测
 		// （全屏模式跳过：导航栏状态由 updateNavbarTransparency 统一管理，
@@ -113,44 +134,53 @@ function registerSwupHooks(): void {
 		}
 	});
 	window.swup.hooks.on("visit:start", (visit: { to: { url: string } }) => {
-		// Start progress bar
-		const progressBar = document.getElementById("progress-bar");
-		if (progressBar) {
-			progressBar.classList.remove("finishing", "done");
-			// Force reflow so the animation restarts cleanly
-			void progressBar.offsetWidth;
-			progressBar.classList.add("loading");
+		// Start progress bar（WAAPI 合成线程动画，不强制回流）
+		startProgressBar();
+
+		// 先回顶，让后续 FLIP 在 scroll=0 的坐标系内计算：
+		// 若在切页后才回顶，FLIP 的 invert 是按切页前滚动位置校准的，scroll 一复位就会导致
+		// 内容区从视口上方之外（滚动较深时 top<0）开始、再落回，表现为“冲过头再回落”。
+		// 必须用 instant：html 上有 scroll-behavior:smooth（main.css），behavior:"auto" 会被当作平滑滚动，
+		// 在 FLIP 期间与内容位移叠加、同样造成“顶到最顶部再回落”。
+		// 移动端（<768）不使用即时回顶，避免闪烁（由 swup 默认滚动接管）
+		if (window.innerWidth >= 768) {
+			window.scrollTo({ top: 0, behavior: "instant" });
 		}
 
 		// 更新首页状态（body.is-home 驱动 CSS --content-top 等）
 		const bodyElement = document.querySelector("body") as HTMLElement;
 		const isHomePage = pathsEqual(visit.to.url, url("/"));
+		const wasHome = bodyElement.classList.contains("is-home");
 		const contentPanel = document.querySelector(
 			".content-panel",
 		) as HTMLElement | null;
-		const oldTop = contentPanel?.getBoundingClientRect().top ?? 0;
-		if (isHomePage) {
-			bodyElement.classList.add("is-home");
-		} else {
-			bodyElement.classList.remove("is-home");
-		}
-		// FLIP：top 已瞬时定位到目标，用 transform 从旧位置平滑过渡（合成动画，避免 top 重排卡顿）
-		if (contentPanel) {
-			const newTop = contentPanel.getBoundingClientRect().top;
+		// FLIP 只在 is-home 状态变化（首页↔非首页）时才有意义；文章↔文章、首页↔首页
+		// 类未变 → delta 必为 0，直接短路，避免常见切页白付两次强制布局读取
+		if (isHomePage !== wasHome && contentPanel) {
+			const oldTop = contentPanel.getBoundingClientRect().top; // 类切换前读
+			bodyElement.classList.toggle("is-home", isHomePage);
+			const newTop = contentPanel.getBoundingClientRect().top; // 类切换后读
 			const delta = oldTop - newTop;
-			// 超大位移（>75% 视口，如全屏首页→非首页）不做 FLIP：新页内容重排叠加会抖动，直接到位由 swup 淡入掩盖
-			if (delta !== 0 && Math.abs(delta) <= window.innerHeight * 0.75) {
+			// 全屏首页↔非首页 delta ≈ 92vh，总是超过 0.75 视口，此前被跳过导致内容区瞬间跳变；
+			// 现在放行，改用与移动端横幅模式完全一致的标准 FLIP（强制回流提交 invert + CSS 过渡），
+			// 让内容区整屏丝滑上移/下移（非全屏仍受 0.75 视口阈值保护）
+			const isFullscreen =
+				document.documentElement.getAttribute("data-wallpaper-mode") ===
+				"fullscreen";
+			if (
+				delta !== 0 &&
+				(isFullscreen || Math.abs(delta) <= window.innerHeight * 0.75)
+			) {
 				// 标准 FLIP：禁用过渡→设 invert transform→回流提交→启用过渡→移除 transform（触发合成动画）
-				contentPanel.style.willChange = "transform";
+				// 不再设置 will-change:transform——它把整个 .content-panel（含全页文字）预先且持续地提升为
+				// 独立合成层，软导航结束后的旧光栅贴图因该提示而保留，导致残留发糊（#615）。
+				// transform 过渡本身会在动画期间由浏览器自动提升到合成层（compositor 驱动，丝滑不减），
+				// 动画结束后自动降级并按普通路径重光栅，文字恢复清晰。
 				contentPanel.style.transition = "none";
 				contentPanel.style.transform = `translateY(${delta}px)`;
 				void contentPanel.offsetWidth;
 				contentPanel.style.transition = "";
 				contentPanel.style.transform = "";
-				window.setTimeout(
-					() => contentPanel.style.removeProperty("will-change"),
-					260,
-				);
 			}
 		}
 
@@ -181,39 +211,15 @@ function registerSwupHooks(): void {
 				postListContainer.style.transition = "none";
 			}
 		}
-
-		// increase the page height during page transition to prevent the scrolling animation from jumping
-		const heightExtend = document.getElementById("page-height-extend");
-		if (heightExtend) {
-			heightExtend.classList.remove("hidden");
-		}
-
-		// Hide the TOC while scrolling back to top
-		const toc = document.getElementById("toc-wrapper");
-		if (toc) {
-			toc.classList.add("toc-not-ready");
-		}
-
-		// 确保页面滚动到顶部，切页期间使用即时回顶，移动端不使用，避免出现闪烁
-		// （非首页全屏模式与 overlay 一致、内容在最上面，回顶即内容顶部）
-		const shouldUseSmoothScroll = window.innerWidth >= 768;
-		if (shouldUseSmoothScroll) {
-			window.scrollTo({
-				top: 0,
-				behavior: "auto",
-			});
-		}
 	});
 	window.swup.hooks.on("page:view", () => {
 		// 更新网格列数和侧边栏组件可见性
 		updateMainGridCols();
 		updateSidebarComponentsVisibility();
 
-		// hide the temp high element when the transition is done
-		const heightExtend = document.getElementById("page-height-extend");
-		if (heightExtend) {
-			heightExtend.classList.remove("hidden");
-		}
+		// 过渡结束后再量一次，避免顶部组件未就绪时读到 offsetHeight=0 而误删 mb-4
+		// (sticky 与 top 组件之间间距只在 refreshSidebarStickyState 里恢复，延迟补偿一次更稳)
+		window.setTimeout(() => updateSidebarComponentsVisibility(), 300);
 
 		// 页面切换完成后，同步全屏模式的标题视差位移（Swup 已替换容器内容）
 		updateFullscreenTitleParallax();
@@ -284,32 +290,11 @@ function registerSwupHooks(): void {
 		}, 300);
 	});
 	window.swup.hooks.on("visit:end", (_visit: { to: { url: string } }) => {
-		// Finish progress bar
-		const progressBar = document.getElementById("progress-bar");
-		if (progressBar) {
-			progressBar.classList.remove("loading");
-			progressBar.classList.add("finishing");
-			setTimeout(() => {
-				progressBar.classList.remove("finishing");
-				progressBar.classList.add("done");
-				setTimeout(() => {
-					progressBar.classList.remove("done");
-				}, 300);
-			}, 200);
-		}
+		// Finish progress bar（WAAPI：快速填满后淡出）
+		finishProgressBar();
 
 		setTimeout(() => {
-			const heightExtend = document.getElementById("page-height-extend");
-			if (heightExtend) {
-				heightExtend.classList.add("hidden");
-			}
-
 			// Just make the transition looks better
-			const toc = document.getElementById("toc-wrapper");
-			if (toc) {
-				toc.classList.remove("toc-not-ready");
-			}
-
 			// 移除页面切换保护，恢复过渡动画
 			document.documentElement.classList.remove("is-page-transitioning");
 			scrollFunction();

@@ -132,7 +132,10 @@ export default defineConfig({
 			],
 			smoothScrolling: false,
 			cache: true,
-			preload: true,
+			preload: {
+				hover: true,
+				visible: true,
+			},
 			accessibility: true,
 			updateHead: true,
 			updateBodyClass: false,
@@ -239,7 +242,7 @@ export default defineConfig({
 				if (pathname === "/dynamic/" && !siteConfig.pages.dynamic) {
 					return false;
 				}
-				if (pathname === "/gallery/" && !siteConfig.pages.gallery) {
+				if (pathname.startsWith("/gallery/") && !siteConfig.pages.gallery) {
 					return false;
 				}
 				if (pathname === "/friends/" && !siteConfig.pages.friends) {

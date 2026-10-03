@@ -34,6 +34,7 @@ export const en: Translation = {
 	[Key.allTags]: "All Tags",
 	[Key.tagsDescription]:
 		"Browse all posts by tag to quickly find topics you are interested in.",
+	[Key.allSeries]: "All Series",
 	[Key.recentPosts]: "Recent Posts",
 	[Key.postList]: "Post List",
 	[Key.tableOfContents]: "Table of Contents",
@@ -97,6 +98,18 @@ export const en: Translation = {
 		"A curated collection of useful sites, organized by category.",
 	[Key.searchBooknav]: "Search bookmarks...",
 	[Key.booknavEmpty]: "No bookmarks yet.",
+
+	// Project showcase
+	[Key.projects]: "Projects",
+	[Key.projectsDescription]: "Here are the projects I've built",
+	[Key.projectDetails]: "View details",
+	[Key.projectBack]: "Back to projects",
+	[Key.projectEmpty]: "No projects yet",
+	[Key.projectSearch]: "Search projects",
+	[Key.projectStatusPlanning]: "Planning",
+	[Key.projectStatusDeveloping]: "In Development",
+	[Key.projectStatusPublished]: "Published",
+	[Key.projectStatusArchived]: "Archived",
 	[Key.guestbook]: "Guestbook",
 	[Key.guestbookDescription]:
 		"Welcome to leave your mark here, share your thoughts and suggestions",
@@ -188,7 +201,7 @@ export const en: Translation = {
 	[Key.bangumiCategoryReal]: "Real",
 
 	// Bangumi Data Update
-	[Key.bangumiLastUpdated]: "Data updated at",
+	[Key.bangumiLastUpdated]: "Data updated on",
 	[Key.bangumiUpdatedAt]: "Build time",
 	[Key.bangumiDataStatic]: "Static data",
 
@@ -216,7 +229,7 @@ export const en: Translation = {
 	[Key.vndbNotConfigured]: "VNDB User ID Not Configured",
 	[Key.vndbNotConfiguredDesc]:
 		"Please configure your VNDB user ID in src/config/siteConfig.ts",
-	[Key.vndbLastUpdated]: "Data updated at",
+	[Key.vndbLastUpdated]: "Data updated on",
 	[Key.vndbVotes]: "votes",
 	[Key.vndbLengthVeryShort]: "Very short",
 	[Key.vndbLengthShort]: "Short",
@@ -243,7 +256,7 @@ export const en: Translation = {
 	[Key.animeDateDesc]: "Newest",
 	[Key.animeDateAsc]: "Oldest",
 	[Key.animeNoResults]: "No matching anime found",
-	[Key.animeLastUpdated]: "Data updated at",
+	[Key.animeLastUpdated]: "Data updated on",
 	[Key.animeEpStatus]: "Progress",
 	[Key.animeViewDetails]: "View Details",
 	[Key.animeBilibiliAvg]: "Bilibili Avg",
@@ -285,7 +298,7 @@ export const en: Translation = {
 	[Key.malNotConfigured]: "MyAnimeList Not Configured",
 	[Key.malNotConfiguredDesc]:
 		"Please configure your MyAnimeList username and Client ID in src/config/siteConfig.ts. The list must be public.",
-	[Key.malLastUpdated]: "Data updated at",
+	[Key.malLastUpdated]: "Data updated on",
 	[Key.malSeasonWinter]: "Winter",
 	[Key.malSeasonSpring]: "Spring",
 	[Key.malSeasonSummer]: "Summer",
@@ -331,6 +344,15 @@ export const en: Translation = {
 	[Key.rssCopied]: "RSS link copied to clipboard!",
 	[Key.rssCopyFailed]: "Copy failed, please copy the link manually",
 
+	// Atom Page
+	[Key.atom]: "Atom Feed",
+	[Key.atomDescription]: "Subscribe to get latest updates",
+	[Key.atomSubtitle]:
+		"Subscribe via Atom to get the latest articles and updates immediately",
+	[Key.atomLink]: "Atom Link",
+	[Key.atomCopyToReader]: "Copy link to your Atom reader",
+	[Key.atomCopied]: "Atom link copied to clipboard!",
+
 	// Last Modified Time Card
 	[Key.lastModifiedPrefix]: "Last updated on ",
 	[Key.lastModifiedOutdated]: "Some content may be outdated",
@@ -358,6 +380,13 @@ export const en: Translation = {
 	[Key.noRelatedPosts]: "No related posts",
 	[Key.noRandomPosts]: "No random posts",
 
+	// Article Series
+	[Key.series]: "Series",
+	[Key.seriesPartOf]: "Part of series",
+	[Key.seriesPart]: "Part {n}",
+	[Key.seriesThisArticle]: "This article",
+	[Key.noSeries]: "No series yet",
+
 	// Encrypted
 	[Key.postEncrypted]: "This post is encrypted",
 
@@ -365,6 +394,9 @@ export const en: Translation = {
 	[Key.wallpaperMode]: "Wallpaper Mode",
 	[Key.wallpaperBannerMode]: "Banner Wallpaper",
 	[Key.wallpaperFullscreenMode]: "Fullscreen Wallpaper",
+	[Key.fullscreenLayout]: "Fullscreen Layout",
+	[Key.fullscreenClassicLayout]: "Classic",
+	[Key.fullscreenHeroLayout]: "Hero",
 	[Key.wallpaperOverlayMode]: "Overlay Wallpaper",
 	[Key.wallpaperNoneMode]: "None Wallpaper",
 
@@ -489,6 +521,7 @@ export const en: Translation = {
 	[Key.galleryAlbums]: "albums",
 	[Key.galleryNoAlbums]: "No albums yet",
 	[Key.galleryBackToAlbums]: "Back to albums",
+	[Key.galleryEnterAlbum]: "Enter album",
 	[Key.searchAlbums]: "Search albums...",
 
 	// Password Protection
@@ -674,4 +707,10 @@ export const en: Translation = {
 	[Key.gbCopyMessage]: "Copy message",
 	[Key.gbEditMessage]: "Edit message",
 	[Key.gbConnecting]: "Connecting to guestbook service",
+// Immersive Reading
+	[Key.immersiveReading]: "Immersive Reading",
+	[Key.enterImmersiveReading]: "Enter Immersive Reading",
+	[Key.exitImmersiveReading]: "Exit Immersive Reading",
+	[Key.tocExpand]: "Expand directory",
+	[Key.tocCollapse]: "Collapse directory",
 };

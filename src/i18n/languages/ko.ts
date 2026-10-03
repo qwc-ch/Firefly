@@ -33,6 +33,7 @@ export const ko: Translation = {
 	[Key.allTags]: "모든 태그",
 	[Key.tagsDescription]:
 		"태그별로 게시글을 둘러보고 관심 주제를 빠르게 찾아보세요.",
+	[Key.allSeries]: "모든 시리즈",
 	[Key.recentPosts]: "최근 게시글",
 	[Key.postList]: "게시글 목록",
 	[Key.tableOfContents]: "목차",
@@ -95,6 +96,18 @@ export const ko: Translation = {
 	[Key.booknavDescription]: "유용한 사이트를 카테고리별로 모았습니다.",
 	[Key.searchBooknav]: "북마크 검색...",
 	[Key.booknavEmpty]: "북마크가 없습니다.",
+
+	// 프로젝트 쇼케이스
+	[Key.projects]: "프로젝트",
+	[Key.projectsDescription]: "제가 개발한 프로젝트입니다",
+	[Key.projectDetails]: "자세히 보기",
+	[Key.projectBack]: "프로젝트 목록으로 돌아가기",
+	[Key.projectEmpty]: "아직 프로젝트가 없습니다",
+	[Key.projectSearch]: "프로젝트 검색",
+	[Key.projectStatusPlanning]: "계획 중",
+	[Key.projectStatusDeveloping]: "개발 중",
+	[Key.projectStatusPublished]: "출시됨",
+	[Key.projectStatusArchived]: "보관됨",
 	[Key.guestbook]: "방명록",
 	[Key.guestbookDescription]:
 		"이곳에 흔적을 남기고 생각과 제안을 공유해 주세요",
@@ -186,7 +199,7 @@ export const ko: Translation = {
 	[Key.bangumiCategoryReal]: "실사",
 
 	// Bangumi Data Update
-	[Key.bangumiLastUpdated]: "데이터 업데이트 시각",
+	[Key.bangumiLastUpdated]: "데이터 업데이트 날짜",
 	[Key.bangumiUpdatedAt]: "빌드 시각",
 	[Key.bangumiDataStatic]: "정적 데이터",
 
@@ -214,7 +227,7 @@ export const ko: Translation = {
 	[Key.vndbNotConfigured]: "VNDB 사용자 ID가 설정되지 않았습니다",
 	[Key.vndbNotConfiguredDesc]:
 		"src/config/siteConfig.ts에서 VNDB 사용자 ID를 설정하세요",
-	[Key.vndbLastUpdated]: "데이터 업데이트 시각",
+	[Key.vndbLastUpdated]: "데이터 업데이트 날짜",
 	[Key.vndbVotes]: "표",
 	[Key.vndbLengthVeryShort]: "매우 짧음",
 	[Key.vndbLengthShort]: "짧음",
@@ -241,7 +254,7 @@ export const ko: Translation = {
 	[Key.animeDateDesc]: "최신순",
 	[Key.animeDateAsc]: "오래된 순",
 	[Key.animeNoResults]: "일치하는 애니메이션이 없습니다",
-	[Key.animeLastUpdated]: "데이터 업데이트 시각",
+	[Key.animeLastUpdated]: "데이터 업데이트 날짜",
 	[Key.animeEpStatus]: "진행 상황",
 	[Key.animeViewDetails]: "상세 보기",
 	[Key.animeBilibiliAvg]: "Bilibili 평균",
@@ -283,7 +296,7 @@ export const ko: Translation = {
 	[Key.malNotConfigured]: "MyAnimeList가 설정되지 않았습니다",
 	[Key.malNotConfiguredDesc]:
 		"src/config/siteConfig.ts에서 MyAnimeList 사용자 이름과 Client ID를 설정하세요 (목록은 공개여야 합니다)",
-	[Key.malLastUpdated]: "데이터 업데이트 시각",
+	[Key.malLastUpdated]: "데이터 업데이트 날짜",
 	[Key.malSeasonWinter]: "겨울",
 	[Key.malSeasonSpring]: "봄",
 	[Key.malSeasonSummer]: "여름",
@@ -328,6 +341,15 @@ export const ko: Translation = {
 	[Key.rssCopied]: "RSS 링크가 클립보드에 복사되었습니다!",
 	[Key.rssCopyFailed]: "복사에 실패했습니다. 링크를 직접 복사해 주세요",
 
+	// Atom Page
+	[Key.atom]: "Atom 피드",
+	[Key.atomDescription]: "최신 업데이트 구독",
+	[Key.atomSubtitle]:
+		"Atom으로 구독하면 최신 글과 업데이트를 바로 받을 수 있습니다",
+	[Key.atomLink]: "Atom 링크",
+	[Key.atomCopyToReader]: "Atom 리더에 링크 복사",
+	[Key.atomCopied]: "Atom 링크가 클립보드에 복사되었습니다!",
+
 	// Last Modified Time Card
 	[Key.lastModifiedPrefix]: "마지막 업데이트: ",
 	[Key.lastModifiedOutdated]: "일부 내용이 오래되었을 수 있습니다",
@@ -355,6 +377,13 @@ export const ko: Translation = {
 	[Key.noRelatedPosts]: "관련 게시글이 없습니다",
 	[Key.noRandomPosts]: "무작위 게시글이 없습니다",
 
+	// 글 시리즈
+	[Key.series]: "시리즈",
+	[Key.seriesPartOf]: "시리즈의 일부",
+	[Key.seriesPart]: "파트 {n}",
+	[Key.seriesThisArticle]: "이 글",
+	[Key.noSeries]: "시리즈가 없습니다",
+
 	// Encrypted
 	[Key.postEncrypted]: "이 게시글은 암호화되어 있습니다",
 
@@ -362,6 +391,9 @@ export const ko: Translation = {
 	[Key.wallpaperMode]: "배경화면 모드",
 	[Key.wallpaperBannerMode]: "배너 배경화면",
 	[Key.wallpaperFullscreenMode]: "전체화면 배경화면",
+	[Key.fullscreenLayout]: "전체화면 레이아웃",
+	[Key.fullscreenClassicLayout]: "클래식",
+	[Key.fullscreenHeroLayout]: "히어로",
 	[Key.wallpaperOverlayMode]: "오버레이 배경화면",
 	[Key.wallpaperNoneMode]: "배경화면 없음",
 
@@ -485,6 +517,7 @@ export const ko: Translation = {
 	[Key.galleryAlbums]: "앨범",
 	[Key.galleryNoAlbums]: "아직 앨범이 없습니다",
 	[Key.galleryBackToAlbums]: "앨범으로 돌아가기",
+	[Key.galleryEnterAlbum]: "앨범 보기",
 	[Key.searchAlbums]: "앨범 검색...",
 
 	// Password Protection
@@ -677,4 +710,10 @@ export const ko: Translation = {
 	[Key.gbCopyMessage]: "메시지 복사",
 	[Key.gbEditMessage]: "메시지 수정",
 	[Key.gbConnecting]: "메시지 서비스에 연결 중",
+	// 몰입형 읽기
+	[Key.immersiveReading]: "몰입형 읽기",
+	[Key.enterImmersiveReading]: "몰입형 읽기 시작",
+	[Key.exitImmersiveReading]: "몰입형 읽기 종료",
+	[Key.tocExpand]: "목차 펼치기",
+	[Key.tocCollapse]: "목차 접기",
 };

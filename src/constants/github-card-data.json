@@ -1,0 +1,26 @@
+{
+	"cuteleaf/firefly": {
+		"description": "🍀Firefly, fresh and aesthetic Astro blog theme template. ",
+		"language": "Astro",
+		"avatarUrl": "https://avatars.githubusercontent.com/u/43440669?v=4",
+		"license": "MIT"
+	},
+	"qwc-ch/firefly": {
+		"description": null,
+		"language": "Astro",
+		"avatarUrl": "https://avatars.githubusercontent.com/u/225119585?v=4",
+		"license": "MIT"
+	},
+	"qwc-ch/firefly-admin-cfworkers": {
+		"description": "基于 Hono 的 Cloudflare Workers 博客 管理 API，为 \"Firefly\" 博客系统提供后端支持",
+		"language": "TypeScript",
+		"avatarUrl": "https://avatars.githubusercontent.com/u/225119585?v=4",
+		"license": "MIT"
+	},
+	"saicaca/fuwari": {
+		"description": "✨A static blog template built with Astro. ",
+		"language": "Astro",
+		"avatarUrl": "https://avatars.githubusercontent.com/u/25200299?v=4",
+		"license": "MIT"
+	}
+}

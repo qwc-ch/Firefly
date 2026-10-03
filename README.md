@@ -8,8 +8,8 @@
 > 
 > ![Node.js >= 22](https://img.shields.io/badge/node.js-%3E%3D22-brightgreen) 
 ![pnpm >= 11](https://img.shields.io/badge/pnpm-%3E%3D9-blue)
-![Astro](https://img.shields.io/badge/Astro-7.2.0-orange)
-![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-blue)
+![Astro](https://img.shields.io/badge/Astro-7-orange)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-blue)
 >
 > [![Stars](https://img.shields.io/github/stars/CuteLeaf/Firefly?style=social)](https://github.com/CuteLeaf/Firefly/stargazers)
 [![Forks](https://img.shields.io/github/forks/CuteLeaf/Firefly?style=social)](https://github.com/CuteLeaf/Firefly/network/members)
@@ -28,7 +28,7 @@
 
 ---
 📖 README：
-**[简体中文](README.md)** | **[繁體中文](docs/README.zh-TW.md)** | **[English](README.en.md)** | **[日本語](docs/README.ja.md)** 
+**[简体中文](README.md)** | **[繁體中文](docs/README.zh-TW.md)** | **[English](README.en.md)** | **[日本語](docs/README.ja.md)** | **[한국어](docs/README.ko.md)**
 
 🚀 快速指南：
 [**🖥️在线预览**](https://firefly.cuteleaf.cn/) /
@@ -186,7 +186,7 @@ src/
 │   ├── effectsConfig.ts          # 动画特效配置（樱花等）
 │   ├── expressiveCodeConfig.ts   # 代码高亮配置
 │   ├── fontConfig.ts             # 字体配置
-│   ├── footerConfig.ts           # 页脚配置
+│   ├── FooterConfig.html           # 页脚配置
 │   ├── friendsConfig.ts          # 友链配置
 │   ├── galleryConfig.ts          # 相册配置
 │   ├── licenseConfig.ts          # 许可证配置

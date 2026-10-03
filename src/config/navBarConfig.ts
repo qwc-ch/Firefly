@@ -30,6 +30,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 
 			// 标签
 			LinkPresets.Tags,
+
+			// 系列
+			LinkPresets.Series,
 		],
 	});
 
@@ -61,6 +64,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 
 			// 动态
 			LinkPresets.Dynamic,
+
+			// 项目
+			LinkPresets.Projects,
 
 			// 相册
 			LinkPresets.Gallery,
@@ -129,6 +135,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "fa7-regular:envelope",
 			},
+			{
+				name: "Firefly文档",
+				url: "https://docs-firefly.cuteleaf.cn",
+				external: true,
+				icon: "material-symbols:docs",
+			},
 		],
 	});
 
@@ -173,6 +185,11 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/tags/",
 		icon: "material-symbols:tag-rounded",
 	},
+	Series: {
+		name: "系列",
+		url: "/series/",
+		icon: "material-symbols:layers",
+	},
 	Timetable: {
 		name: "课程表",
 		url: "/timetable/",
@@ -195,6 +212,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/dynamic/",
 		icon: "material-symbols:forum-rounded",
 		pageKey: "dynamic",
+	},
+	Projects: {
+		name: "项目",
+		url: "/projects/",
+		icon: "material-symbols:rocket-launch",
+		pageKey: "projects",
 	},
 	Gallery: {
 		name: "相册",

@@ -33,6 +33,7 @@ export const ru: Translation = {
 	[Key.allTags]: "Все теги",
 	[Key.tagsDescription]:
 		"Просматривайте посты по тегам, чтобы быстро находить интересующие темы.",
+	[Key.allSeries]: "Все серии",
 	[Key.recentPosts]: "Последние посты",
 	[Key.postList]: "Список постов",
 	[Key.tableOfContents]: "Содержание",
@@ -96,6 +97,18 @@ export const ru: Translation = {
 		"Подборка полезных сайтов, сгруппированных по категориям.",
 	[Key.searchBooknav]: "Поиск закладок...",
 	[Key.booknavEmpty]: "Закладок пока нет.",
+
+	// Витрина проектов
+	[Key.projects]: "Проекты",
+	[Key.projectsDescription]: "Мои разработанные проекты",
+	[Key.projectDetails]: "Подробнее",
+	[Key.projectBack]: "К списку проектов",
+	[Key.projectEmpty]: "Проектов пока нет",
+	[Key.projectSearch]: "Поиск проектов",
+	[Key.projectStatusPlanning]: "В планах",
+	[Key.projectStatusDeveloping]: "В разработке",
+	[Key.projectStatusPublished]: "Опубликовано",
+	[Key.projectStatusArchived]: "В архиве",
 	[Key.guestbook]: "Гостевая книга",
 	[Key.guestbookDescription]:
 		"Добро пожаловать, оставьте свой след здесь, поделитесь своими мыслями и предложениями",
@@ -187,7 +200,7 @@ export const ru: Translation = {
 	[Key.bangumiCategoryReal]: "Реальный",
 
 	// Обновление данных Бангуми
-	[Key.bangumiLastUpdated]: "Данные обновлены",
+	[Key.bangumiLastUpdated]: "Дата обновления данных",
 	[Key.bangumiUpdatedAt]: "Время сборки",
 	[Key.bangumiDataStatic]: "Статические данные",
 
@@ -215,7 +228,7 @@ export const ru: Translation = {
 	[Key.vndbNotConfigured]: "ID пользователя VNDB не настроен",
 	[Key.vndbNotConfiguredDesc]:
 		"Укажите ID пользователя VNDB в src/config/siteConfig.ts",
-	[Key.vndbLastUpdated]: "Данные обновлены",
+	[Key.vndbLastUpdated]: "Дата обновления данных",
 	[Key.vndbVotes]: "голосов",
 	[Key.vndbLengthVeryShort]: "Очень короткая",
 	[Key.vndbLengthShort]: "Короткая",
@@ -242,7 +255,7 @@ export const ru: Translation = {
 	[Key.animeDateDesc]: "Сначала новые",
 	[Key.animeDateAsc]: "Сначала старые",
 	[Key.animeNoResults]: "Аниме не найдено",
-	[Key.animeLastUpdated]: "Данные обновлены",
+	[Key.animeLastUpdated]: "Дата обновления данных",
 	[Key.animeEpStatus]: "Прогресс",
 	[Key.animeViewDetails]: "Подробнее",
 	[Key.animeBilibiliAvg]: "Bilibili ср.",
@@ -284,7 +297,7 @@ export const ru: Translation = {
 	[Key.malNotConfigured]: "MyAnimeList не настроен",
 	[Key.malNotConfiguredDesc]:
 		"Укажите имя пользователя и Client ID MyAnimeList в src/config/siteConfig.ts (список должен быть открытым)",
-	[Key.malLastUpdated]: "Данные обновлены",
+	[Key.malLastUpdated]: "Дата обновления данных",
 	[Key.malSeasonWinter]: "Зима",
 	[Key.malSeasonSpring]: "Весна",
 	[Key.malSeasonSummer]: "Лето",
@@ -331,6 +344,15 @@ export const ru: Translation = {
 	[Key.rssCopyFailed]:
 		"Ошибка копирования, пожалуйста, скопируйте ссылку вручную",
 
+	// Atom Page
+	[Key.atom]: "Atom-лента",
+	[Key.atomDescription]: "Подпишитесь на последние обновления",
+	[Key.atomSubtitle]:
+		"Подпишитесь через Atom, чтобы сразу получать последние статьи и обновления",
+	[Key.atomLink]: "Atom-ссылка",
+	[Key.atomCopyToReader]: "Скопируйте ссылку в свой Atom-ридер",
+	[Key.atomCopied]: "Atom-ссылка скопирована в буфер обмена!",
+
 	// Последнее изменение
 	[Key.lastModifiedPrefix]: "Последнее обновление: ",
 	[Key.lastModifiedOutdated]: "Некоторый контент может быть устаревшим",
@@ -358,6 +380,13 @@ export const ru: Translation = {
 	[Key.noRelatedPosts]: "Нет похожих статей",
 	[Key.noRandomPosts]: "Нет случайных статей",
 
+	// Серия статей
+	[Key.series]: "Серии",
+	[Key.seriesPartOf]: "Часть серии",
+	[Key.seriesPart]: "Часть {n}",
+	[Key.seriesThisArticle]: "Эта статья",
+	[Key.noSeries]: "Пока нет серий",
+
 	// Зашифровано
 	[Key.postEncrypted]: "Эта статья зашифрована",
 
@@ -365,6 +394,9 @@ export const ru: Translation = {
 	[Key.wallpaperMode]: "Режим обоев",
 	[Key.wallpaperBannerMode]: "Баннер обои",
 	[Key.wallpaperFullscreenMode]: "Полноэкранные обои",
+	[Key.fullscreenLayout]: "Полноэкранный макет",
+	[Key.fullscreenClassicLayout]: "Классический",
+	[Key.fullscreenHeroLayout]: "Hero",
 	[Key.wallpaperOverlayMode]: "Прозрачный",
 	[Key.wallpaperNoneMode]: "Однотонный фон",
 
@@ -489,6 +521,7 @@ export const ru: Translation = {
 	[Key.galleryAlbums]: "альбомов",
 	[Key.galleryNoAlbums]: "Пока нет альбомов",
 	[Key.galleryBackToAlbums]: "Вернуться к альбомам",
+	[Key.galleryEnterAlbum]: "Открыть альбом",
 	[Key.searchAlbums]: "Поиск альбомов...",
 
 	// Защита паролем
@@ -677,4 +710,11 @@ export const ru: Translation = {
 	[Key.gbCopyMessage]: "Копировать сообщение",
 	[Key.gbEditMessage]: "Редактировать",
 	[Key.gbConnecting]: "Подключение к сервису гостевой книги",
+
+	// Чтение без отвлечений
+	[Key.immersiveReading]: "Чтение без отвлечений",
+	[Key.enterImmersiveReading]: "Войти в режим чтения",
+	[Key.exitImmersiveReading]: "Выйти из режима чтения",
+	[Key.tocExpand]: "Развернуть оглавление",
+	[Key.tocCollapse]: "Свернуть оглавление",
 };

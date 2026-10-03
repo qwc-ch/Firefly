@@ -21,6 +21,8 @@ const pages = resolvePageToggles({
 
 	// 动态页面开关
 	dynamic: true,
+	// 项目展示页开关
+	projects: true,
 	// 相册页面开关
 	gallery: false,
 	// 书签导航页面开关
@@ -129,8 +131,11 @@ export const siteConfig: SiteConfig = {
 		menuAlign: "center",
 		// 导航栏图标和标题是否跟随主题色
 		followTheme: false,
-		// 导航栏是否固定在顶部并始终可见
-		stickyNavbar: true,
+		// 导航栏模式navbarMode：
+		// "static"：不固定，随页面滚动消失
+		// "fixed"：固定在顶部常显
+		// "dynamic"：固定在顶部，下滑隐藏、轻微上滑显示
+		navbarMode: "dynamic",
 	},
 
 	// 站点开始日期，用于统计运行天数
@@ -236,10 +241,27 @@ export const siteConfig: SiteConfig = {
 		showLastModified: true,
 		// 文章过期阈值（天数），超过此天数才显示"上次编辑"卡片
 		outdatedThreshold: 180,
-		// 是否开启分享海报生成功能
-		sharePoster: true,
+		// 是否显示文章页的分享按钮
+		share: true,
+		// 是否显示上一篇/下一篇文章导航
+		postNavigation: true,
+		// 是否显示相关文章推荐
+		relatedPosts: true,
+		// 是否显示随机文章推荐
+		randomPosts: true,
 		// OpenGraph图片功能，注意开启后要渲染很长时间，不建议本地调试的时候开启
-		generateOgImages: false,
+		generateOgImages: true,
+		// 沉浸阅读配置：电脑端文章详情页右下角按钮，进入后只留文章卡片+左侧目录
+		immersiveReading: {
+			// 总开关：false 则不显示按钮
+			enable: true,
+			// 进入文章页是否默认开启沉浸阅读
+			defaultOn: false,
+			// 沉浸阅读中是否显示目录栏
+			tocEnabled: true,
+			// 目录栏位置："left" | "right"
+			tocPosition: "left",
+		},
 	},
 
 	// ── Bilibili配置 ──────────────────────────────────
@@ -257,9 +279,9 @@ export const siteConfig: SiteConfig = {
 		// dynamic 模式在浏览器中实时请求 API，始终显示最新数据
 		mode: "static",
 		// Bangumi API 地址
-		apiUrl: "https://bgmapi.anibt.net",
+		apiUrl: "https://api.bangumi.pro",
 		// 详情页地址
-		subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
+		subjectBaseUrl: "https://api.bangumi.pro/subject/",
 		// 条目类型排序，数组中的类型将按顺序优先展示
 		// 可选值: "anime" | "book" | "music" | "game" | "real" (暂不支持"real"类型)
 		// 未列出的类型将按默认顺序排在后面
@@ -268,6 +290,8 @@ export const siteConfig: SiteConfig = {
 		// categories: {
 		// 	game: false, // 禁用游戏分类显示
 		// },
+		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+		nsfw: "hide",
 	},
 
 	// ── VNDB配置 ──────────────────────────────────
@@ -286,8 +310,8 @@ export const siteConfig: SiteConfig = {
 		vnBaseUrl: "https://vndb.org/",
 		// 私密列表访问令牌，仅 static 模式下使用；不要把真实令牌提交到公开仓库！
 		apiToken: "",
-		// 对Nsfw的游戏封面模糊化
-		blurNsfw: true,
+		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+		nsfw: "hide",
 	},
 
 	// ── MyAnimeList配置 ──────────────────────────────────
@@ -302,6 +326,8 @@ export const siteConfig: SiteConfig = {
 		animeBaseUrl: "https://myanimelist.net/anime/",
 		// 漫画条目详情页地址，末尾需要带 /
 		mangaBaseUrl: "https://myanimelist.net/manga/",
+		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+		nsfw: "hide",
 	},
 
 	// ── 图像优化配置 ──────────────────────────────────
@@ -326,6 +352,14 @@ export const siteConfig: SiteConfig = {
 			"*.myanimelist.net",
 			"*.vndb.org",
 		],
+	},
+
+	// ── 订阅 (RSS / Atom) 配置 ──────────────────────────────────
+	feed: {
+		// 订阅条目内容模式：
+		// - "full": 包含文章正文全文（默认）
+		// - "summary": 仅包含文章摘要/描述，不含正文，体积更小
+		contentMode: "full",
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义

@@ -7,6 +7,8 @@ import type {
 	WALLPAPER_NONE,
 	WALLPAPER_OVERLAY,
 } from "../constants/constants";
+import type { ImmersiveReadingConfig } from "./immersiveReadingConfig";
+import type { NsfwMode } from "./nsfw";
 
 export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE
@@ -24,6 +26,8 @@ export type Favicon = {
 	theme?: "light" | "dark";
 	sizes?: string;
 };
+
+export type NavbarMode = "static" | "fixed" | "dynamic";
 
 export type SiteConfig = {
 	title: string;
@@ -74,7 +78,10 @@ export type SiteConfig = {
 		widthFull?: boolean; // 导航栏是否占满屏幕宽度
 		menuAlign?: "left" | "center"; // 导航菜单对齐方式（仅桌面端菜单）
 		followTheme?: boolean; // 导航栏图标和标题是否跟随主题色
-		stickyNavbar?: boolean; // 导航栏是否固定在顶部始终可见
+		// 导航栏模式：static（不固定，随页面滚动消失）/ fixed（固定在顶部常显）/ dynamic（固定在顶部，下滑隐藏、轻微上滑显示）
+		navbarMode?: NavbarMode;
+		/** @deprecated 由 navbarMode 取代；true→fixed，false→static */
+		stickyNavbar?: boolean;
 	};
 
 	// 页面开关配置
@@ -98,6 +105,7 @@ export type SiteConfig = {
 		bilibili: boolean; // 哔哩哔哩追番页面开关
 		dynamic: boolean; // 动态页面开关
 		circle?: boolean; // 朋友圈页面开关（本地自定义页面）
+		projects: boolean; // 项目展示页开关
 	};
 
 	// 分类导航栏开关
@@ -161,10 +169,18 @@ export type SiteConfig = {
 		showLastModified: boolean;
 		// 文章过期阈值（天数），超过此天数才显示"上次编辑"卡片
 		outdatedThreshold?: number;
-		// 是否显示分享海报按钮
-		sharePoster?: boolean;
+		// 是否显示文章页的分享按钮
+		share: boolean;
+		// 是否显示上一篇/下一篇文章导航
+		postNavigation: boolean;
+		// 是否显示相关文章推荐
+		relatedPosts: boolean;
+		// 是否显示随机文章推荐
+		randomPosts: boolean;
 		// OpenGraph图片功能
 		generateOgImages: boolean;
+		// 沉浸阅读配置
+		immersiveReading?: ImmersiveReadingConfig;
 	};
 
 	// bangumi配置
@@ -182,6 +198,7 @@ export type SiteConfig = {
 			game?: boolean;
 			real?: boolean;
 		};
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
 	};
 
 	// VNDB 配置
@@ -192,7 +209,7 @@ export type SiteConfig = {
 		apiUrl?: string; // VNDB API 地址
 		vnBaseUrl?: string; // VNDB 条目详情页地址，末尾需要带 /
 		apiToken?: string; // 私密列表访问令牌，仅 static 模式下使用
-		blurNsfw?: boolean; // 对Nsfw的游戏封面模糊化，默认为true
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
 	};
 
 	// MyAnimeList 配置
@@ -202,6 +219,7 @@ export type SiteConfig = {
 		apiUrl?: string; // MAL API 地址
 		animeBaseUrl?: string; // 动画条目详情页地址，末尾需要带 /
 		mangaBaseUrl?: string; // 漫画条目详情页地址，末尾需要带 /
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
 	};
 
 	// Bilibili 配置
@@ -235,5 +253,15 @@ export type SiteConfig = {
 		 * 仅影响匹配域名的图片标签，不影响其他链接的 referrer 行为
 		 */
 		noReferrerDomains?: string[];
+	};
+
+	// 订阅 (RSS / Atom) 配置
+	feed?: {
+		/**
+		 * 订阅条目内容模式：
+		 * - "full": 包含文章正文全文（默认）
+		 * - "summary": 仅包含文章摘要/描述，不含正文
+		 */
+		contentMode?: "full" | "summary";
 	};
 };

@@ -19,6 +19,10 @@ interface Props {
 }
 
 const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
+const wallpaperPosition = state.isFullscreenMode
+	? (backgroundWallpaper.fullscreen?.position ??
+		backgroundWallpaper.banner?.position)
+	: backgroundWallpaper.banner?.position;
 ---
 
 <!-- Wallpaper - 如果允许切换则始终渲染，否则只渲染当前模式 -->
@@ -41,7 +45,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Mobile background image of the blog"
                         class="object-cover h-full w-full"
                         src={src}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={828}
                         widths={[640, 828]}
                         sizes="100vw"
@@ -58,7 +62,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Desktop background image of the blog"
                         class="object-cover h-full"
                         src={src}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={1920}
                         widths={[1280, 1920]}
                         sizes="100vw"
@@ -75,7 +79,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Mobile background image of the blog"
                         class="object-cover h-full w-full"
                         src={backgroundImages.mobile[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={828}
                         widths={[640, 828]}
                         sizes="100vw"
@@ -92,7 +96,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Desktop background image of the blog"
                         class="object-cover h-full"
                         src={backgroundImages.desktop[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={1920}
                         widths={[1280, 1920]}
                         sizes="100vw"
@@ -117,7 +121,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Mobile background image of the blog"
                         class="object-cover h-full w-full"
                         src={backgroundImages.mobile[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={828}
                         widths={[640, 828]}
                         sizes="100vw"
@@ -134,7 +138,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Desktop background image of the blog"
                         class="object-cover h-full"
                         src={backgroundImages.desktop[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={1920}
                         widths={[1280, 1920]}
                         sizes="100vw"
@@ -151,7 +155,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Mobile background image of the blog"
                         class="object-cover h-full w-full"
                         src={backgroundImages.mobile[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={828}
                         widths={[640, 828]}
                         sizes="100vw"
@@ -168,7 +172,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                         alt="Desktop background image of the blog"
                         class="object-cover h-full"
                         src={backgroundImages.desktop[0]}
-                        position={backgroundWallpaper.banner?.position}
+                        position={wallpaperPosition}
                         width={1920}
                         widths={[1280, 1920]}
                         sizes="100vw"
@@ -384,6 +388,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
                 appState.touchStartX = e.changedTouches[0].screenX;
             }, { passive: true });
             document.addEventListener('touchend', function(e) {
+                if (!isBannerWallpaperMode() || !isCarouselEnabled()) return;
                 appState.touchEndX = e.changedTouches[0].screenX;
                 var diff = appState.touchEndX - appState.touchStartX;
                 if (Math.abs(diff) > 50) {
@@ -540,7 +545,7 @@ const { state, backgroundImages, title, bannerPostMeta } = Astro.props;
         <div class="banner-page-title-overlay absolute inset-0 z-20 hidden lg:flex items-center justify-center pointer-events-none">
             <div class="w-4/5 lg:w-3/4 text-center mb-0">
                 <div class="banner-page-title font-bold text-white leading-tight inline-flex items-center justify-center gap-3">
-                    {/* <Icon is:inline name="material-symbols:bookmark-rounded" class="banner-page-title-icon" /> */}
+                    {/* <Icon name="material-symbols:bookmark-rounded" class="banner-page-title-icon" /> */}
                     <span class="banner-page-title-text">{title}</span>
                 </div>
             </div>

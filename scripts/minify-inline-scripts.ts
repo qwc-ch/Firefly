@@ -5,8 +5,10 @@
 import fs from "node:fs/promises";
 import { transformSync } from "esbuild";
 import { glob } from "glob";
+import { resolveSiteRoot } from "./site-root";
 
-const DIST_DIR = "dist";
+// Cloudflare Pages 上产物在 dist/client，本地在 dist，统一对准真实根目录
+const DIST_DIR = resolveSiteRoot();
 
 // <script ...>...</script>，惰性匹配内容，属性里不允许出现 >
 const SCRIPT_RE = /<script([^>]*)>([\s\S]*?)<\/script>/gi;
@@ -33,6 +35,9 @@ function shouldMinify(attrs: string): boolean {
 
 function minifyInline(code: string, file: string): string {
 	if (!code.trim()) return code;
+	// 有些内联脚本包含非文本字节（如成品站里被压缩过的二进制字面量），
+	// esbuild 会报 "Unexpected \\x7f" 且无法解析，直接跳过这类脚本。
+	if (/[\x00-\x08\x0e-\x1f\x7f]/u.test(code)) return code;
 	try {
 		const result = transformSync(code, {
 			loader: "js",

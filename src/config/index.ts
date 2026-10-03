@@ -1,6 +1,21 @@
 // 配置索引文件 - 统一导出所有配置
 // 这样组件可以一次性导入多个相关配置，减少重复的导入语句
 
+import type { NavbarMode } from "../types/siteConfig";
+import { siteConfig } from "./siteConfig"; // 站点基础配置（用于派生 navbarMode）
+
+/** 解析导航栏模式：navbarMode 优先，否则按旧 stickyNavbar 兼容映射（true→fixed，false→static） */
+export function resolveNavbarMode(navbar: {
+	navbarMode?: NavbarMode;
+	stickyNavbar?: boolean;
+}): NavbarMode {
+	if (navbar.navbarMode) return navbar.navbarMode;
+	return navbar.stickyNavbar === false ? "static" : "fixed";
+}
+
+/** 当前导航栏模式（已按 navbarMode / 旧 stickyNavbar 解析），供各消费方统一读取 */
+export const navbarMode: NavbarMode = resolveNavbarMode(siteConfig.navbar);
+
 // 类型导出
 export type {
 	AdConfig,
@@ -17,7 +32,6 @@ export type {
 	DisplaySettingsConfig,
 	DynamicConfig,
 	ExpressiveCodeConfig,
-	FooterConfig,
 	GalleryAlbum,
 	GalleryConfig,
 	LicenseConfig,
@@ -56,7 +70,6 @@ export { dynamicConfig } from "./dynamicConfig"; // 动态页面配置
 export { sakuraConfig } from "./effectsConfig"; // 动画特效配置（樱花等）
 export { expressiveCodeConfig } from "./expressiveCodeConfig"; // 代码高亮配置
 export { fontConfig, fontsList } from "./fontConfig"; // 字体配置
-export { footerConfig } from "./footerConfig"; // 页脚配置
 export {
 	friendsConfig,
 	friendsPageConfig,

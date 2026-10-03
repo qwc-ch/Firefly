@@ -31,6 +31,7 @@ export const zh_CN: Translation = {
 	[Key.categoriesDescription]: "按分类浏览全部文章，更快找到感兴趣的主题。",
 	[Key.allTags]: "全部标签",
 	[Key.tagsDescription]: "按标签浏览全部文章，快速定位感兴趣的主题。",
+	[Key.allSeries]: "全部系列",
 	[Key.recentPosts]: "最新文章",
 	[Key.postList]: "文章列表",
 	[Key.tableOfContents]: "文章目录",
@@ -92,6 +93,18 @@ export const zh_CN: Translation = {
 	[Key.booknavDescription]: "收藏一些好用的网站，按分类整理",
 	[Key.searchBooknav]: "搜索书签...",
 	[Key.booknavEmpty]: "暂无书签",
+
+	// 项目展示页
+	[Key.projects]: "项目",
+	[Key.projectsDescription]: "这里展示我开发过的项目",
+	[Key.projectDetails]: "查看详情",
+	[Key.projectBack]: "返回项目列表",
+	[Key.projectEmpty]: "暂无项目",
+	[Key.projectSearch]: "搜索项目",
+	[Key.projectStatusPlanning]: "计划中",
+	[Key.projectStatusDeveloping]: "开发中",
+	[Key.projectStatusPublished]: "已发布",
+	[Key.projectStatusArchived]: "已归档",
 	[Key.guestbook]: "留言",
 	[Key.guestbookDescription]: "欢迎在这里留下你的足迹，分享你的想法和建议",
 	[Key.untitled]: "无标题",
@@ -180,7 +193,7 @@ export const zh_CN: Translation = {
 	[Key.bangumiCategoryReal]: "三次元",
 
 	// 番组数据更新
-	[Key.bangumiLastUpdated]: "数据更新于",
+	[Key.bangumiLastUpdated]: "数据更新日期",
 	[Key.bangumiUpdatedAt]: "构建时间",
 	[Key.bangumiDataStatic]: "静态数据",
 
@@ -208,7 +221,7 @@ export const zh_CN: Translation = {
 	[Key.vndbNotConfigured]: "未配置 VNDB 用户ID",
 	[Key.vndbNotConfiguredDesc]:
 		"请在 src/config/siteConfig.ts 中配置你的 VNDB 用户ID",
-	[Key.vndbLastUpdated]: "数据更新于",
+	[Key.vndbLastUpdated]: "数据更新日期",
 	[Key.vndbVotes]: "票",
 	[Key.vndbLengthVeryShort]: "极短",
 	[Key.vndbLengthShort]: "短",
@@ -235,7 +248,7 @@ export const zh_CN: Translation = {
 	[Key.animeDateDesc]: "最新发布",
 	[Key.animeDateAsc]: "最早发布",
 	[Key.animeNoResults]: "没有找到匹配的番剧",
-	[Key.animeLastUpdated]: "数据更新于",
+	[Key.animeLastUpdated]: "数据更新日期",
 	[Key.animeEpStatus]: "进度",
 	[Key.animeViewDetails]: "查看详情",
 	[Key.animeBilibiliAvg]: "Bilibili 均分",
@@ -277,7 +290,7 @@ export const zh_CN: Translation = {
 	[Key.malNotConfigured]: "未配置 MyAnimeList 用户信息",
 	[Key.malNotConfiguredDesc]:
 		"请在 src/config/siteConfig.ts 中配置你的 MyAnimeList 用户名和 Client ID（列表需为公开状态）",
-	[Key.malLastUpdated]: "数据更新于",
+	[Key.malLastUpdated]: "数据更新日期",
 	[Key.malSeasonWinter]: "冬季",
 	[Key.malSeasonSpring]: "春季",
 	[Key.malSeasonSummer]: "夏季",
@@ -319,6 +332,14 @@ export const zh_CN: Translation = {
 	[Key.rssCopied]: "RSS 链接已复制到剪贴板！",
 	[Key.rssCopyFailed]: "复制失败，请手动复制链接",
 
+	// Atom 页面
+	[Key.atom]: "Atom 订阅",
+	[Key.atomDescription]: "订阅获取最新更新",
+	[Key.atomSubtitle]: "通过 Atom 订阅，第一时间获取最新文章和动态",
+	[Key.atomLink]: "Atom 链接",
+	[Key.atomCopyToReader]: "复制链接到你的 Atom 阅读器",
+	[Key.atomCopied]: "Atom 链接已复制到剪贴板！",
+
 	//最后编辑时间卡片
 	[Key.lastModifiedPrefix]: "最后更新于 ",
 	[Key.lastModifiedOutdated]: "部分内容可能已过时",
@@ -346,6 +367,13 @@ export const zh_CN: Translation = {
 	[Key.noRelatedPosts]: "暂无相关文章",
 	[Key.noRandomPosts]: "暂无随机文章",
 
+	// 文章系列
+	[Key.series]: "系列",
+	[Key.seriesPartOf]: "所属系列",
+	[Key.seriesPart]: "第 {n} 篇",
+	[Key.seriesThisArticle]: "本文",
+	[Key.noSeries]: "暂无系列",
+
 	// 加密
 	[Key.postEncrypted]: "本文已加密",
 
@@ -353,6 +381,9 @@ export const zh_CN: Translation = {
 	[Key.wallpaperMode]: "壁纸模式",
 	[Key.wallpaperBannerMode]: "横幅壁纸",
 	[Key.wallpaperFullscreenMode]: "全屏壁纸",
+	[Key.fullscreenLayout]: "全屏布局",
+	[Key.fullscreenClassicLayout]: "经典模式",
+	[Key.fullscreenHeroLayout]: "Hero 模式",
 	[Key.wallpaperOverlayMode]: "覆盖透明",
 	[Key.wallpaperNoneMode]: "纯色背景",
 
@@ -476,6 +507,7 @@ export const zh_CN: Translation = {
 	[Key.galleryAlbums]: "本相册",
 	[Key.galleryNoAlbums]: "暂无相册",
 	[Key.galleryBackToAlbums]: "返回相册列表",
+	[Key.galleryEnterAlbum]: "进入相册",
 	[Key.searchAlbums]: "搜索相簿...",
 
 	// 密码保护
@@ -651,4 +683,11 @@ export const zh_CN: Translation = {
 	[Key.gbCopyMessage]: "复制消息",
 	[Key.gbEditMessage]: "编辑消息",
 	[Key.gbConnecting]: "正在连接留言服务",
+
+	// 沉浸阅读
+	[Key.immersiveReading]: "沉浸阅读",
+	[Key.enterImmersiveReading]: "进入沉浸阅读",
+	[Key.exitImmersiveReading]: "退出沉浸阅读",
+	[Key.tocExpand]: "展开目录",
+	[Key.tocCollapse]: "折叠目录",
 };
