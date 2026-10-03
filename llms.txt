@@ -1,0 +1,35 @@
+﻿# 年华
+> 基于Firefly和Astro开发的个人博客，我会在这里分享生活和技术。
+
+## Key Pages
+- [主页](https://blog.amamo.top/)
+- [归档](https://blog.amamo.top/archive/)
+- [关于我](https://blog.amamo.top/about/)
+- [友链](https://blog.amamo.top/friends/): 这里是我的朋友们，欢迎互相访问交流
+- [留言](https://blog.amamo.top/guestbook/): 欢迎在这里留下你的足迹，分享你的想法和建议
+- [动态](https://blog.amamo.top/dynamic/): 随手记下此刻的想法与日常。
+- [项目](https://blog.amamo.top/projects/): 这里展示我开发过的项目
+- [书签导航](https://blog.amamo.top/booknav/): 收藏一些好用的网站，按分类整理
+- [番组计划](https://blog.amamo.top/bangumi/): 记录我的二次元之旅
+
+## Recent Posts
+- [dsh-fs-link2symlink-fix：一个插件修好 dsh 在 PRoot 下 write 丢文件](https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/): dsh 的 write 工具在 Termux/PRoot 里新建文件只留一个悬空的 .l2s 符号链接，内容直接蒸发。排查到 PRoot 的 --link2symlink 把 link(2) 仿真坏了，于是写了个零依赖插件在发布原语上把它兜住。
+- [随机封面修复记：同一篇文章，列表和详情页竟然两张图](https://blog.amamo.top/posts/firefly-random-cover/): 博客列表页和文章详情页的随机封面每次都不一样，排查后发现是图床 /random 接口不支持种子参数。记录用"构建期固定封面"彻底解决这个问题的过程。
+- [怎么让 dsh 搜索用上 Exa 插件](https://blog.amamo.top/posts/zen-me-rang-dsh-sou-suo-yong-shang-exa-cha-jian/): dsh 基础包把 web 行的 searchProvider 钉死为 deepseek-official，导致搜索插件的"零配置自动接管"不会生效；本文记录排查过程与 profile 补丁层的修复方法。
+- [测试](https://blog.amamo.top/posts/back-end_testing/)
+- [课表是怎么做的](https://blog.amamo.top/posts/%E8%AF%BE%E8%A1%A8%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84/): 记录一下给 Firefly 博客主题添加课表组件的过程
+- [Mobi 转 PDF 完整指南](https://blog.amamo.top/posts/mobi%E8%BD%ACpdf%E6%8C%87%E5%8D%97/): 用 Calibre 把 MOBI 电子书转换成 PDF 的详细教程，解决排版错乱问题
+- [dsh-toolcall-id：一个插件修好 dsh 的历史加载失败](https://blog.amamo.top/posts/dsh-toolcall-id/): dsh Web GUI 重开多步会话时报 "received more than one start Match"，排源发现是工具调用 id 每步重号撞车。写了个开源插件挂在官方钩子上修掉它，升级 dsh 不会被覆盖
+- [怎么让 dsh 无限重试](https://blog.amamo.top/posts/zen-me-rang-dsh-wu-xian-zhong-shi/): dsh 默认只会重试 5 次且间隔很快；本文展示通过配置 retryPolicy 为 always，实现指数退避的无限重试。
+- [记一次博客收录优化：从 1 个页面到全部可收录](https://blog.amamo.top/posts/seo-indexing-fix-journey/): 分享为博客排查 Google/Bing 收录问题的全过程：canonical 缺失、重复页面判定、meta description 雷同，以及 IndexNow 接入时踩过的各种坑。
+- [开源推荐：把 QQ 机器人搬到 Hugging Face 免费跑（AstrBot + NapCat）](https://blog.amamo.top/posts/%E5%BC%80%E6%BA%90%E6%8E%A8%E8%8D%90-astrbot-napcat-%E9%83%A8%E7%BD%B2%E5%88%B0huggingface/): 开源推荐：把 QQ 机器人搬到 Hugging Face 免费跑（AstrBot + NapCat）
+- [无服务器部署 AstrBot：Hugging Face 免费方案](https://blog.amamo.top/posts/serverless-astbot-huggingface/): 把 AstrBot + NapCat 整套机器人塞进 Hugging Face 免费 Docker Space，零服务器成本，配合 GitHub 自动备份防止数据丢失，再加一个 Actions 定时请求防休眠
+- [headless Chrome 截图 WebGL 黑块问题排查](https://blog.amamo.top/posts/headless-chrome-webgl-black-block/): 友链截图工具在 headless Chrome 下遇到 Spline/Live2D 站点渲染失败、出现带报错信息的黑块，通过启用 swiftshader 软件渲染解决。
+- [vercel优化冷知识](https://blog.amamo.top/posts/vercel%E4%BC%98%E5%8C%96%E5%86%B7%E7%9F%A5%E8%AF%86/): vercel优化冷知识
+- [Vercel 部署后全站 404 排查记](https://blog.amamo.top/posts/vercel-deploy-404/): 博客部署到 Vercel 后所有 HTML 页面都返回 404，静态资源却正常。本文记录了从现象、链路分析到定位根因（Vercel CLI cleanUrls 冲突与 l2s 上传 bug）的全过程，以及最终通过固定 CLI 版本解决的方案。
+- [怎么用Netlify反代你的源站](https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/): 怎么用Netlify反代你的源站
+- [留言页的群聊风格改造](https://blog.amamo.top/posts/%E7%95%99%E8%A8%80%E9%A1%B5%E7%9A%84%E7%BE%A4%E8%81%8A%E9%A3%8E%E6%A0%BC%E6%94%B9%E9%80%A0/): 把传统评论区改成即时通讯风格的聊天界面，聊聊这个改造过程中的思路和实现。
+- [这个博客的朋友圈是怎么做的](https://blog.amamo.top/posts/%E8%BF%99%E4%B8%AA%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%9C%8B%E5%8F%8B%E5%9C%88%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84/): 一篇关于博客朋友圈功能的实现思路分享，从 RSS 抓取到前端展示，聊聊背后的设计。
+- [今天是伟大的0721日](https://blog.amamo.top/posts/26-07-21/): 今天居然是0721日
+- [Cloudflare VS Vercel？！](https://blog.amamo.top/posts/cf-vs-vercel/): 简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。
+- [给博客写了个后台管理](https://blog.amamo.top/posts/admin-panel/): 一个简单顺手的博客后台，从零到一的实践记录

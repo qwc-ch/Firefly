@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>年华</title><description>欢迎来到我的小破站</description><link>https://blog.amamo.top/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.16.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年10月3日 14:18:13</lastBuildDate><item><title>dsh-fs-link2symlink-fix：一个插件修好 dsh 在 PRoot 下 write 丢文件</title><link>https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/</link><guid isPermaLink="true">https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/</guid><description>dsh 的 write 工具在 Termux/PRoot 里新建文件只留一个悬空的 .l2s 符号链接，内容直接蒸发。排查到 PRoot 的 --link2symlink 把 link(2) 仿真坏了，于是写了个零依赖插件在发布原语上把它兜住。</description><pubDate>Sat, 03 Oct 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;症状：工具说写好了，文件没了&lt;a href=&quot;#症状工具说写好了文件没了&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;这台机器上的 dsh 跑在 Termux + PRoot 容器里。某天开始，用 &lt;code&gt;write&lt;/code&gt; 工具&lt;strong&gt;新建&lt;/strong&gt;文件会变成这样：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt; ls -la&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;lrwxrwxrwx hello.txt -&amp;gt; .../.hello.txt.&amp;lt;pid&amp;gt;.&amp;lt;uuid&amp;gt;.tmpdir/.l2s.hello.txt.tmp0001&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt; cat hello.txt&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;cat: hello.txt: No such file or directory&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;工具那边返回的是干干净净的 &lt;code&gt;Created file&lt;/code&gt;，磁盘上却是一个&lt;strong&gt;悬空的 &lt;code&gt;.l2s.&lt;/code&gt; 符号链接&lt;/strong&gt;，内容已经不存在了。&lt;/p&gt;&lt;p&gt;几个很明确的特征：&lt;/p&gt;&lt;ul&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>年华</title><description>欢迎来到我的小破站</description><link>https://blog.amamo.top/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.16.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年10月3日 16:15:45</lastBuildDate><item><title>dsh-fs-link2symlink-fix：一个插件修好 dsh 在 PRoot 下 write 丢文件</title><link>https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/</link><guid isPermaLink="true">https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/</guid><description>dsh 的 write 工具在 Termux/PRoot 里新建文件只留一个悬空的 .l2s 符号链接，内容直接蒸发。排查到 PRoot 的 --link2symlink 把 link(2) 仿真坏了，于是写了个零依赖插件在发布原语上把它兜住。</description><pubDate>Sat, 03 Oct 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;症状：工具说写好了，文件没了&lt;a href=&quot;#症状工具说写好了文件没了&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;这台机器上的 dsh 跑在 Termux + PRoot 容器里。某天开始，用 &lt;code&gt;write&lt;/code&gt; 工具&lt;strong&gt;新建&lt;/strong&gt;文件会变成这样：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt; ls -la&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;lrwxrwxrwx hello.txt -&amp;gt; .../.hello.txt.&amp;lt;pid&amp;gt;.&amp;lt;uuid&amp;gt;.tmpdir/.l2s.hello.txt.tmp0001&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt; cat hello.txt&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;cat: hello.txt: No such file or directory&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;工具那边返回的是干干净净的 &lt;code&gt;Created file&lt;/code&gt;，磁盘上却是一个&lt;strong&gt;悬空的 &lt;code&gt;.l2s.&lt;/code&gt; 符号链接&lt;/strong&gt;，内容已经不存在了。&lt;/p&gt;&lt;p&gt;几个很明确的特征：&lt;/p&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;只有新文件会丢&lt;/strong&gt;。覆盖已有文件、&lt;code&gt;edit&lt;/code&gt; 改文件都完全正常。&lt;/li&gt;
 &lt;li&gt;目录里会残留 &lt;code&gt;.l2s.*&lt;/code&gt; 文件和 &lt;code&gt;.&amp;lt;name&amp;gt;.&amp;lt;pid&amp;gt;.&amp;lt;uuid&amp;gt;.tmpdir/&lt;/code&gt; 目录。&lt;/li&gt;
 &lt;li&gt;全程没有任何报错，就是文件”凭空消失”。&lt;/li&gt;
@@ -88,25 +88,6 @@
 &lt;/ul&gt;&lt;p&gt;这周五下午就是靠 &lt;code&gt;parity&lt;/code&gt; 实现的：单周第一节化学，双周第一节体育，其余课程不变。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;排课过程&lt;a href=&quot;#排课过程&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;按时间表逐天录入，&lt;code&gt;day: 1-5&lt;/code&gt; 对应周一到周五，&lt;code&gt;slot&lt;/code&gt; 对应 &lt;code&gt;periods&lt;/code&gt; 的下标。13 个时段分别是：&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;早读1&lt;/th&gt;&lt;th&gt;早读2&lt;/th&gt;&lt;th&gt;上午1-4&lt;/th&gt;&lt;th&gt;中午1-2&lt;/th&gt;&lt;th&gt;下午1-4&lt;/th&gt;&lt;th&gt;晚自习&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;07:00-07&amp;lt;25&amp;gt;&lt;/td&gt;&lt;td&gt;07:25-07&amp;lt;50&amp;gt;&lt;/td&gt;&lt;td&gt;08:00-11&amp;lt;41&amp;gt;&lt;/td&gt;&lt;td&gt;12:00-13&amp;lt;30&amp;gt;&lt;/td&gt;&lt;td&gt;13:40-17&amp;lt;20&amp;gt;&lt;/td&gt;&lt;td&gt;17:45-20&amp;lt;30&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;周二到周五的课程顺序和周一不同，逐一核对后填入对应 slot。地点和教师目前留空，后续补上。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;学期信息&lt;a href=&quot;#学期信息&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;semester&lt;/code&gt; 配置了学期的基本信息，&lt;code&gt;startDate&lt;/code&gt; 设成 2026-09-01，&lt;code&gt;totalWeeks&lt;/code&gt; 设为 21 周。组件会根据当前日期和开学第一天自动计算现在是第几周，高亮当前周的课程。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;效果预览&lt;a href=&quot;#效果预览&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;课表页面在 &lt;code&gt;/timetable&lt;/code&gt; 路由下，桌面端是表格形式展示，手机端切换为按天列表。课程卡片会自动分配颜色，不同科目不同颜色，一眼就能分辨。&lt;/p&gt;&lt;/section&gt;
@@ -118,21 +99,6 @@
 &lt;section&gt;&lt;h2&gt;解决方案：MOBI → EPUB → PDF&lt;a href=&quot;#解决方案mobi--epub--pdf&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;核心思路是分两步走：先转 EPUB 提取原始图片，再用 Python/PIL 从图片生成 PDF，这样可以保持原始宽高比。&lt;/p&gt;&lt;section&gt;&lt;h3&gt;第一步：安装 Calibre&lt;a href=&quot;#第一步安装-calibre&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;sudo&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;apt-get&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;install&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-y&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;calibre&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;如果你遇到依赖问题，可以先修复：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;sudo&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;apt-get&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;install&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-f&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;第二步：MOBI → EPUB&lt;a href=&quot;#第二步mobi--epub&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;QTWEBENGINE_DISABLE_SANDBOX&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;1&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;ebook-convert&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;输入.mobi&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;/tmp/输出.epub&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：加上 &lt;code&gt;QTWEBENGINE_DISABLE_SANDBOX=1&lt;/code&gt; 可以避免在无头环境中崩溃。&lt;/p&gt;&lt;/blockquote&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;第三步：从 EPUB 提取图片生成 PDF&lt;a href=&quot;#第三步从-epub-提取图片生成-pdf&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;EPUB 本质是一个 ZIP 包，里面包含所有图片。用 Python 脚本逐页提取：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;import&lt;/span&gt;&lt;span&gt; zipfile&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt; os&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;from&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;PIL&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;import&lt;/span&gt;&lt;span&gt; Image&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;import&lt;/span&gt;&lt;span&gt; io&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
 &lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;with&lt;/span&gt;&lt;span&gt; zipfile&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;ZipFile&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;输出.epub&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;as&lt;/span&gt;&lt;span&gt; z&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;imgs &lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;sorted&lt;/span&gt;&lt;span&gt;([&lt;/span&gt;&lt;span&gt;n &lt;/span&gt;&lt;span&gt;for&lt;/span&gt;&lt;span&gt; n &lt;/span&gt;&lt;span&gt;in&lt;/span&gt;&lt;span&gt; z&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;namelist&lt;/span&gt;&lt;span&gt;()&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;if&lt;/span&gt;&lt;span&gt; n&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;endswith&lt;/span&gt;&lt;span&gt;((&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;.jpg&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;.jpeg&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;.png&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;))])&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;pil_images &lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;[&lt;/span&gt;&lt;span&gt;Image&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;open&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;io&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;BytesIO&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;z&lt;/span&gt;&lt;span&gt;.&lt;/span&gt;&lt;span&gt;read&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;n&lt;/span&gt;&lt;span&gt;))).&lt;/span&gt;&lt;span&gt;convert&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;RGB&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;for&lt;/span&gt;&lt;span&gt; n &lt;/span&gt;&lt;span&gt;in&lt;/span&gt;&lt;span&gt; imgs&lt;/span&gt;&lt;span&gt;]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;pil_images&lt;/span&gt;&lt;span&gt;[&lt;/span&gt;&lt;span&gt;0&lt;/span&gt;&lt;span&gt;].&lt;/span&gt;&lt;span&gt;save&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;输出.pdf&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;PDF&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;save_all&lt;/span&gt;&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;True&lt;/span&gt;&lt;span&gt;,&lt;/span&gt;&lt;span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;append_images&lt;/span&gt;&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;pil_images&lt;/span&gt;&lt;span&gt;[&lt;/span&gt;&lt;span&gt;1&lt;/span&gt;&lt;span&gt;:],&lt;/span&gt;&lt;span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;resolution&lt;/span&gt;&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;150.0&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;这样生成的 PDF 每一页都对应一张原始图片，&lt;strong&gt;比例不会变形，不会出现空白边距&lt;/strong&gt;。&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;批量处理脚本&lt;a href=&quot;#批量处理脚本&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;如果有多个文件，可以写个循环：&lt;/p&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;Terminal window&lt;/span&gt;&lt;span&gt;展开&lt;/span&gt;&lt;span&gt;收起&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;cd&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;mobi文件夹&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;for&lt;/span&gt;&lt;span&gt; f &lt;/span&gt;&lt;span&gt;in&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;*.mobi&lt;/span&gt;&lt;span&gt;;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;do&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;  &lt;/span&gt;&lt;/span&gt;&lt;span&gt;QTWEBENGINE_DISABLE_SANDBOX&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;1&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;ebook-convert&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;$f&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;/tmp/&lt;/span&gt;&lt;span&gt;$(&lt;/span&gt;&lt;span&gt;basename&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;$f&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; .mobi&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;span&gt;.epub&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;2&amp;gt;&lt;/span&gt;&lt;span&gt;/dev/null&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;python3&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-c&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;import zipfile, os&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;from PIL import Image&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;import io&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;epub = &apos;/tmp/&lt;/span&gt;&lt;span&gt;$(&lt;/span&gt;&lt;span&gt;basename&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;$f&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; .mobi&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;span&gt;.epub&apos;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;pdf = &apos;&lt;/span&gt;&lt;span&gt;$f&lt;/span&gt;&lt;span&gt;&apos;.replace(&apos;.mobi&apos;, &apos;.pdf&apos;)&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;10&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;with zipfile.ZipFile(epub) as z:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;11&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;imgs = sorted([n for n in z.namelist() if n.endswith((&apos;.jpg&apos;,&apos;.jpeg&apos;,&apos;.png&apos;))])&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;12&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;pil = [Image.open(io.BytesIO(z.read(n))).convert(&apos;RGB&apos;) for n in imgs]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;13&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;pil[0].save(pdf, &apos;PDF&apos;, save_all=True, append_images=pil[1:], resolution=150.0)&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;14&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;print(f&apos;{pdf}: {len(pil)} pages&apos;)&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;15&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;16&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;done&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;17&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;rm&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;-f&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;/tmp/&lt;/span&gt;&lt;span&gt;*&lt;/span&gt;&lt;span&gt;.epub&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;span&gt;展开&lt;/span&gt;&lt;span&gt;收起&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;实际效果&lt;a href=&quot;#实际效果&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;我用这套方法转换了《金牌得主》的 12 本 MOBI（共约 2300 页），每本 PDF 都完美保持了原图比例，没有变形也没有空白边距。&lt;/p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;转换方式&lt;/th&gt;&lt;th&gt;效果&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;ebook-convert MOBI→PDF&lt;/td&gt;&lt;td&gt;图片挤在一边，大片空白&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;MOBI→EPUB→PDF（图片提取）&lt;/td&gt;&lt;td&gt;原比例呈现，排版正常&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;总结&lt;a href=&quot;#总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ol&gt;
@@ -192,29 +158,6 @@
 &lt;li&gt;未编入索引：&lt;strong&gt;23 个&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;p&gt;未索引的原因分三类：&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;原因&lt;/th&gt;&lt;th&gt;数量&lt;/th&gt;&lt;th&gt;说明&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Crawled - currently not indexed&lt;/td&gt;&lt;td&gt;21&lt;/td&gt;&lt;td&gt;已抓取但未收录，新站常见&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Duplicate without user-selected canonical&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;没有指定规范网页的重复内容&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Not found (404)&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;&lt;code&gt;/posts/&lt;/code&gt; 返回 404&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;「Duplicate without user-selected canonical」这条最扎眼——&lt;strong&gt;全站没有任何 &lt;code&gt;&amp;lt;link rel=&quot;canonical&quot;&amp;gt;&lt;/code&gt; 标签&lt;/strong&gt;。没有 canonical，Google 无法区分 &lt;code&gt;https://blog.amamo.top/posts/xxx/&lt;/code&gt; 与不带斜杠的版本、分页页、搜索参数变体，于是只收录一个代表页（首页），其余全部被当作重复内容。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;修复一：补上 canonical&lt;a href=&quot;#修复一补上-canonical&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;在布局组件的 &lt;code&gt;&amp;lt;head&amp;gt;&lt;/code&gt; 里加一行：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&amp;lt;&lt;/span&gt;&lt;span&gt;link&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;rel&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;canonical&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;href&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt;{Astro.url}&lt;/span&gt;&lt;span&gt; /&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;配合 Astro 的 &lt;code&gt;trailingSlash: &quot;always&quot;&lt;/code&gt;，输出的就是带斜杠的完整 URL，与 sitemap 保持一致。这是一个纯声明式的修复，不影响页面显示，只影响搜索引擎对 URL 的判断。&lt;/p&gt;&lt;p&gt;修复后无斜杠版本（如 &lt;code&gt;/posts/astbot&lt;/code&gt;）虽然在 Vercel 上同样返回 200，但页面内的 canonical 指向带斜杠版本，Google 会自动剔除重复 URL。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;修复二：robots.txt 屏蔽参数页&lt;a href=&quot;#修复二robotstxt-屏蔽参数页&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;code&gt;/archive/?tag=xxx&lt;/code&gt; 这类带查询参数的过滤页会被反复抓取，但永远不会被收录，纯浪费抓取配额。在 robots.txt 里加上：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;Disallow: /*?tag=&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/section&gt;
@@ -265,24 +208,6 @@
 &lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;git&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;remote&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;add&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;hf&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;https://&amp;lt;你的HF用户名&amp;gt;:&amp;lt;HF_TOKEN&amp;gt;@huggingface.co/spaces/&amp;lt;用户名&amp;gt;/&amp;lt;Space名&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;git&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;push&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;--force&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;hf&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;main&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;Token 在 &lt;a href=&quot;https://huggingface.co/settings/tokens&quot; target=&quot;_blank&quot;&gt;https://huggingface.co/settings/tokens&lt;/a&gt; 生成，权限选 Write 就行。&lt;/p&gt;&lt;p&gt;推完之后去 Space 页面点 Build，第一次构建大概二十分钟到四十分钟，别急着刷新，等它自己跑完。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;第三步，配置备份&lt;a href=&quot;#第三步配置备份&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;在 Space 的 Settings → Variables and secrets 里加两个变量：&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;变量&lt;/th&gt;&lt;th&gt;值&lt;/th&gt;&lt;th&gt;干什么用的&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;GITHUB_REPO&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;你的GitHub用户名/备份仓库名&lt;/code&gt;&lt;/td&gt;&lt;td&gt;数据推到哪&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;GITHUB_PAT&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;ghp_...&lt;/code&gt;&lt;/td&gt;&lt;td&gt;推数据用的凭据&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;前提是你得先在 GitHub 建一个空的 Private 仓库，比如叫 &lt;code&gt;astrbot-backup&lt;/code&gt;，PAT 在 &lt;a href=&quot;https://github.com/settings/tokens&quot; target=&quot;_blank&quot;&gt;https://github.com/settings/tokens&lt;/a&gt; 生成，勾上 repo 权限。&lt;/p&gt;&lt;p&gt;填完之后 Space 会自动重启。Sync 守护进程会把 &lt;code&gt;AstrBot/data/&lt;/code&gt; 每三分钟往备份仓库推一次，先 pull 再 commit 再 push，两边不会打架。这一对变量不配也能跑，但容器一重启数据就没了，到时候懂的都懂。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;第四步，第一次登录&lt;a href=&quot;#第四步第一次登录&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;访问 &lt;code&gt;https://&amp;lt;space名&amp;gt;.hf.space/&lt;/code&gt;，有几个入口：&lt;/p&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;/&lt;/code&gt; 是 AstrBot 控制台。新版首次登录账号固定是 &lt;code&gt;astrbot&lt;/code&gt;，密码是随机生成打印在日志里的，去运行日志里搜 &lt;code&gt;Initial password&lt;/code&gt; 就能看到。&lt;/li&gt;
@@ -291,29 +216,6 @@
 &lt;/ul&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;第五步，防休眠&lt;a href=&quot;#第五步防休眠&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;免费档四十八小时没访问就休眠，所以要定时去”戳”它一下。在仓库里加个 workflow，GitHub Actions 会替你每天戳三次：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;.github/workflows/keep-alive.yml&lt;/span&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;name&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;Keep HF Space Alive&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;on&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;schedule&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;-&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;cron&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;span&gt;0 */8 * * *&lt;/span&gt;&lt;span&gt;&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;workflow_dispatch&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;jobs&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;  &lt;/span&gt;&lt;span&gt;ping&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;    &lt;/span&gt;&lt;span&gt;runs-on&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;ubuntu-latest&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;    &lt;/span&gt;&lt;span&gt;steps&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;10&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;      &lt;/span&gt;&lt;/span&gt;&lt;span&gt;-&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;run&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;curl -sS -o /dev/null -H &quot;Authorization&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;Bearer ${{ secrets.HF_TOKEN }}&quot; https://&amp;lt;你的space名&amp;gt;.hf.space/&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;然后在仓库的 Settings → Secrets → Actions 里加一个 &lt;code&gt;HF_TOKEN&lt;/code&gt; 就行。一天三次请求，Actions 的免费额度完全够用。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;一些要提前知道的局限&lt;a href=&quot;#一些要提前知道的局限&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;方面&lt;/th&gt;&lt;th&gt;实际情况&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;数据&lt;/td&gt;&lt;td&gt;有 GitHub 兜底，但两次备份之间的三分钟如果正好被硬杀，会丢一点东西&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;在线率&lt;/td&gt;&lt;td&gt;免费版休眠后唤醒要一两分钟；想真正 7×24 在线得花钱，大概七美元多一个月&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;资源&lt;/td&gt;&lt;td&gt;CPU Basic 是 2 vCPU / 16GB 单副本，别指望它扛并发&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;构建&lt;/td&gt;&lt;td&gt;改一次 Dockerfile 就要重新构建，二十分钟起步&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;踩过的坑&lt;a href=&quot;#踩过的坑&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;第一个是 &lt;code&gt;FROM ubuntu:latest&lt;/code&gt;，六月份之后 latest 已经指向 26.04 了，OpenResty 的 apt 源还没跟上，构建直接 404 失败。改成 &lt;code&gt;FROM ubuntu:24.04&lt;/code&gt; 就好了。&lt;/p&gt;&lt;p&gt;第二个是浏览器打开 404。Space 第一次启动会下载两百来兆的 AstrBot 前端资源，下载没完成之前 &lt;code&gt;/&lt;/code&gt; 就是 404，等下载到 100% 刷新一下就好，不是坏了。&lt;/p&gt;&lt;p&gt;第三个是没配备份那一对变量的话，AstrBot 和 NapCat 会卡三十分钟起不来——Sync 守护进程拿不到配置会崩，标记文件永远不写，其他服务就干等超时。我给守护进程加了”没配置就直接放行”的处理，已经合到仓库里了。&lt;/p&gt;&lt;p&gt;总的来说，无服务器方案的核心矛盾就是拿在线率换零成本。这套路子数据有 GitHub 兜底，唯一的妥协是休眠后的冷启动，对个人机器人来说这个妥协还算能接受。&lt;/p&gt;&lt;/section&gt;</content:encoded></item><item><title>headless Chrome 截图 WebGL 黑块问题排查</title><link>https://blog.amamo.top/posts/headless-chrome-webgl-black-block/</link><guid isPermaLink="true">https://blog.amamo.top/posts/headless-chrome-webgl-black-block/</guid><description>友链截图工具在 headless Chrome 下遇到 Spline/Live2D 站点渲染失败、出现带报错信息的黑块，通过启用 swiftshader 软件渲染解决。</description><pubDate>Fri, 14 Aug 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;起因&lt;a href=&quot;#起因&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;维护友链检测工具 &lt;a href=&quot;https://github.com/fqzlr/check-flink&quot; target=&quot;_blank&quot;&gt;check-flink&lt;/a&gt;（Selenium + headless Chrome 截取友链主页并上传图床）时发现：部分友链站点使用了 &lt;a href=&quot;https://spline.design/&quot; target=&quot;_blank&quot;&gt;Spline&lt;/a&gt; 或 Live2D 这类 WebGL 内容，截出来的图对应区域是一块纯黑色，黑块里还带着 WebGL 初始化失败的报错信息，非常难看。&lt;/p&gt;&lt;/section&gt;
@@ -338,29 +240,6 @@
 &lt;/ul&gt;&lt;p&gt;CI 构建日志显示构建、部署、Alias 全部成功。这是一个”部署成功但内容缺失”的诡异问题，折腾了很久，记录下完整的排查思路和根因。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;观察现象&lt;a href=&quot;#观察现象&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;对线上逐路径探测，得到如下行为矩阵：&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;路径&lt;/th&gt;&lt;th&gt;状态码&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/&lt;/code&gt;、&lt;code&gt;/about/&lt;/code&gt;、&lt;code&gt;/posts/xxx/&lt;/code&gt;&lt;/td&gt;&lt;td&gt;404（响应体是站点自定义 404 页）&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/_astro/*.css&lt;/code&gt;、&lt;code&gt;*.js&lt;/code&gt;、图片&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;robots.txt&lt;/code&gt;、&lt;code&gt;rss.xml&lt;/code&gt;、&lt;code&gt;pagefind/*&lt;/code&gt;&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;/index.html&lt;/code&gt;、&lt;code&gt;/about.html&lt;/code&gt;&lt;/td&gt;&lt;td&gt;308 重定向到去扩展名路径&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;关键信息：&lt;/p&gt;&lt;ol&gt;
 &lt;li&gt;非 HTML 静态资源 200，说明部署确实上传了文件；&lt;/li&gt;
 &lt;li&gt;所有 HTML 页面 404，说明 HTML 部分出了问题；&lt;/li&gt;
@@ -377,55 +256,10 @@
 &lt;/ul&gt;&lt;p&gt;这也解释了为什么 CI 部署时上传只有 19.8MB（大量符号链接被跳过/去重），而实际产物有 52MB。&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;为什么新版本 CLI 有问题，旧版本没问题&lt;a href=&quot;#为什么新版本-cli-有问题旧版本没问题&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;这次问题的核心在 Vercel CLI 58.x 引入的 &lt;strong&gt;l2s（large-file storage）上传优化&lt;/strong&gt;。它的本意是把大文件切分成约 1MB 的小块（&lt;code&gt;.l2s.&amp;lt;文件名&amp;gt;0001&lt;/code&gt;、&lt;code&gt;0002&lt;/code&gt;…），以便内容寻址去重、并发上传、断点续传，服务器端再重组。&lt;strong&gt;57 和 58 都用了分片，但实现方式截然不同&lt;/strong&gt;：&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;分片后的原文件&lt;/th&gt;&lt;th&gt;上传结果&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;vercel@57&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;保留为&lt;strong&gt;真实文件&lt;/strong&gt;（与分片文件互为硬链接，link count = 2），&lt;code&gt;readFile&lt;/code&gt; 随时能读到完整内容&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;vercel@58.7.1&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;被替换成&lt;strong&gt;符号链接&lt;/strong&gt;，指向本地绝对路径（&lt;code&gt;/home/qwc/.../.l2s...&lt;/code&gt;），且出现嵌套分片（&lt;code&gt;.l2s..l2s.&lt;/code&gt; 双层前缀）&lt;/td&gt;&lt;td&gt;服务端解析不到 → 404&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;58.7.1 的具体问题有两个：&lt;/p&gt;&lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;symlink 目标写死成本机绝对路径&lt;/strong&gt;：&lt;code&gt;posts/astbot/index.html -&amp;gt; /home/qwc/Firefly/dist/posts/astbot/.l2s..l2s.index.html0001.00010001&lt;/code&gt;。这个路径只在本机存在，上传到 Vercel 后无法解析，文件”在列表里、读不出内容”。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;对已分片的文件再次分片&lt;/strong&gt;：正常的 l2s 分片命名是 &lt;code&gt;.l2s.index.html0001.0001&lt;/code&gt;，而 58.7.1 在部分文件上生成了&lt;strong&gt;嵌套前缀&lt;/strong&gt; &lt;code&gt;.l2s..l2s.index.html0001.00010001&lt;/code&gt;，说明分片逻辑对”分片产物”又跑了一遍，symlink 指向了错误的目标。&lt;/li&gt;
 &lt;/ol&gt;&lt;p&gt;而 57 的处理方式是&lt;strong&gt;硬链接&lt;/strong&gt;：&lt;code&gt;index.html&lt;/code&gt; 和 &lt;code&gt;.l2s.index.html0001.0002&lt;/code&gt; 是同一个 inode 的两个目录项，&lt;code&gt;index.html&lt;/code&gt; 始终是真实文件、内容完整。上传时 CLI 读到的就是完整数据，服务器端重组无需依赖符号链接。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;为什么”以前正常、某一天突然全站 404”&lt;/strong&gt;：CI 里用的是 &lt;code&gt;npx vercel&lt;/code&gt;（不带版本号），npx 每次拉取的都是&lt;strong&gt;最新版&lt;/strong&gt;。以前最新版还是 57.x（实现正确），某次升级到 58.7.1（实现有 bug）后，CI 的每一次部署都带着坏掉的符号链接上传——所以在 GitHub Actions 部署日志全部成功的情况下，线上依旧全站 404。&lt;/p&gt;&lt;section&gt;&lt;h3&gt;为什么 Cloudflare / EdgeOne 不受影响&lt;a href=&quot;#为什么-cloudflare--edgeone-不受影响&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;同一份 dist，三家平台的部署工具走的是完全不同的上传模型：&lt;/p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;部署工具&lt;/th&gt;&lt;th&gt;上传模型&lt;/th&gt;&lt;th&gt;遇到 symlink&lt;/th&gt;&lt;th&gt;结果&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;wrangler&lt;/code&gt;（Cloudflare）&lt;/td&gt;&lt;td&gt;逐文件 &lt;code&gt;readFile&lt;/code&gt; 读取内容上传&lt;/td&gt;&lt;td&gt;自动跟随链接，读到真实字节&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;edgeone pages deploy&lt;/code&gt;&lt;/td&gt;&lt;td&gt;逐文件读取内容上传&lt;/td&gt;&lt;td&gt;自动跟随链接&lt;/td&gt;&lt;td&gt;正常&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;vercel deploy&lt;/code&gt;（CLI 58）&lt;/td&gt;&lt;td&gt;本地预处理 + 内容寻址分片上传&lt;/td&gt;&lt;td&gt;把 symlink 当路径记录，不上传内容&lt;/td&gt;&lt;td&gt;404&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;wrangler / edgeone 是朴素的”文件内容上传”模型，没有本地预处理这一层，符号链接在读文件时就被解析掉了，自然不受影响。Vercel CLI 因为多了 l2s 预处理层，才把 bug 带进了部署产物。&lt;strong&gt;多平台部署（CF / EdgeOne / Vercel）在这种场景下相当于交叉验证：同一份 dist，别人正常、只有 Vercel 异常，问题几乎可以锁定在 Vercel 的部署链路上。&lt;/strong&gt;&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;根因总结&lt;a href=&quot;#根因总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;两个问题叠加：&lt;/p&gt;&lt;ol&gt;
@@ -519,8 +353,8 @@ rectangle &amp;quot;D1&amp;quot; as D1 #87CEEB {
 &lt;p&gt;后台主要分三块：文章编辑器带 Markdown 工具栏和实时预览，站点配置页管理社交链接和友链，还有一个图片管理器可以浏览和删除已上传的图片。编辑器支持拖拽和剪贴板上传图片，前端用 XHR 做了进度条。&lt;/p&gt;
 &lt;p&gt;&lt;/p&gt;&lt;figure&gt;&lt;img alt=&quot;后台示例&quot; loading=&quot;lazy&quot; width=&quot;1080&quot; height=&quot;2412&quot; src=&quot;/_astro/firefly-background.C-IMuNjZ_Z1dzT5T.webp&quot; /&gt;&lt;figcaption&gt;后台示例&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;&lt;/p&gt;
 &lt;p&gt;前后端都已开源：&lt;/p&gt;
-&lt;a href=&quot;https://github.com/qwc-ch/Firefly&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;qwc-ch&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;Firefly&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Waiting for api.github.com...&lt;/div&gt;&lt;div&gt;&lt;div&gt;00K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;span&gt;Waiting...&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;
-&lt;a href=&quot;https://github.com/qwc-ch/firefly-admin-cfworkers&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;qwc-ch&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;firefly-admin-cfworkers&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Waiting for api.github.com...&lt;/div&gt;&lt;div&gt;&lt;div&gt;00K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;span&gt;Waiting...&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;</content:encoded></item><item><title>待办</title><link>https://blog.amamo.top/posts/summer_plan/</link><guid isPermaLink="true">https://blog.amamo.top/posts/summer_plan/</guid><description>关于我在暑期对博客添加新功能的计划</description><pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;功能&lt;a href=&quot;#功能&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;a href=&quot;https://github.com/qwc-ch/Firefly&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;qwc-ch&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;Firefly&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Description not set&lt;/div&gt;&lt;div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;MIT&lt;/div&gt;&lt;span&gt;Astro&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;
+&lt;a href=&quot;https://github.com/qwc-ch/firefly-admin-cfworkers&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;qwc-ch&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;firefly-admin-cfworkers&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;基于 Hono 的 Cloudflare Workers 博客 管理 API，为 &quot;Firefly&quot; 博客系统提供后端支持&lt;/div&gt;&lt;div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;MIT&lt;/div&gt;&lt;span&gt;TypeScript&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;</content:encoded></item><item><title>待办</title><link>https://blog.amamo.top/posts/summer_plan/</link><guid isPermaLink="true">https://blog.amamo.top/posts/summer_plan/</guid><description>关于我在暑期对博客添加新功能的计划</description><pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;功能&lt;a href=&quot;#功能&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;[√] 后台&lt;/li&gt;
 &lt;li&gt;[√] AI摘要&lt;/li&gt;
 &lt;li&gt;[√] AI聊天页面&lt;/li&gt;
@@ -549,46 +383,13 @@ rectangle &amp;quot;D1&amp;quot; as D1 #87CEEB {
 &lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;56&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;      &lt;/span&gt;&lt;/span&gt;&lt;span&gt;# 使用 wrangler CLI 部署到 Cloudflare Workers&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;57&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;      &lt;/span&gt;&lt;/span&gt;&lt;span&gt;-&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;name&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;Deploy to Cloudflare Workers&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;58&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;        &lt;/span&gt;&lt;span&gt;run&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;npx wrangler deploy&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;59&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;        &lt;/span&gt;&lt;span&gt;env&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;60&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;          &lt;/span&gt;&lt;/span&gt;&lt;span&gt;# Cloudflare API Token，需要 Edit Cloudflare Workers 权限&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;61&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;          &lt;/span&gt;&lt;span&gt;CLOUDFLARE_API_TOKEN&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;${{ secrets.CLOUDFLARE_API_TOKEN }}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;62&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;          &lt;/span&gt;&lt;/span&gt;&lt;span&gt;# Cloudflare 账户 ID，在 Dashboard 右侧栏可见&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;63&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;          &lt;/span&gt;&lt;span&gt;CLOUDFLARE_ACCOUNT_ID&lt;/span&gt;&lt;span&gt;:&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;${{ secrets.CLOUDFLARE_ACCOUNT_ID }}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;span&gt;展开&lt;/span&gt;&lt;span&gt;收起&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;需要配置的 Secrets&lt;a href=&quot;#需要配置的-secrets&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;在 GitHub 仓库 Settings → Secrets and variables → Actions 里加两个 secret，不加的话 workflow 会直接报错退出。&lt;/p&gt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Secret&lt;/th&gt;&lt;th&gt;说明&lt;/th&gt;&lt;th&gt;获取方式&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;CLOUDFLARE_API_TOKEN&lt;/code&gt;&lt;/td&gt;&lt;td&gt;API 令牌&lt;/td&gt;&lt;td&gt;Cloudflare Dashboard → My Profile → API Tokens → Create Token&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;code&gt;CLOUDFLARE_ACCOUNT_ID&lt;/code&gt;&lt;/td&gt;&lt;td&gt;账户 ID&lt;/td&gt;&lt;td&gt;Cloudflare Dashboard 右侧栏&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;API Token 要选 &lt;strong&gt;“Edit Cloudflare Workers”&lt;/strong&gt; 模板，这个模板包含 Workers 脚本编辑权限，部署够用了。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h2&gt;注意事项&lt;a href=&quot;#注意事项&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;--frozen-lockfile&lt;/code&gt; 是个好东西，确保 CI 里不会偷偷给你更新依赖版本，避免”我本地能跑线上挂了”的经典剧情&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;concurrency&lt;/code&gt; 配置能避免同时跑多个构建任务，省点 CI 分钟数&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;wrangler deploy&lt;/code&gt; 会老老实实读取仓库根目录的 &lt;code&gt;wrangler.toml&lt;/code&gt;，所以记得把这个文件提交上去&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;build&lt;/code&gt; 分支只包含 &lt;code&gt;dist/&lt;/code&gt; 的内容，源码不会泄露，放心用&lt;/li&gt;
-&lt;/ul&gt;&lt;/section&gt;</content:encoded></item><item><title>Firefly 主题 添加WelcomeToast 组件</title><link>https://blog.amamo.top/posts/firefly_welcometoast/</link><guid isPermaLink="true">https://blog.amamo.top/posts/firefly_welcometoast/</guid><description>分析 Firefly Astro 博客主题中 WelcomeToast 欢迎弹窗的实现逻辑与在 MainGridLayout 中的集成方式</description><pubDate>Sun, 31 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h1&gt;Firefly 主题 WelcomeToast 组件分析&lt;a href=&quot;#firefly-主题-welcometoast-组件分析&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;Firefly是一个基于 Astro的博客主题。&lt;/p&gt;&lt;a href=&quot;https://github.com/CuteLeaf/Firefly&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;CuteLeaf&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;Firefly&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Waiting for api.github.com...&lt;/div&gt;&lt;div&gt;&lt;div&gt;00K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;div&gt;0K&lt;/div&gt;&lt;span&gt;Waiting...&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;&lt;p&gt;WelcomeToast 是我自己加的一个小组件，效果就是访客第一次打开页面时，右下角会弹出一个欢迎卡片，还带了 IP 地理位置的个性化问候，5 秒后自动消失。&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;figure&gt;&lt;img alt=&quot;WelcomeToast 效果演示&quot; loading=&quot;lazy&quot; width=&quot;1078&quot; height=&quot;366&quot; src=&quot;/_astro/welcome.CqPgWiqc_SONnY.webp&quot; /&gt;&lt;figcaption&gt;WelcomeToast 效果演示&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;&lt;/p&gt;&lt;hr /&gt;&lt;section&gt;&lt;h2&gt;涉及的文件&lt;a href=&quot;#涉及的文件&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;整个组件涉及两个文件：&lt;/p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+&lt;/ul&gt;&lt;/section&gt;</content:encoded></item><item><title>Firefly 主题 添加WelcomeToast 组件</title><link>https://blog.amamo.top/posts/firefly_welcometoast/</link><guid isPermaLink="true">https://blog.amamo.top/posts/firefly_welcometoast/</guid><description>分析 Firefly Astro 博客主题中 WelcomeToast 欢迎弹窗的实现逻辑与在 MainGridLayout 中的集成方式</description><pubDate>Sun, 31 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h1&gt;Firefly 主题 WelcomeToast 组件分析&lt;a href=&quot;#firefly-主题-welcometoast-组件分析&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;Firefly是一个基于 Astro的博客主题。&lt;/p&gt;&lt;a href=&quot;https://github.com/CuteLeaf/Firefly&quot; target=&quot;_blank&quot;&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;CuteLeaf&lt;/div&gt;&lt;/div&gt;&lt;div&gt;/&lt;/div&gt;&lt;div&gt;Firefly&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;🍀Firefly, fresh and aesthetic Astro blog theme template. &lt;/div&gt;&lt;div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;—&lt;/div&gt;&lt;div&gt;MIT&lt;/div&gt;&lt;span&gt;Astro&lt;/span&gt;&lt;/div&gt;&lt;/a&gt;&lt;p&gt;WelcomeToast 是我自己加的一个小组件，效果就是访客第一次打开页面时，右下角会弹出一个欢迎卡片，还带了 IP 地理位置的个性化问候，5 秒后自动消失。&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;figure&gt;&lt;img alt=&quot;WelcomeToast 效果演示&quot; loading=&quot;lazy&quot; width=&quot;1078&quot; height=&quot;366&quot; src=&quot;/_astro/welcome.CqPgWiqc_SONnY.webp&quot; /&gt;&lt;figcaption&gt;WelcomeToast 效果演示&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;&lt;/p&gt;&lt;hr /&gt;&lt;section&gt;&lt;h2&gt;涉及的文件&lt;a href=&quot;#涉及的文件&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;整个组件涉及两个文件：&lt;/p&gt;
 
 &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;文件&lt;/th&gt;&lt;th&gt;路径&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;组件本身&lt;/td&gt;&lt;td&gt;&lt;code&gt;src/components/widget/WelcomeToast.astro&lt;/code&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;在布局中引用&lt;/td&gt;&lt;td&gt;&lt;code&gt;src/layouts/MainGridLayout.astro&lt;/code&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;hr /&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;组件是怎么实现的&lt;a href=&quot;#组件是怎么实现的&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;这个组件的 frontmatter 是空的，没有任何服务端逻辑。所有事情都在浏览器端的 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; 和 &lt;code&gt;&amp;lt;style&amp;gt;&lt;/code&gt; 里完成。&lt;/p&gt;&lt;section&gt;&lt;h3&gt;页面上长什么样&lt;a href=&quot;#页面上长什么样&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;组件本身不输出任何 HTML，所有 DOM 都是 JS 动态生成的。结构大概是这样：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;#welcome-toast（固定在右下角，z-50）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;└── 一个卡片 div（白色背景、圆角、阴影）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;├── 👋 表情&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;├── 文字区&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;│   ├── 问候语（一开始显示&quot;正在加载...&quot;，后面会变成具体地址）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;│   └── 副标题&quot;欢迎来到我的博客&quot;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;└── 关闭按钮（一个 ×）&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;几个关键函数&lt;a href=&quot;#几个关键函数&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;整个逻辑不复杂，就是 5 个函数各管各的事：&lt;/p&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;// 用 sessionStorage 做会话标识，防止重复弹出&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;const&lt;/span&gt;&lt;span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;VISIT_SESSION_KEY&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;blog_visit_flag&lt;/span&gt;&lt;span&gt;&apos;&lt;/span&gt;&lt;span&gt;;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;let&lt;/span&gt;&lt;span&gt; hasShownToast &lt;/span&gt;&lt;span&gt;=&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;false&lt;/span&gt;&lt;span&gt;;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
 &lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;// 创建 Toast 的 DOM 结构，插入到页面上&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;function&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span&gt;createWelcomeToast&lt;/span&gt;&lt;span&gt;()&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
