@@ -63,6 +63,23 @@ export const fontsList: FontDefinition[] = [
 			"monospace",
 		],
 	},
+	// ─── 中文字体（取自 remio-home 项目） ───
+	// HYTMR = 汉仪唐美人（HYTangMeiRen55W），与 /home/qwc/remio-home 的正文字体保持一致
+	// 原始文件：https://npm.elemecdn.com/fontcdn-ariasaka@1.0.0/HYTangMeiRen55W.woff2
+	// 整包约 3.5MB，构建时由 scripts/subset-fonts.ts 生成字符子集后再进入产物
+	{
+		name: "HYTMR",
+		cssVariable: "--font-hytmr",
+		provider: "local",
+		options: {
+			variants: [
+				{
+					src: ["./public/assets/fonts/HYTangMeiRen55W.woff2"],
+				},
+			],
+		},
+		fallbacks: ["sans-serif"],
+	},
 	// ─── 本地字体示例 ───
 	// 使用步骤：
 	// 1. 将 TTF/OTF/WOFF2 字体文件放在 public/assets/fonts/ 目录下
@@ -89,7 +106,8 @@ export const fontConfig: FontSelectionConfig = {
 	enable: true,
 	// 当前选择的字体 CSS 变量名（对应上方 fonts 中的 cssVariable）
 	// 使用 "system" 表示系统字体（不加载任何自定义字体）
-	selected: ["system"],
+	// 中文字体：使用 remio-home 同款 HYTMR（汉仪唐美人）
+	selected: ["--font-hytmr"],
 
 	// 各区域独立字体设置（填写上方 fonts 中的 cssVariable，留空则使用全局 selected 字体）
 	// 例如：bannerTitleFont: "--font-inter", 表示主页横幅主标题使用 Inter 字体
@@ -105,6 +123,10 @@ export const fontConfig: FontSelectionConfig = {
 	// 本地字体子集化配置（构建时由 scripts/subset-fonts.ts 处理）
 	// key 为 fonts 数组中对应的 cssVariable，value 为子集化选项
 	subsetFonts: {
+		"--font-hytmr": {
+			// 额外包含的字符（覆盖评论、Bangumi 等构建后仍会动态出现的内容）
+			extraChars: "",
+		},
 		"--font-greatvibes": {
 			// 额外包含的字符
 			extraChars: "",
