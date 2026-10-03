@@ -59,6 +59,23 @@ function computeEntryId(fileRelPath: string, frontmatter: string): string {
 		.replace(/\/index$/, "");
 }
 
+/**
+ * 把图片链接的域名归一化为配置中 API 使用的域名。
+ * 图床 type=url 返回的链接固定写死它的主域（如 a.520781.xyz），
+ * 但同一文件在绑定的别名域（如 tu.520781.xyz）上路径相同且实测更快，
+ * 因此统一替换为配置的 API 域；今后换域名只需改 coverImageConfig。
+ */
+function normalizeCoverHost(rawUrl: string, api: string): string {
+	try {
+		const wantedHost = new URL(api).host;
+		const url = new URL(rawUrl);
+		if (url.host !== wantedHost) url.host = wantedHost;
+		return url.toString();
+	} catch {
+		return rawUrl;
+	}
+}
+
 /** 调用随机 API，返回完整图片 URL（失败返回 null） */
 async function fetchRandomImageUrl(api: string): Promise<string | null> {
 	// 保留配置里 API 的查询参数（如 dir=cover 目录过滤），只改写返回形态
@@ -78,7 +95,7 @@ async function fetchRandomImageUrl(api: string): Promise<string | null> {
 			if (!text.startsWith("http")) {
 				throw new Error(`Unexpected response: ${text.slice(0, 100)}`);
 			}
-			return text;
+			return normalizeCoverHost(text, api);
 		} catch (error) {
 			if (attempt === MAX_RETRIES) {
 				console.warn(
