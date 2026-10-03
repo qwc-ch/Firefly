@@ -623,6 +623,18 @@ export const friendsConfig: FriendLink[] = [
 		cover: "https://tu.520781.xyz/file/youlian/blog.windstart.top.png",
 		rss: "https://blog.windstart.top/rss.xml",
 	},
+	{
+		title: "左沐の手册",
+		imgurl: 
+			"https://tu.mstzuomu.space/file/%E5%A4%B4%E5%83%8F/1786942479049_azumahead.jpg",
+		desc: "热爱是拯救无趣人生的唯一途径",
+		siteurl: "https://azuma.mstzuomu.space/",
+		tags: [],
+		weight: 47,
+		enabled: true,
+		cover: "https://tu.520781.xyz/file/youlian/azuma.mstzuomu.space.png",
+		rss: "https://azuma.mstzuomu.space/rsd.xml",
+	},
 ];
 
 // 获取启用的友链并进行排序
