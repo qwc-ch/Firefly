@@ -1,16 +1,16 @@
 /**
- * 构建期随机封面固定脚本
+ * 构建期随机封面分配脚本
  *
  * 背景：随机图 API（CloudFlare ImgBed /random）不支持按 seed 参数稳定返回，
  * 同一篇文章在列表页和详情页会各自请求到两张不同的随机图。
  *
- * 本脚本在构建时对每篇 image: "api" 的文章调用一次随机 API（type=url&form=text），
- * 拿到确定的图片 URL 写入 src/constants/random-covers.json。
- * 生产渲染直接使用该映射，列表页和文章页必然显示同一张图。
+ * 本脚本在每次构建时对每篇 image: "api" 的文章调用一次随机 API（type=url&form=text），
+ * 全量重新随机分配封面，写入 src/constants/random-covers.json。
+ * 渲染端直接使用该映射，列表页和文章页必然显示同一张图（每次构建整体换一批新封面）。
  *
- * - 已存在于映射表中的文章不会重复请求 API（封面保持稳定，不随每次构建漂移）
- * - 文章不再使用 image: "api" 或文章被删除时，对应条目会被清理
- * - 单篇请求失败自动重试 3 次；仍失败则跳过（运行时回退随机 API 行为）
+ * - 图片池足够大，撞车的概率很小；重复时最多重取 MAX_UNIQUE_ATTEMPTS 次
+ * - 单篇请求失败自动重试 3 次；仍失败则跳过该篇（运行时回退随机 API 行为）
+ * - 每次构建都会产生新的封面组合，git diff 记录每一次变化
  *
  * 手动触发：pnpm covers
  */
@@ -110,18 +110,6 @@ async function fetchRandomImageUrl(api: string): Promise<string | null> {
 }
 
 async function main() {
-	// 读取已有的映射表
-	let existing: CoverMap = {};
-	try {
-		const content = await fs.readFile(OUTPUT_FILE, "utf-8");
-		existing = JSON.parse(content);
-		console.log(
-			`[random-covers] Loaded ${Object.keys(existing).length} existing entries from ${OUTPUT_FILE}`,
-		);
-	} catch {
-		console.log(`[random-covers] No existing ${OUTPUT_FILE}, will create new.`);
-	}
-
 	const { randomCoverImage } = coverImageConfig;
 	if (!randomCoverImage.enable || randomCoverImage.apis.length === 0) {
 		console.log(
@@ -152,49 +140,31 @@ async function main() {
 		}
 	}
 
-	// 清理不再使用随机封面的文章条目
-	const staleKeys = Object.keys(existing).filter((key) => !apiPosts.has(key));
-	for (const key of staleKeys) {
-		delete existing[key];
-	}
-	if (staleKeys.length > 0) {
-		console.log(
-			`[random-covers] Removed ${staleKeys.length} stale entries: ${staleKeys.join(", ")}`,
-		);
-	}
-
-	// 只对尚未固定的文章请求 API
-	const newIds = [...apiPosts.keys()].filter((id) => !(id in existing));
+	// 每次构建全量重新随机分配：不保留旧映射，所有 image: "api" 的文章重新获取
 	console.log(
-		`[random-covers] Found ${apiPosts.size} posts with image: "api", ${newIds.length} new to fix.`,
+		`[random-covers] Found ${apiPosts.size} posts with image: "api", refetching all covers.`,
 	);
-
-	const covers: CoverMap = { ...existing };
-
-	if (newIds.length > 0) {
-		const api = randomCoverImage.apis[0];
-		const usedUrls = new Set(Object.values(covers));
-		for (const id of newIds) {
-			let imageUrl: string | null = null;
-			// 尽量让每篇文章拿到不同的封面；连续重复时接受最后一次结果
-			for (let attempt = 0; attempt < MAX_UNIQUE_ATTEMPTS; attempt++) {
-				const candidate = await fetchRandomImageUrl(api);
-				if (!candidate) break;
-				if (!usedUrls.has(candidate)) {
-					imageUrl = candidate;
-					break;
-				}
-				imageUrl ??= candidate;
+	const covers: CoverMap = {};
+	const api = randomCoverImage.apis[0];
+	const usedUrls = new Set<string>();
+	for (const id of apiPosts.keys()) {
+		let imageUrl: string | null = null;
+		// 尽量让每篇文章拿到不同的封面；连续重复时接受最后一次结果
+		for (let attempt = 0; attempt < MAX_UNIQUE_ATTEMPTS; attempt++) {
+			const candidate = await fetchRandomImageUrl(api);
+			if (!candidate) break;
+			if (!usedUrls.has(candidate)) {
+				imageUrl = candidate;
+				break;
 			}
-			if (imageUrl) {
-				covers[id] = imageUrl;
-				usedUrls.add(imageUrl);
-				console.log(`[random-covers] ${id} -> ${imageUrl}`);
-			} else {
-				console.warn(
-					`[random-covers] Skipping ${id}: could not fetch an image.`,
-				);
-			}
+			imageUrl ??= candidate;
+		}
+		if (imageUrl) {
+			covers[id] = imageUrl;
+			usedUrls.add(imageUrl);
+			console.log(`[random-covers] ${id} -> ${imageUrl}`);
+		} else {
+			console.warn(`[random-covers] Skipping ${id}: could not fetch an image.`);
 		}
 	}
 

@@ -9,11 +9,11 @@ import type { CoverImageConfig } from "../types/coverImageConfig";
  *
  * 随机封面图使用说明：
  * 1. 在文章的 Frontmatter 中添加 image: "api" 即可使用随机图功能
- * 2. 随机图 API 不支持按种子稳定返回，因此构建时由 scripts/generate-random-covers.ts
- *    为每篇文章固定一张封面写入 src/constants/random-covers.json（pnpm covers 可单独执行），
- *    保证列表页与文章页显示同一张图；映射提交到 git 后长期保持不变
- * 3. 想给某篇文章换封面：删除映射表中对应条目再执行 pnpm covers；也可直接填入图片URL
- * 4. 尚未固定的文章（如 pnpm dev 新增文章）会依次尝试所有配置的 API，全部失败后保留 LQIP 并显示错误提示
+ * 2. 随机图 API 不支持按种子稳定返回，因此每次构建时由 scripts/generate-random-covers.ts
+ *    为所有 image: "api" 的文章全量重新随机分配封面，写入 src/constants/random-covers.json
+ *    （pnpm covers 可单独执行），保证列表页与文章页显示同一张图、每次构建换一批新封面
+ * 3. 想固定某篇封面：构建后在 random-covers.json 里手动改对应条目；或删除条目再 pnpm covers
+ * 4. 未在映射表中的文章（如 pnpm dev 新增文章）会依次尝试所有配置的 API，全部失败后保留 LQIP 并显示错误提示
  *
  * // 文章 Frontmatter 示例：
  * ---

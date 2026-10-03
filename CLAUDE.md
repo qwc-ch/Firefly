@@ -20,7 +20,7 @@ Firefly is a feature-rich static blog theme built on **Astro 7** with **Svelte 5
 | `pnpm new-post <filename>` | Scaffold a new blog post |
 | `pnpm new-dynamic` (`new-d`) | Scaffold a new dynamic (microblog) entry |
 | `pnpm lqips` | Regenerate LQIP data into `src/constants/lqips.json` |
-| `pnpm covers` | Pin random covers (`image: "api"` posts) into `src/constants/random-covers.json` (existing entries kept) |
+| `pnpm covers` | Re-roll random covers (`image: "api"` posts) into `src/constants/random-covers.json` (all refetched each run) |
 
 Package manager is **pnpm** (enforced). Node.js >= 22 required.
 
@@ -85,7 +85,7 @@ Defined in `src/content.config.ts`:
 
 Multi-step: `scripts/generate-lqips.ts` → `scripts/generate-random-covers.ts` → `scripts/generate-vndb-covers.ts` → `astro build` → `scripts/prune-pio-assets.ts` → `scripts/subset-fonts.ts` → `scripts/minify-inline-scripts.ts` → `pagefind --site dist`
 
-LQIP data is generated into `src/constants/lqips.json` and committed — regenerate with `pnpm lqips`. Random-cover pinning: the `/random` API (CloudFlare ImgBed) cannot honor a seed param, so `generate-random-covers.ts` resolves one stable image URL per `image: "api"` post into committed `src/constants/random-covers.json` (consumed by `src/utils/image-utils.ts`); this keeps list-card and post-page covers identical. Delete an entry + rerun `pnpm covers` to re-roll that post's cover. Icon data lives in `src/constants/icons-data.json` (committed, Biome-ignored, consumed by `src/components/common/Icon.svelte`) but has no generator script in the current build.
+LQIP data is generated into `src/constants/lqips.json` and committed — regenerate with `pnpm lqips`. Random covers: the `/random` API (CloudFlare ImgBed) cannot honor a seed param, so `generate-random-covers.ts` re-rolls a fresh image URL for every `image: "api"` post on each build into committed `src/constants/random-covers.json` (consumed by `src/utils/image-utils.ts`); this keeps list-card and post-page covers identical within a build while rotating covers across builds. Icon data lives in `src/constants/icons-data.json` (committed, Biome-ignored, consumed by `src/components/common/Icon.svelte`) but has no generator script in the current build.
 
 `generate-vndb-covers.ts` downloads VNDB cover art into `public/vndb-covers/` (gitignored, skips files that already exist). It no-ops unless `siteConfig.vndb` has a `userId`, `downloadCovers: true`, and `mode: "static"`.
 
