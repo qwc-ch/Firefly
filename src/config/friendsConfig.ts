@@ -635,6 +635,18 @@ export const friendsConfig: FriendLink[] = [
 		cover: "https://tu.520781.xyz/file/youlian/azuma.mstzuomu.space.png",
 		rss: "https://azuma.mstzuomu.space/rsd.xml",
 	},
+	{
+		title: "折腾进行时",
+		imgurl: 
+			"https://weavatar.com/api/avatar/e3298b871864a7a21690863f8c930754a36cb5c6f0b105f4b5d4737bfd219f57?s=2000&t=1783684315863",
+		desc: "生命不息，折腾不止",
+		siteurl: "https://www.9ll.uk/",
+		tags: ["Blog"],
+		weight: 46,
+		enabled: true,
+		cover: "https://tu.520781.xyz/file/youlian/www.9ll.uk.png",
+		rss: "https://www.9ll.uk/rss.xml",
+	},
 ];
 
 // 获取启用的友链并进行排序
