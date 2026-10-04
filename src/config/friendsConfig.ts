@@ -442,7 +442,7 @@ export const friendsConfig: FriendLink[] = [
 		siteurl: "https://201562.xyz",
 		rss: "https://201562.xyz/rss.xml",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
+		weight: 63, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
 	{
