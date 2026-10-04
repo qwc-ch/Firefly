@@ -637,7 +637,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "折腾进行时",
-		imgurl: 
+		imgurl:
 			"https://weavatar.com/api/avatar/e3298b871864a7a21690863f8c930754a36cb5c6f0b105f4b5d4737bfd219f57?s=2000&t=1783684315863",
 		desc: "生命不息，折腾不止",
 		siteurl: "https://www.9ll.uk/",
