@@ -3,6 +3,7 @@ import GoogleAnalytics from "@components/analytics/GoogleAnalytics.astro";
 import La51Analytics from "@components/analytics/La51Analytics.astro";
 import MicrosoftClarity from "@components/analytics/MicrosoftClarity.astro";
 import UmamiAnalytics from "@components/analytics/UmamiAnalytics.astro";
+import UmamiMetrics from "@components/analytics/UmamiMetrics.astro";
 import CodeGroupManager from "@components/features/CodeGroupManager.astro";
 import FancyboxManager from "@components/features/FancyboxManager.astro";
 import FontSetup from "@components/features/FontSetup.astro";
@@ -177,6 +178,17 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
           replays={analyticsConfig.umamiAnalytics.replays}
           />
         )}
+        {analyticsConfig?.umamiAnalytics?.websiteId &&
+          analyticsConfig.umamiAnalytics.shareId &&
+          analyticsConfig.umamiAnalytics.shareApiBase && (
+            <UmamiMetrics
+              shareId={analyticsConfig.umamiAnalytics.shareId}
+              shareApiBase={analyticsConfig.umamiAnalytics.shareApiBase}
+              historicalVisitors={analyticsConfig.umamiAnalytics.historicalStats?.visitors}
+              historicalPageviews={analyticsConfig.umamiAnalytics.historicalStats?.pageviews}
+              localPreview={import.meta.env.DEV || ["localhost", "127.0.0.1", "::1", "0.0.0.0"].includes(Astro.url.hostname.toLowerCase())}
+            />
+          )}
         {analyticsConfig?.la51Analytics?.Id && (
             <La51Analytics
             analyticsId={analyticsConfig.la51Analytics.Id}
