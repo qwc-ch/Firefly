@@ -13,6 +13,7 @@
 - [番组计划](https://blog.amamo.top/bangumi/): 记录我的二次元之旅
 
 ## Recent Posts
+- [把 Aemeath 的站点统计页移植到 Firefly](https://blog.amamo.top/posts/firefly-aemeath-analytics-port/): 记录把 Aemeath 主题的公开站点统计页 /analytics 移植到 Firefly 博客主题的过程：Umami 公开分享接口、Waline 最新评论、GitHub 推送热力图与侧栏统计快照组件的适配记录。
 - [dsh-fs-link2symlink-fix：一个插件修好 dsh 在 PRoot 下 write 丢文件](https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/): dsh 的 write 工具在 Termux/PRoot 里新建文件只留一个悬空的 .l2s 符号链接，内容直接蒸发。排查到 PRoot 的 --link2symlink 把 link(2) 仿真坏了，于是写了个零依赖插件在发布原语上把它兜住。
 - [随机封面修复记：同一篇文章，列表和详情页竟然两张图](https://blog.amamo.top/posts/firefly-random-cover/): 博客列表页和文章详情页的随机封面每次都不一样，排查后发现是图床 /random 接口不支持种子参数。记录用"构建期固定封面"彻底解决这个问题的过程。
 - [怎么让 dsh 搜索用上 Exa 插件](https://blog.amamo.top/posts/zen-me-rang-dsh-sou-suo-yong-shang-exa-cha-jian/): dsh 基础包把 web 行的 searchProvider 钉死为 deepseek-official，导致搜索插件的"零配置自动接管"不会生效；本文记录排查过程与 profile 补丁层的修复方法。
@@ -32,4 +33,3 @@
 - [这个博客的朋友圈是怎么做的](https://blog.amamo.top/posts/%E8%BF%99%E4%B8%AA%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%9C%8B%E5%8F%8B%E5%9C%88%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84/): 一篇关于博客朋友圈功能的实现思路分享，从 RSS 抓取到前端展示，聊聊背后的设计。
 - [今天是伟大的0721日](https://blog.amamo.top/posts/26-07-21/): 今天居然是0721日
 - [Cloudflare VS Vercel？！](https://blog.amamo.top/posts/cf-vs-vercel/): 简单介绍Cloudflare和vercel的服务，以及对比双方优缺点。
-- [给博客写了个后台管理](https://blog.amamo.top/posts/admin-panel/): 一个简单顺手的博客后台，从零到一的实践记录

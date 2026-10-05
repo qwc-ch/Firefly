@@ -3,11 +3,41 @@
   <id>https://blog.amamo.top/</id>
   <title type="text">年华</title>
   <subtitle type="text">欢迎来到我的小破站</subtitle>
-  <updated>2026-10-03T00:00:00.000Z</updated>
+  <updated>2026-10-05T00:00:00.000Z</updated>
   <author><name>年华</name></author>
   <link rel="alternate" href="https://blog.amamo.top/"/>
   <link rel="self" href="https://blog.amamo.top/atom.xml"/>
   <generator uri="https://github.com/CuteLeaf/Firefly">Firefly v6.16.3</generator>
+    <entry>
+      <id>https://blog.amamo.top/posts/firefly-aemeath-analytics-port/</id>
+      <title type="text">把 Aemeath 的站点统计页移植到 Firefly</title>
+      <published>2026-10-05T00:00:00.000Z</published>
+      <updated>2026-10-05T00:00:00.000Z</updated>
+      <author><name>Admin</name></author>
+      <link rel="alternate" href="https://blog.amamo.top/posts/firefly-aemeath-analytics-port/"/>
+      <summary type="text">记录把 Aemeath 主题的公开站点统计页 /analytics 移植到 Firefly 博客主题的过程：Umami 公开分享接口、Waline 最新评论、GitHub 推送热力图与侧栏统计快照组件的适配记录。</summary>
+      <content type="html"><![CDATA[<p>最近把 Aemeath 主题里的公开统计页搬到了这个 Firefly 主题里。Aemeath 是原作者的项目，站点地址：<a href="http://rainzt.cn" target="_blank">http://rainzt.cn</a>。它把 Umami 公开数据、Waline 最新评论、GitHub 推送热力图聚合在一个独立的 <code>/analytics</code> 页面里，做成了一块”会呼吸”的真实数据面板。这篇文章记录移植过程，顺便说明新加了哪些文件。</p>
+<blockquote><p>Aemeath 的原页面地址是作者站点的 <code>/analytics</code>，思路来源与样式实现都值得细看；Firefly 这边做了本地适配。</p></blockquote>
+<section><h2>一、新增的三个文件<a href="#一新增的三个文件"><span>#</span></a></h2><section><h3>1. <code>src/pages/analytics.astro</code><a href="#1-srcpagesanalyticsastro"><span>#</span></a></h3><p>独立的「站点统计」页面，访问 <code>/analytics/</code>。基于 Umami 的公开分享接口（只读鉴权，不需要管理员 Token），包含：</p><ul>
+<li><strong>总览卡片</strong>：累计访客、累计浏览、今日访客、今日浏览</li>
+<li><strong>访问脉冲</strong>：7 / 30 / 90 天切换的浏览量与访客趋势</li>
+<li><strong>热门页面排行</strong>：按路径的 Top 页面</li>
+<li><strong>访客分布</strong>：设备、浏览器、国内地域分布的环形图与图例</li>
+<li><strong>流量来源</strong>：channel 维度来源渠道</li>
+<li><strong>部署动态</strong>：GitHub main 分支推送热力图</li>
+<li><strong>最新评论</strong>：读取 Waline 公开评论流</li>
+</ul><p>页面重点做了容错：单个接口超时只影响对应模块，其他模块照常显示；加了 2 分钟级 localStorage 缓存，Swup 切页后重新挂载动画与数据。</p></section><section><h3>2. <code>src/components/widget/AnalyticsSnapshot.astro</code><a href="#2-srccomponentswidgetanalyticssnapshotastro"><span>#</span></a></h3><p>侧栏用的统计快照小组件，展示设备分布和浏览器偏好的环形图（donut），读取同一组 Umami 公开接口，适合挂在侧栏或首页。</p></section><section><h3>3. <code>src/pages/api/github-pushes.json.ts</code><a href="#3-srcpagesapigithub-pushesjsonts"><span>#</span></a></h3><p>构建期预渲染的 JSON 接口 <code>/api/github-pushes.json</code>：服务端执行 <code>git log HEAD --since=53 weeks ago</code> 读取提交时间，供统计页的部署热力图使用。移植时把硬编码的仓库名从 <code>Jarvis0227/Aemeath</code> 改成了本站的 <code>qwc-ch/Firefly</code>。</p></section></section>
+<section><h2>二、配置上的改动<a href="#二配置上的改动"><span>#</span></a></h2><p>只动了配置，不破坏原有结构：</p><ul>
+<li><code>src/config/analyticsConfig.ts</code>：给 Umami 配置补 <code>shareId</code>、<code>shareApiBase</code>（指向自建的 <code>https://umami.520781.xyz</code>）、<code>historicalStats</code>、<code>showPageViews</code>、<code>showSiteStats</code></li>
+<li><code>src/types/analyticsConfig.ts</code>：同步补充对应类型字段</li>
+<li><code>src/config/navBarConfig.ts</code>：「其他」下拉里原来指向 Umami 外部分享页的「统计」，改成本地 <code>/analytics/</code> 入口</li>
+</ul><p>Waline 已经在 <code>src/config/commentConfig.ts</code> 里启用，统计页的最新评论模块会直接复用它的 <code>serverURL</code>，不用额外配置。</p></section>
+<section><h2>三、验证方式<a href="#三验证方式"><span>#</span></a></h2><ul>
+<li><code>pnpm astro check</code>：282 个文件，0 错误 0 警告</li>
+<li><code>pnpm exec biome ci</code> 对新增/改动文件：通过</li>
+</ul><p>构建流程没有跑完整 build（本地较慢），静态产物和接口在 <code>pnpm astro check</code> 的类型检查下已经通过；部署后访问 <code>/analytics/</code> 和 <code>/api/github-pushes.json</code> 即可看到效果。</p></section>
+<section><h2>结语<a href="#结语"><span>#</span></a></h2><p>这套统计页的价值在于”公开可读”——不需要暴露 Umami 管理后台，访客也能看到站点的真实活力。移植到 Firefly 后，主题原有的 <code>UmamiStats</code> 侧栏小组件保持不变，<code>/analytics</code> 只是多了一个更完整的数据总览入口。感谢 Aemeath 作者的开源与分享。</p></section>]]></content>
+    </entry>
     <entry>
       <id>https://blog.amamo.top/posts/dsh-fs-link2symlink-fix/</id>
       <title type="text">dsh-fs-link2symlink-fix：一个插件修好 dsh 在 PRoot 下 write 丢文件</title>
