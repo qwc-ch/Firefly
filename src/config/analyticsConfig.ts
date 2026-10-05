@@ -13,6 +13,19 @@ export const analyticsConfig: AnalyticsConfig = {
 		scriptUrl: "https://umami.520781.xyz/script.js",
 		// Umami 会话回放脚本地址，支持使用自建
 		replaysScriptUrl: "https://umami.520781.xyz/recorder.js",
+		// 公开分享链接对应的 Share ID（仅用于读取公开统计，不要填写管理员 Token）
+		shareId: "uVEXU0CJbC0XUe0n",
+		// Umami 实例的 API 地址（自建实例指向源站根地址，不含 /api）
+		shareApiBase: "https://umami.520781.xyz",
+		// 迁移前的历史累计仅合并展示在站点统计卡片中，不会写入 Umami
+		historicalStats: {
+			visitors: 0,
+			pageviews: 0,
+		},
+		// 文章页保留 Waline 的历史阅读量；Umami 继续负责全站流量与仪表盘统计
+		showPageViews: false,
+		// 在“站点统计”卡片中显示累计访客与总浏览量
+		showSiteStats: true,
 		// 是否追踪出站链接
 		trackOutboundLinks: true,
 		// 是否收集浏览器性能指标

@@ -109,11 +109,11 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		icon: "material-symbols:more-horiz",
 
 		children: [
+			// 站点统计
 			{
-				name: "统计",
-				url: "https://umami.520781.xyz/share/uVEXU0CJbC0XUe0n",
-				external: true,
-				icon: "fa7-solid:chart-simple",
+				name: "站点统计",
+				url: "/analytics/",
+				icon: "material-symbols:monitoring-rounded",
 			},
 			// 音乐（外部链接）
 			LinkPresets.Music,
