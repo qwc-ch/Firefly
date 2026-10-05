@@ -647,6 +647,17 @@ export const friendsConfig: FriendLink[] = [
 		cover: "https://tu.520781.xyz/file/youlian/www.9ll.uk.png",
 		rss: "https://www.9ll.uk/rss.xml",
 	},
+	{
+		title: "朝朝听雨",
+		imgurl: "https://rainzt.cn/zzty.png",
+		cover: "https://tu.520781.xyz/file/youlian/rainzt.cn.png",
+		desc: "物物而不物于物，念念而不念于念",
+		siteurl: "http://rainzt.cn",
+		rss: "https://rainzt.cn/rss.xml",
+		tags: ["Blog"],
+		weight: 45,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
