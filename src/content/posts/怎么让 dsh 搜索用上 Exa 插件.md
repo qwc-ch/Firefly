@@ -1,8 +1,8 @@
 ---
 title: 怎么让 dsh 搜索用上 Exa 插件
 published: 2026-10-02
-updated: 2026-10-02
-description: dsh 基础包把 web 行的 searchProvider 钉死为 deepseek-official，导致搜索插件的"零配置自动接管"不会生效；本文记录排查过程与 profile 补丁层的修复方法。
+updated: 2026-10-05
+description: dsh 基础包把 web 行的 searchProvider 钉死为 deepseek-official，导致搜索插件的"零配置自动接管"不会生效；本文记录排查过程与 profile 补丁层的修复方法。2026-10-05 勘误：profile 补丁层是整值替换而非合并，web 行必须把 fetchProvider 一并写上。
 image: 'api'
 tags: [dsh, AI, 搜索]
 category: '运维'
@@ -107,18 +107,30 @@ function resolveProvider(selection) {
 
 ## 修复：profile 补丁层按 id 覆盖
 
-用户自己的 `~/.dsh/profiles/web/cordis.patch.yml` 应用在所有 bundle 层**之后**，可以按 id 覆盖行（加载器用 `Object.assign` 合并 config override，没写的字段保留原值）：
+用户自己的 `~/.dsh/profiles/web/cordis.patch.yml` 应用在所有 bundle 层**之后**，可以按 id 覆盖行：
 
 ```yaml
 # ~/.dsh/profiles/web/cordis.patch.yml
 - id: web
   config:
     searchProvider: exa
+    fetchProvider: http
 ```
 
-只覆盖 `searchProvider` 一个字段，`fetchProvider: http` 原样保留，不影响网页抓取。另外 profile 配了 `patchReload: "live"`，这个改动**保存即热重载生效，无需重启**。
+注意 `fetchProvider: http` **必须一并写上**。这是本文初版的一个勘误：初版写的是"加载器用 `Object.assign` 合并 config override，没写的字段保留原值"，这是错的。实际查 `cordis-plugin-include` 的 `applyEntryPatches` 源码，覆盖语义是：
 
-之后 `web_search` 就走 Exa 插件了——搜"哈利波特作者是谁"直接返回真实结果。
+```js
+for (const [key, value] of Object.entries(overrides)) {
+  if (key === "id") continue;
+  target[key] = value;   // ← 整值替换，没有深合并
+}
+```
+
+`config` 作为一个整体被替换掉，只写 `searchProvider` 会把 `fetchProvider` 丢掉。而 `WebRuntime.Config` 的 zod schema 里 `searchProvider` / `fetchProvider` 都是必填（`z.string()`），构造时 `config.fetchProvider ?? process.env.DSH_WEB_FETCH_PROVIDER` 会回退到环境变量——没配就是 `undefined`，`web_fetch` 会直接报"未配置 provider"。dsh-base 自家注释也写明了："A patch replaces the targeted row's whole `config` rather than merging into it"。按 id 覆盖行时，正确姿势是**把整行 config 完整重述一遍**，只改你想改的字段。
+
+另外 profile 配了 `patchReload: "live"`，这个改动**保存即热重载生效，无需重启**。
+
+之后 `web_search` 就走 Exa 插件了——搜"哈利波特作者是谁"直接返回真实结果（J.K. 罗琳），已在 2026-10-05 用上述两字段写法实测验证通过。
 
 ## 注意事项
 
@@ -128,7 +140,7 @@ function resolveProvider(selection) {
 ## 小结
 
 - **装插件 ≠ 会生效**：dsh 基础包把 `web` 行的 `searchProvider` 钉死为 `deepseek-official`，无 key 时插件的零配置自动接管不会发生，搜索只会撞上凭据错误。
-- **修复一行搞定**：在 `~/.dsh/profiles/web/cordis.patch.yml` 里加 `- id: web` + `config: { searchProvider: exa }`，`fetchProvider` 不受影响。
+- **覆盖是整值替换**：profile 补丁层按 id 覆盖 `web` 行时，`config` 整体被替换，必须把 `fetchProvider: http` 一并写上，只写 `searchProvider` 会丢抓取配置。
 - **热生效**：`patchReload: "live"` 下保存即生效，无需重启 dsh。
 - **仓库地址**：
   - 搜索插件：[TonyDua/dsh-web-search-exa](https://github.com/TonyDua/dsh-web-search-exa)（`@tonydua/dsh-web-search-exa@0.1.5`）
