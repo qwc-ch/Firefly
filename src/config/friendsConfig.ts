@@ -669,6 +669,17 @@ export const friendsConfig: FriendLink[] = [
 		cover: "https://tu.520781.xyz/file/youlian/clannad.top.png",
 		rss: "https://clannad.top/feed.xml",
 	},
+	{
+		title: "YuJing的记忆终端",
+		imgurl: "https://yujingblog.top/assets/home/avatar.webp",
+		desc: "记一些无用的日常，和有光的时刻。",
+		siteurl: "https://yujingblog.top/",
+		tags: [],
+		weight: 43,
+		enabled: true,
+		cover: "https://tu.520781.xyz/file/youlian/yujingblog.top.png",
+		rss: "https://yujingblog.top/atom.xml",
+	},
 ];
 
 // 获取启用的友链并进行排序
