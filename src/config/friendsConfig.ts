@@ -658,6 +658,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 45,
 		enabled: true,
 	},
+	{
+		title: "HZH",
+		imgurl: "https://clannad.top/favicon.png",
+		desc: "Welcome to HZH",
+		siteurl: "https://clannad.top/",
+		tags: [],
+		weight: 44,
+		enabled: true,
+		cover: "https://tu.520781.xyz/file/youlian/clannad.top.png",
+		rss: "https://clannad.top/feed.xml",
+	},
 ];
 
 // 获取启用的友链并进行排序
