@@ -228,14 +228,21 @@ const description =
 
         connectedCallback() {
           this.addEventListener("click", this.handleClick);
-          const input = this.querySelector("[data-search]");
-          if (input) {
-            input.addEventListener("input", () => this.applyFilters());
-          }
+          // 定义脚本在 head 中提前注册了自定义元素：解析器会在起始标签处立即升级并
+          // 触发 connectedCallback，此时子元素尚未解析，querySelector 取不到输入框。
+          // 因此用事件委托监听冒泡的 input 事件，不依赖解析时序。
+          this.addEventListener("input", this.handleInput);
         }
 
         disconnectedCallback() {
           this.removeEventListener("click", this.handleClick);
+          this.removeEventListener("input", this.handleInput);
+        }
+
+        handleInput(e) {
+          if (e.target instanceof Element && e.target.matches("[data-search]")) {
+            this.applyFilters();
+          }
         }
 
         handleClick(e) {
