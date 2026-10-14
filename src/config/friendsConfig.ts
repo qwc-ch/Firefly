@@ -680,6 +680,17 @@ export const friendsConfig: FriendLink[] = [
 		cover: "https://tu.520781.xyz/file/youlian/yujingblog.top.png",
 		rss: "https://yujingblog.top/atom.xml",
 	},
+	{
+		title: "zuige's blog",
+		imgurl: "https://blog.zuiges.com/img/avatar.jpg",
+		cover: "https://tu.520781.xyz/file/youlian/blog.zuiges.com.png",
+		desc: "嵌入式开发 玩机折腾 技术随手记的小博客",
+		siteurl: "https://blog.zuiges.com",
+		rss: "https://blog.zuiges.com/atom.xml",
+		tags: ["Blog"],
+		weight: 42,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
