@@ -691,6 +691,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 42,
 		enabled: true,
 	},
+	{
+		title: "DW博客",
+		imgurl: "https://www.dwancc.cn/assets/images/6ac7991353b46.jpg",
+		cover: "https://tu.520781.xyz/file/youlian/www.dwancc.cn.png",
+		desc: "欢迎来到我的个人主页",
+		siteurl: "https://www.dwancc.cn",
+		tags: ["Blog"],
+		weight: 41,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
