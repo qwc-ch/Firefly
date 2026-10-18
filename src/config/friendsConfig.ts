@@ -701,6 +701,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 41,
 		enabled: true,
 	},
+	{
+		title: "yikuae の 小站",
+		imgurl: "https://www.yikuae.top/avatar.jpg",
+		cover: "https://tu.520781.xyz/file/youlian/www.yikuae.top.png",
+		desc: "辞江寄晓序，承烬赴星遐",
+		siteurl: "https://www.yikuae.top",
+		tags: ["Blog"],
+		weight: 40,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
