@@ -633,7 +633,7 @@ export const friendsConfig: FriendLink[] = [
 		weight: 47,
 		enabled: true,
 		cover: "https://tu.520781.xyz/file/youlian/azuma.mstzuomu.space.png",
-		rss: "https://azuma.mstzuomu.space/rsd.xml",
+		rss: "https://azuma.mstzuomu.space/rss.xml",
 	},
 	{
 		title: "折腾进行时",
