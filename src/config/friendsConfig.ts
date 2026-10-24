@@ -711,6 +711,18 @@ export const friendsConfig: FriendLink[] = [
 		weight: 40,
 		enabled: true,
 	},
+	{
+		title: "SilverCode Nexus",
+		imgurl:
+			"https://cdn.replow.org/media/site/39567bb1b9474e869fb4ee1c4343a7e8.png",
+		cover: "https://tu.520781.xyz/file/youlian/www.replow.org.png",
+		desc: "Silune的小站",
+		siteurl: "https://www.replow.org/",
+		rss: "https://www.replow.org/rss.xml",
+		tags: ["Blog"],
+		weight: 39,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
