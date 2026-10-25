@@ -723,6 +723,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 39,
 		enabled: true,
 	},
+	{
+		title: "Beau",
+		imgurl: "https://blog.melz.cn/Beau.png",
+		cover: "https://tu.520781.xyz/file/youlian/blog.melz.cn.png",
+		desc: "写我所见，记我所思。",
+		siteurl: "https://blog.melz.cn/",
+		rss: "https://blog.melz.cn/feed/",
+		tags: ["Blog"],
+		weight: 38,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
