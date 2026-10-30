@@ -734,6 +734,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 38,
 		enabled: true,
 	},
+	{
+		title: "渡劫博客",
+		imgurl: "https://www.520691.xyz/images/16456faa-fdea-4a15-9d01-88efd5863791.jpg",
+		cover: "https://tu.520781.xyz/file/youlian/www.520691.xyz.png",
+		desc: "个人全栈开发者，cf生态爱好者",
+		siteurl: "https://www.520691.xyz",
+		rss: "https://www.520691.xyz/rss.xml",
+		tags: ["Blog"],
+		weight: 37,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
