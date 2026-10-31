@@ -736,7 +736,8 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "渡劫博客",
-		imgurl: "https://www.520691.xyz/images/16456faa-fdea-4a15-9d01-88efd5863791.jpg",
+		imgurl:
+			"https://www.520691.xyz/images/16456faa-fdea-4a15-9d01-88efd5863791.jpg",
 		cover: "https://tu.520781.xyz/file/youlian/www.520691.xyz.png",
 		desc: "个人全栈开发者，cf生态爱好者",
 		siteurl: "https://www.520691.xyz",
