@@ -3,11 +3,41 @@
   <id>https://blog.amamo.top/</id>
   <title type="text">年华</title>
   <subtitle type="text">欢迎来到我的小破站</subtitle>
-  <updated>2026-10-06T00:00:00.000Z</updated>
+  <updated>2026-10-30T00:00:00.000Z</updated>
   <author><name>年华</name></author>
   <link rel="alternate" href="https://blog.amamo.top/"/>
   <link rel="self" href="https://blog.amamo.top/atom.xml"/>
   <generator uri="https://github.com/CuteLeaf/Firefly">Firefly v6.16.3</generator>
+    <entry>
+      <id>https://blog.amamo.top/posts/2026-10-30-%E8%BF%99%E5%A5%97%E5%85%A8%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E9%A3%8E%E6%A0%BC/</id>
+      <title type="text">这套全新的博客风格：纸底、墨线、一种黄</title>
+      <published>2026-10-30T00:00:00.000Z</published>
+      <updated>2026-10-30T00:00:00.000Z</updated>
+      <author><name>年华</name></author>
+      <link rel="alternate" href="https://blog.amamo.top/posts/2026-10-30-%E8%BF%99%E5%A5%97%E5%85%A8%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E9%A3%8E%E6%A0%BC/"/>
+      <summary type="text">博客从 Firefly 换皮成了现在这套工业手册的味道，这套风格从《明日方舟：终末地》的界面学的。聊聊规则怎么定的：颜色怎么用、什么形状表示什么、编号从哪来。</summary>
+      <content type="html"><![CDATA[<p>新站<a href="tblog.amamo.top">tblog.amamo.top</a>使用了新的风格。</p>
+<p>先交代这套皮的来路：它的味道是从游戏 <strong>《明日方舟：终末地》</strong>（Arknights: Endfield）的界面学的——纸底墨线、一种高亮黄、切角的可点块、短促机械的动效。那套界面很对我的胃口，于是把它的气质搬进了博客，但不是照抄，是抽成一组规则再用在自己的内容上。</p>
+<section><h2>颜色只有三种角色<a href="#颜色只有三种角色"><span>#</span></a></h2><p>定风格的时候，最怕的是颜色失控。所以一开始就只给颜色分了三个角色：</p><ul>
+<li><strong>纸和墨</strong>。页面底色是纸白，文字和线都是墨色。深色主题是另一套完整的配色，不是简单反色——跟着系统或页脚的切换按钮走。</li>
+<li><strong>黄色</strong>。全站唯一的高亮色，只做填充。出现黄色，意思永远是这三件事之一：你在这里、你可以按、这里需要看一眼。黄色上面永远压墨色字。</li>
+<li><strong>红色</strong>。只留给删除这类不可恢复的操作。日常界面里看不到红色，这是故意的。</li>
+</ul><blockquote><p><strong>注意</strong>：这套规则不是随手定的。界面越简单，就越要管住”哪个颜色在哪出现”。“一种黄”的意思是全站高亮就这一个信号，多了就糊了。</p></blockquote></section>
+<section><h2>什么形状表示什么<a href="#什么形状表示什么"><span>#</span></a></h2><p>切掉一个角的块，表示”可以按”：按钮、文章编号、分类筛选都是。不能按的东西是直角：正文里的图、段落、只读的列表。全站没有圆角，也没有投影和渐变。</p><p>这套规则最直观的体现，就是你一眼能看出”这能不能点”。不用靠悬停变色去猜。</p></section>
+<section><h2>编号从哪来<a href="#编号从哪来"><span>#</span></a></h2><p>文章有编号，但不是手写的。<code>No.001</code>、<code>No.002</code> 这样按发布先后排，构建的时候自动算出来。字数、阅读时长、分类计数也一样，全部从文件本身算，页面里没有假数字。</p><p>这一点其实很符合”手册”的感觉：每个字段都是真的，可核对。</p></section>
+<section><h2>为什么是工业手册<a href="#为什么是工业手册"><span>#</span></a></h2><p>我想了挺久，为什么喜欢这种纸底墨线的调子。后来想明白了：它不讨好眼睛，它讨好”读”。</p><ul>
+<li>阅读页不垫整块板色，让背景的等高线透出来，正文压在淡淡的墨线上，对比度不受伤；</li>
+<li>一屏一屏往下，粗的中文标题配细的字段，字号和行高都是按正文排的，不靠加粗和加大制造”高级感”；</li>
+<li>交互的动效是短促机械的：入场很快、落点干脆，不像橡皮糖一样来回弹。</li>
+</ul><p>说白了，这套皮想让内容自己说话，界面退到后面去。黄色的”这里/可点/要留神”，切角的”可按”，编号的”真数据”，都是为了让阅读省心。</p></section>
+<section><h2>灵感来自终末地<a href="#灵感来自终末地"><span>#</span></a></h2><p>说到底，这套风格不是凭空设计的，它的原型是 <strong>《明日方舟：终末地》</strong> 的界面。那款游戏的 UI 有一眼能认出来的气质：</p><ul>
+<li>纸面一样干净的底色，配上墨色细线和一种高亮黄；</li>
+<li>能按的东西切掉一个角，不能按的是直角，看形状就知道能不能点；</li>
+<li>数字、编号、状态都是”真数据”，像工业图纸上的标注，不玩虚的；</li>
+<li>动效短促干脆，机械感强，不粘糊。</li>
+</ul><p>我不是照搬那张界面，而是把它的”规则”抽出来——颜色、形状、编号、动效各自只干一件事——再套到博客自己的内容上。所以它没有终末地的图标和按钮，但有那套界面的骨架。</p><p>喜欢这种调子的原因也简单：它把注意力让给内容。页面不抢戏，但每个可读、可点的地方都说得清清楚楚。</p><p><strong>这个站点还有很多问题，欢迎大家提出意见</strong></p><p>仓库地址：<a href="https://github.com/qwc-ch/endfield-blog" target="_blank">https://github.com/qwc-ch/endfield-blog</a>
+预览地址：<a href="https://tblog.amamo.top" target="_blank">https://tblog.amamo.top</a></p></section>]]></content>
+    </entry>
     <entry>
       <id>https://blog.amamo.top/posts/fk-ai-potboiler/</id>
       <title type="text">AI短剧越来越low，为什么？</title>
