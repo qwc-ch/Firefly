@@ -269,3 +269,13 @@ body.wallpaper-transparent [data-waline] .wl-dropdown {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* 修复：表情/GIF 弹层下半部分点不到。
+   backdrop-filter 会让 .wl-panel 形成独立层叠上下文，z-index:10 的弹层被困在面板内部；
+   而评论卡片 .wl-card-item（position:relative）在 DOM 中靠后，会绘制在弹层之上——
+   卡片背景透明所以表情看得见，但点击被卡片拦截（弹层顶部约 60px 只压在静态的
+   排序栏上，所以表现为"上面两行能点、下面两行点不了"）。
+   抬升面板层级，让面板连同其内部的弹层重新盖过评论列表。 */
+body.wallpaper-transparent [data-waline] .wl-panel {
+  z-index: 1;
+}
