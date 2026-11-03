@@ -5,8 +5,11 @@ interface Props {
 	path: string;
 }
 
+// imageUpload 是本主题自己的配置项，不属于 Waline 初始化参数，先取出
+const { imageUpload, ...walineOptions } = commentConfig.waline ?? {};
+
 const config = {
-	...commentConfig.waline,
+	...walineOptions,
 	el: "#waline",
 	path: Astro.props.path,
 	dark: "html.dark",
@@ -21,8 +24,55 @@ const config = {
   {commentConfig.waline?.cssUrl && (
     <link rel="stylesheet" href={commentConfig.waline.cssUrl} />
   )}
-  <script type="module" is:inline define:vars={{ config }}>
+  <script type="module" is:inline define:vars={{ config, imageUpload }}>
     import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+
+    // 评论图片直传图床（CloudFlare ImgBed /upload 接口），替代 Waline 默认的 base64 内嵌
+    if (imageUpload?.enable && imageUpload?.endpoint) {
+      const buildUploadUrl = () => {
+        const params = new URLSearchParams();
+        if (imageUpload.authCode) params.set("authCode", imageUpload.authCode);
+        if (imageUpload.uploadFolder) params.set("uploadFolder", imageUpload.uploadFolder);
+        if (imageUpload.uploadChannel) params.set("uploadChannel", imageUpload.uploadChannel);
+        // returnFormat=full 让接口直接返回带域名的完整链接；responseFormat=object 便于单文件解析
+        params.set("returnFormat", "full");
+        params.set("responseFormat", "object");
+        return `${imageUpload.endpoint}?${params.toString()}`;
+      };
+
+      config.imageUploader = async (file) => {
+        const form = new FormData();
+        form.append("file", file, file.name);
+
+        let res;
+        try {
+          res = await fetch(buildUploadUrl(), { method: "POST", body: form });
+        } catch {
+          throw new Error("图片上传失败：无法连接图床，请稍后重试");
+        }
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch {
+          /* 非 JSON 响应交给下方状态码分支处理 */
+        }
+
+        if (!res.ok) {
+          const reason = data && (data.error || data.message);
+          throw new Error(
+            `图片上传失败（HTTP ${res.status}）${reason ? `：${reason}` : "，请检查图床 endpoint 或 authCode 配置"}`,
+          );
+        }
+
+        const item = Array.isArray(data) ? data[0] : data;
+        const src = item && (item.src || item.publicUrl);
+        if (!src) throw new Error("图片上传失败：图床返回内容异常");
+
+        return /^https?:\/\//i.test(src) ? src : new URL(src, imageUpload.endpoint).toString();
+      };
+    }
+
     const requestedPath = new URLSearchParams(window.location.search).get("path");
     const effectiveConfig = requestedPath
       ? { ...config, path: requestedPath }

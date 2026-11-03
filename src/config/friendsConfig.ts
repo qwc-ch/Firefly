@@ -746,6 +746,17 @@ export const friendsConfig: FriendLink[] = [
 		weight: 37,
 		enabled: true,
 	},
+	{
+		title: "摸鱼猫泡泡",
+		imgurl: "https://jiangbyte.cn/img/logo.png",
+		cover: "https://tu.520781.xyz/file/youlian/jiangbyte.cn.png",
+		desc: "记录开发、工具与工程实践。",
+		siteurl: "https://jiangbyte.cn",
+		rss: "https://jiangbyte.cn/rss.xml",
+		tags: ["Blog"],
+		weight: 36,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序

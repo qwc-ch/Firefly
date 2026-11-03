@@ -41,6 +41,18 @@ export const commentConfig: CommentConfig = {
 		visitorCount: true,
 		// Waline 自定义 CSS 文件地址，为空则不加载
 		cssUrl: "/assets/css/waline-custom.css",
+		// 评论图片直传：评论里的图片直接上传到图床（CloudFlare ImgBed），不再转 base64 内嵌
+		imageUpload: {
+			enable: true,
+			// 图床上传接口（CloudFlare ImgBed 格式：https://<域名>/upload）
+			endpoint: "https://tu.520781.xyz/upload",
+			// 若图床开启了上传鉴权（AUTH_CODE），在此填写鉴权码，否则留空
+			authCode: "",
+			// 上传到图床内的目录，留空则传到根目录
+			uploadFolder: "waline",
+			// 存储渠道：telegram / cfr2 / s3 / discord / huggingface / webdav，留空使用图床默认
+			uploadChannel: "",
+		},
 	},
 
 	// artalk评论系统配置

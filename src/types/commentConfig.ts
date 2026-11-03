@@ -30,6 +30,21 @@ export type CommentConfig = {
 		 * Waline 自定义 CSS 文件地址，为空则不加载
 		 */
 		cssUrl?: string;
+		/**
+		 * 评论图片直传图床；未启用时回退 Waline 默认行为（图片转 base64 内嵌，单张上限 128KB）
+		 */
+		imageUpload?: {
+			/** 是否启用直传 */
+			enable?: boolean;
+			/** 图床上传接口，CloudFlare ImgBed 为 https://<域名>/upload */
+			endpoint?: string;
+			/** 上传鉴权码，图床开启 AUTH_CODE 时填写 */
+			authCode?: string;
+			/** 上传目录（图床内的相对路径，如 "waline"），留空上传到根目录 */
+			uploadFolder?: string;
+			/** 存储渠道：telegram / cfr2 / s3 / discord / huggingface / webdav，留空使用图床默认 */
+			uploadChannel?: string;
+		};
 	};
 	artalk?: {
 		// 后端程序 API 地址
