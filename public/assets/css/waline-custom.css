@@ -279,3 +279,18 @@ body.wallpaper-transparent [data-waline] .wl-dropdown {
 body.wallpaper-transparent [data-waline] .wl-panel {
   z-index: 1;
 }
+
+/* 评论图片"发送时才上传"的占位符（pending:// 伪协议）：
+   预览区和已发评论里显示为虚线占位框，而不是裂图 */
+[data-waline] .wl-preview img[src^="pending:"],
+[data-waline] .wl-content img[src^="pending:"] {
+  display: inline-block;
+  min-width: 5em;
+  min-height: 2.5em;
+  border: 1px dashed var(--waline-border-color);
+  border-radius: 4px;
+  background: var(--waline-bg-color-light);
+  object-fit: contain;
+  color: var(--waline-light-grey);
+  font-size: 0.75em;
+}

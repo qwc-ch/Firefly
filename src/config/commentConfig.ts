@@ -28,9 +28,9 @@ export const commentConfig: CommentConfig = {
 		lang: "zh-CN",
 		// 设置 Waline 评论系统表情地址
 		emoji: [
-			//		"https://unpkg.com/@waline/emojis@1.4.0/weibo",
+			"https://unpkg.com/@waline/emojis@1.4.0/weibo",
 			"https://unpkg.com/@waline/emojis@1.4.0/bilibili",
-			//		"https://unpkg.com/@waline/emojis@1.4.0/bmoji",
+			"https://unpkg.com/@waline/emojis@1.4.0/bmoji",
 		],
 		// 评论登录模式。可选值如下：
 		//   'enable'   —— 默认，允许访客匿名评论和用第三方 OAuth 登录评论，兼容性最佳。
@@ -41,17 +41,14 @@ export const commentConfig: CommentConfig = {
 		visitorCount: true,
 		// Waline 自定义 CSS 文件地址，为空则不加载
 		cssUrl: "/assets/css/waline-custom.css",
-		// 评论图片直传：评论里的图片直接上传到图床（CloudFlare ImgBed），不再转 base64 内嵌
+		// 评论图片上传：选图时只插占位符，点"发送"时才统一上传到 EO 边缘函数，由其转发图床。
+		// 上传服务是独立项目（本仓库同级目录 edgeone-image-upload/），
+		// 图床鉴权码配置在 EO 环境变量，前端不持有任何密钥；
+		// endpoint 留空时回退 Waline 默认行为（base64 内嵌，单张上限 128KB）。
 		imageUpload: {
 			enable: true,
-			// 图床上传接口（CloudFlare ImgBed 格式：https://<域名>/upload）
-			endpoint: "https://tu.520781.xyz/upload",
-			// 若图床开启了上传鉴权（AUTH_CODE），在此填写鉴权码，否则留空
-			authCode: "",
-			// 上传到图床内的目录，留空则传到根目录
-			uploadFolder: "waline",
-			// 存储渠道：telegram / cfr2 / s3 / discord / huggingface / webdav，留空使用图床默认
-			uploadChannel: "",
+			// EO 上传服务（edgeone-image-upload 项目），转发图床并持有鉴权码
+			endpoint: "https://image-upload.520781.xyz/upload",
 		},
 	},
 

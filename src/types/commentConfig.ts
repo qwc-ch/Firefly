@@ -31,19 +31,16 @@ export type CommentConfig = {
 		 */
 		cssUrl?: string;
 		/**
-		 * 评论图片直传图床；未启用时回退 Waline 默认行为（图片转 base64 内嵌，单张上限 128KB）
+		 * 评论图片上传服务；未启用时回退 Waline 默认行为（base64 内嵌，单张上限 128KB）。
+		 * 推荐独立部署 EdgeOne 边缘函数作为上传服务（本仓库同级目录 edgeone-image-upload/）：
+		 * 选图时只插占位符，点"发送"时才统一上传；图床鉴权码只存在 EO 环境变量，
+		 * 前端不持有任何密钥。
 		 */
 		imageUpload?: {
-			/** 是否启用直传 */
+			/** 是否启用 */
 			enable?: boolean;
-			/** 图床上传接口，CloudFlare ImgBed 为 https://<域名>/upload */
+			/** 上传服务地址（EdgeOne 边缘函数），如 https://your-app.edgeone.app/upload */
 			endpoint?: string;
-			/** 上传鉴权码，图床开启 AUTH_CODE 时填写 */
-			authCode?: string;
-			/** 上传目录（图床内的相对路径，如 "waline"），留空上传到根目录 */
-			uploadFolder?: string;
-			/** 存储渠道：telegram / cfr2 / s3 / discord / huggingface / webdav，留空使用图床默认 */
-			uploadChannel?: string;
 		};
 	};
 	artalk?: {
