@@ -27,117 +27,39 @@ const config = {
   <script type="module" is:inline define:vars={{ config, imageUpload }}>
     import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
 
-    // ===== 评论图片：选图时只插入占位符，点"发送"时才统一上传，再放行提交 =====
-    // 上传服务（EdgeOne 边缘函数）负责持有图床鉴权码，前端不保存任何密钥。
-    const PENDING_PREFIX = "pending://";
-    const pendingImages = new Map(); // 占位 token -> File
-    let uploading = false;
-
-    // 上传一张图，返回图床展示链接
-    const uploadOne = async (file) => {
-      const form = new FormData();
-      form.append("file", file, file.name);
-
-      let res;
-      try {
-        res = await fetch(imageUpload.endpoint, { method: "POST", body: form });
-      } catch {
-        throw new Error("图片上传失败：无法连接上传服务，请稍后重试");
-      }
-
-      let data = null;
-      try {
-        data = await res.json();
-      } catch {
-        /* 非 JSON 响应交给下方状态码分支处理 */
-      }
-
-      if (!res.ok) {
-        const reason = data && (data.error || data.message);
-        throw new Error(`图片上传失败（HTTP ${res.status}）${reason ? `：${reason}` : ""}`);
-      }
-
-      const item = Array.isArray(data) ? data[0] : data;
-      const url = item && (item.url || item.src || item.publicUrl);
-      if (!url) throw new Error("图片上传失败：上传服务返回内容异常");
-      return url;
-    };
-
-    // 把编辑器文本里的占位 token 替换为真实链接（需经原生 setter + input 事件同步进 Waline 状态）
-    const replaceToken = (token, url) => {
-      const textarea = document.querySelector("#waline .wl-editor");
-      if (!textarea || !textarea.value.includes(token)) return;
-      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value").set;
-      setter.call(textarea, textarea.value.replaceAll(token, url));
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    };
-
+    // ===== 评论图片：选图即传，编辑器里始终是真实图床链接 =====
+    // Waline 原生机制负责全部体验：选图后编辑器先显示"上传中 xx"占位并锁定
+    // 发送按钮，本函数返回后占位自动替换为真实链接；失败时原生 alert 并移除
+    // 占位。上传服务（EdgeOne 边缘函数）持有图床鉴权码，前端不保存任何密钥。
     if (imageUpload?.enable && imageUpload?.endpoint) {
-      // 选图/粘贴/拖拽：不真正上传，立即返回占位 token 交给 Waline 写进文本
-      config.imageUploader = (file) => {
-        const id = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
-        const token = `${PENDING_PREFIX}${id}/${encodeURIComponent(file.name)}`;
-        pendingImages.set(token, file);
-        return Promise.resolve(token);
-      };
+      config.imageUploader = async (file) => {
+        const form = new FormData();
+        form.append("file", file, file.name);
 
-      // 把待传图片全部传完并把占位替换为真实链接，最后放行一次原生提交；
-      // 某张失败时快速中止（已成功的保持不变，剩余的下次点发送时补传）
-      const flushAndSubmit = async (submitBtn) => {
-        uploading = true;
-        if (submitBtn) submitBtn.disabled = true;
+        let res;
         try {
-          for (const [token, file] of [...pendingImages]) {
-            // 占位已被用户从文本中删掉的图片直接丢弃，不上传
-            const textarea = document.querySelector("#waline .wl-editor");
-            if (!textarea || !textarea.value.includes(token)) {
-              pendingImages.delete(token);
-              continue;
-            }
-            try {
-              const url = await uploadOne(file);
-              pendingImages.delete(token);
-              replaceToken(token, url);
-            } catch (err) {
-              alert((err instanceof Error ? err.message : "图片上传失败"));
-              return;
-            }
-          }
-          if (pendingImages.size === 0) {
-            if (submitBtn) submitBtn.disabled = false;
-            submitBtn?.click();
-          }
-        } finally {
-          uploading = false;
-          if (submitBtn) submitBtn.disabled = false;
+          res = await fetch(imageUpload.endpoint, { method: "POST", body: form });
+        } catch {
+          throw new Error("图片上传失败：无法连接上传服务，请稍后重试");
         }
-      };
 
-      // Waline 的提交入口只有两个：发送按钮 click 和编辑器 Ctrl/Cmd+Enter（都调 submitComment）。
-      // 在容器捕获阶段拦截这两个路径：有待传图片时先上传，否则完全不接管。
-      const walineRoot = document.getElementById("waline");
-      walineRoot.addEventListener(
-        "click",
-        (event) => {
-          const btn = event.target.closest(".wl-btn.primary");
-          if (!btn || uploading || pendingImages.size === 0) return;
-          event.preventDefault();
-          event.stopPropagation();
-          flushAndSubmit(btn);
-        },
-        true,
-      );
-      walineRoot.addEventListener(
-        "keydown",
-        (event) => {
-          if (!((event.ctrlKey || event.metaKey) && event.key === "Enter")) return;
-          if (uploading || pendingImages.size === 0) return;
-          event.preventDefault();
-          event.stopPropagation();
-          flushAndSubmit(document.querySelector("#waline .wl-btn.primary"));
-        },
-        true,
-      );
+        let data = null;
+        try {
+          data = await res.json();
+        } catch {
+          /* 非 JSON 响应交给下方状态码分支处理 */
+        }
+
+        if (!res.ok) {
+          const reason = data && (data.error || data.message);
+          throw new Error(`图片上传失败（HTTP ${res.status}）${reason ? `：${reason}` : ""}`);
+        }
+
+        const item = Array.isArray(data) ? data[0] : data;
+        const url = item && (item.url || item.src || item.publicUrl);
+        if (!url) throw new Error("图片上传失败：上传服务返回内容异常");
+        return url;
+      };
     }
 
     const requestedPath = new URLSearchParams(window.location.search).get("path");
