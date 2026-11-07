@@ -13,6 +13,8 @@
 - [番组计划](https://blog.amamo.top/bangumi/): 记录我的二次元之旅
 
 ## Recent Posts
+- [机房装 Node.js 记](https://blog.amamo.top/posts/life/%E6%9C%BA%E6%88%BF%E8%A3%85nodejs%E8%AE%B0/): 4 核 4G 的机房电脑、一份奇怪的问卷，和一个从 Gitee 下载的项目
+- [评论图片直传图床：Waline + EdgeOne 边缘函数踩坑记](https://blog.amamo.top/posts/waline-image-upload-edgeone/): Waline 评论默认把图片转成 base64 塞进评论数据，又慢又胀。本文记录给评论加上图片直传的全过程：用 EdgeOne 边缘函数做鉴权代理把密钥留在服务端，以及 545、401、404 三层报错的排错实录，还有一次被主动放弃的"点发送才上传"设计。
 - [这套全新的博客风格：纸底、墨线、一种黄](https://blog.amamo.top/posts/2026-10-30-%E8%BF%99%E5%A5%97%E5%85%A8%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E9%A3%8E%E6%A0%BC/): 博客从 Firefly 换皮成了现在这套工业手册的味道，这套风格从《明日方舟：终末地》的界面学的。聊聊规则怎么定的：颜色怎么用、什么形状表示什么、编号从哪来。
 - [AI短剧越来越low，为什么？](https://blog.amamo.top/posts/fk-ai-potboiler/): 从AI短剧的观感变化聊起，谈谈剧情和人物到底决定了什么。用《简·爱》当例子，说说情感主题和反套路怎么落地。
 - [把 Aemeath 的站点统计页移植到 Firefly](https://blog.amamo.top/posts/firefly-aemeath-analytics-port/): 记录把 Aemeath 主题的公开站点统计页 /analytics 移植到 Firefly 博客主题的过程：Umami 公开分享接口、Waline 最新评论、GitHub 推送热力图与侧栏统计快照组件的适配记录。
@@ -31,5 +33,3 @@
 - [vercel优化冷知识](https://blog.amamo.top/posts/vercel%E4%BC%98%E5%8C%96%E5%86%B7%E7%9F%A5%E8%AF%86/): vercel优化冷知识
 - [Vercel 部署后全站 404 排查记](https://blog.amamo.top/posts/vercel-deploy-404/): 博客部署到 Vercel 后所有 HTML 页面都返回 404，静态资源却正常。本文记录了从现象、链路分析到定位根因（Vercel CLI cleanUrls 冲突与 l2s 上传 bug）的全过程，以及最终通过固定 CLI 版本解决的方案。
 - [怎么用Netlify反代你的源站](https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/): 怎么用Netlify反代你的源站
-- [留言页的群聊风格改造](https://blog.amamo.top/posts/%E7%95%99%E8%A8%80%E9%A1%B5%E7%9A%84%E7%BE%A4%E8%81%8A%E9%A3%8E%E6%A0%BC%E6%94%B9%E9%80%A0/): 把传统评论区改成即时通讯风格的聊天界面，聊聊这个改造过程中的思路和实现。
-- [这个博客的朋友圈是怎么做的](https://blog.amamo.top/posts/%E8%BF%99%E4%B8%AA%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%9C%8B%E5%8F%8B%E5%9C%88%E6%98%AF%E6%80%8E%E4%B9%88%E5%81%9A%E7%9A%84/): 一篇关于博客朋友圈功能的实现思路分享，从 RSS 抓取到前端展示，聊聊背后的设计。
