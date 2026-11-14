@@ -23,6 +23,18 @@
     display: none;
   }
 
+  /* 移动端底部组件沉到内容层之下（只改 z 轴绘制顺序，不改布局）。
+     底部资料卡等组件带 onload-animation，其 animation forwards 在结束后会
+     永久保留 transform: translateY(0)，使整块成为层叠上下文；它又因 DOM 顺序
+     排在评论区之后，会绘制在评论卡整棵子树之上——Waline 表情弹层从评论卡
+     底部向下溢出的部分正好落进资料卡区域，壁纸模式下两者都是半透明底，
+     表情"看得见却点不到"（仅移动端；桌面端底部组件不存在，无此问题）。
+     沉到负层级后，内容子树连同其弹层重新绘制在底部组件之上。 */
+  #mobile-bottom-sidebar {
+    position: relative;
+    z-index: -1;
+  }
+
   @media (min-width: 768px) {
     #main-grid {
       grid-template-columns: var(--cols-md, 1fr);
