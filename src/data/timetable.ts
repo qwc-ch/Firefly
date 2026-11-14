@@ -8,16 +8,22 @@
  *   也可以多个规则叠加，如 [{start:1,end:6},{start:9,end:12,parity:"odd"}]
  * day: 1-7 表示周一到周日
  * slot: 大节下标，对应下面 periods 数组的下标（从 0 开始）
+ *
+ * 周次以 semester.firstWeekMonday（学校规定的第一周周一）为锚点，
+ * semester.startDate 仅表示实际开学日，二者不要混用。
+ *
+ * dateOverrides 支持：
+ *   { type: "holiday", start: "2026-10-01", end: "2026-10-07", name: "国庆节" }
+ *   { type: "makeup", date: "2026-10-10", scheduleDay: 5, scheduleWeek: 5 }
  */
 
-export type WeekParity = "odd" | "even" | "all";
+import type { SemesterConfig, WeekRule } from "@/types/timetable";
 
-export interface WeekRule {
-	start: number;
-	end: number;
-	/** "odd" 单周 / "even" 双周 / "all" 全部（默认） */
-	parity?: WeekParity;
-}
+export type {
+	TimetableDateOverride,
+	WeekParity,
+	WeekRule,
+} from "@/types/timetable";
 
 export interface Course {
 	/** 课程名 */
@@ -50,15 +56,25 @@ export interface Period {
 // ============================================================================
 // 学期信息
 // ============================================================================
-export const semester = {
+export const semester: SemesterConfig = {
 	/** 课表标题 */
 	title: "我的课表",
 	/** 学期徽章文字 */
 	term: "2026-2027 学年第 1 学期",
-	/** 开学第一天（周二），用于计算当前第几周 */
+	/** 实际开学第一天（周二），仅用于判断是否已经开学 */
 	startDate: "2026-09-01",
+	/** 学校规定的第一周周一，作为所有教学周次的计算锚点 */
+	firstWeekMonday: "2026-08-31",
 	/** 学期总周数 */
 	totalWeeks: 21,
+	/**
+	 * 假期与调休覆盖规则。
+	 * 调休规则优先于假期规则，因此落在假期区间内的补课日仍会正常显示课程。
+	 */
+	dateOverrides: [
+		// 例：{ type: "holiday", start: "2026-10-01", end: "2026-10-07", name: "国庆节" }
+		// 例：{ type: "makeup", date: "2026-10-10", scheduleDay: 5, scheduleWeek: 5, name: "国庆调休" }
+	],
 };
 
 // ============================================================================

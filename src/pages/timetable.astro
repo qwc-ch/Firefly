@@ -3,23 +3,21 @@ import { Icon } from "astro-icon/components";
 import type { WeekRule } from "@/data/timetable";
 import { courses, periods, semester } from "@/data/timetable";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import {
+	assertTimetableCalendarConfig,
+	expandWeeks,
+} from "@/utils/timetable-calendar";
 
 const WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"];
 const PALETTE = 8;
 
-/** 展开周次规则为周次数组 */
-function expandWeeks(rules: WeekRule[], total: number): number[] {
-	const nums: number[] = [];
-	for (const r of rules) {
-		for (let w = r.start; w <= Math.min(r.end, total); w++) {
-			if (w < 1) continue;
-			if (r.parity === "odd" && w % 2 === 0) continue;
-			if (r.parity === "even" && w % 2 === 1) continue;
-			if (!nums.includes(w)) nums.push(w);
-		}
-	}
-	return nums.sort((a, b) => a - b);
-}
+const calendarConfig = {
+	firstWeekMonday: semester.firstWeekMonday,
+	teachingStartDate: semester.startDate,
+	totalWeeks: semester.totalWeeks,
+	dateOverrides: semester.dateOverrides,
+};
+assertTimetableCalendarConfig(calendarConfig);
 
 function ruleText(r: WeekRule): string {
 	const p = r.parity === "odd" ? "单" : r.parity === "even" ? "双" : "";
@@ -52,13 +50,16 @@ const shownDays = hasWeekend ? days : days.slice(0, 5);
 const maxSlot = Math.max(periods.length - 1, ...enriched.map((c) => c.slot));
 
 const title = semester.title;
-const description = `${semester.term} · ${semester.startDate} 起，共 ${semester.totalWeeks} 周`;
+const description = `${semester.term} · ${semester.startDate} 开学，共 ${semester.totalWeeks} 周`;
 ---
 
 <MainGridLayout title={title} description={description}>
 	<div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
 		<div class="card-base z-10 px-4 md:px-9 py-6 relative w-full" id="timetable-root"
-			data-start={semester.startDate} data-total={semester.totalWeeks}>
+			data-first-week-monday={semester.firstWeekMonday}
+			data-teaching-start-date={semester.startDate}
+			data-total-weeks={semester.totalWeeks}
+			data-date-overrides={JSON.stringify(semester.dateOverrides)}>
 
 			<!-- 页头 -->
 			<div class="flex flex-wrap items-center gap-3 mb-1">
@@ -69,7 +70,7 @@ const description = `${semester.term} · ${semester.startDate} 起，共 ${semes
 				<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-(--primary)/10 text-(--primary)">{semester.term}</span>
 			</div>
 			<p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-				{semester.startDate} 起，共 {semester.totalWeeks} 周 · 当前第 <span data-current-week class="font-semibold text-(--primary)">?</span> 周
+				{semester.startDate} 开学（第一周周一：{semester.firstWeekMonday}）· 共 {semester.totalWeeks} 周 · 当前第 <span data-current-week class="font-semibold text-(--primary)">?</span> 周
 			</p>
 
 			<!-- 课程图例 -->
@@ -121,7 +122,7 @@ const description = `${semester.term} · ${semester.startDate} 起，共 ${semes
 										<td class="align-top" data-day-cell={d}>
 											<div class="flex min-h-24 flex-col gap-1">
 												{cell.map((c) => (
-													<div class="course-card" data-weeks={c.weeksNums.join(",")}>
+													<div class="course-card" data-weeks={c.weeksNums.join(",")} data-course-day={c.day}>
 														<span class={`course-bar course-bg-${c.color}`} aria-hidden="true" />
 														<div class="flex flex-col gap-0.5 py-2 pe-2 min-w-0">
 															<p class={`text-xs leading-snug font-semibold course-text-${c.color}`}>{c.name}</p>
@@ -170,7 +171,7 @@ const description = `${semester.term} · ${semester.startDate} 起，共 ${semes
 												<span>第{p?.label}大节 · {p?.sessions}</span>
 												<span class="font-mono">{p?.start}-{p?.end}</span>
 											</div>
-											<div class="course-card" data-weeks={c.weeksNums.join(",")}>
+											<div class="course-card" data-weeks={c.weeksNums.join(",")} data-course-day={c.day}>
 												<span class={`course-bar course-bg-${c.color}`} aria-hidden="true" />
 												<div class="flex flex-col gap-1 py-2.5 pe-3 min-w-0">
 													<p class={`text-sm font-semibold course-text-${c.color}`}>{c.name}</p>
@@ -253,89 +254,4 @@ const description = `${semester.term} · ${semester.startDate} 起，共 ${semes
 		}
 	</style>
 
-	<script is:inline data-astro-rerun>
-		(() => {
-			const root = document.getElementById("timetable-root");
-			if (!root) return;
-			const start = new Date(root.dataset.start + "T00:00:00");
-			const total = Number(root.dataset.total);
-
-			function currentWeek(now) {
-				const diff = now.getTime() - start.getTime();
-				return Math.floor(diff / (7 * 86400000)) + 1;
-			}
-			function mondayOfWeek(n) {
-				const d = new Date(start);
-				d.setDate(d.getDate() + (n - 1) * 7);
-				return d;
-			}
-			function fmt(d) {
-				return `${d.getMonth() + 1}/${d.getDate()}`;
-			}
-
-			function render() {
-				const now = new Date();
-				const week = currentWeek(now);
-				const clamped = Math.min(Math.max(week, 1), total);
-				// 当前周文本
-				root.querySelectorAll("[data-current-week]").forEach((el) => {
-					el.textContent = week < 1 ? "未开学" : week > total ? "已结课" : String(week);
-				});
-
-				// 时钟
-				const wd = ["日", "一", "二", "三", "四", "五", "六"][now.getDay()];
-				const pad = (n) => String(n).padStart(2, "0");
-				root.querySelectorAll("[data-clock-weekday]").forEach((el) => {
-					el.textContent = `星期${wd}`;
-				});
-				root.querySelectorAll("[data-clock-time]").forEach((el) => {
-					el.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-				});
-
-				// 今天的课程汇总
-				const todayDay = now.getDay() === 0 ? 7 : now.getDay();
-				const cards = [...root.querySelectorAll(".course-card")];
-				let todayCount = 0;
-				cards.forEach((card) => {
-					const weeks = (card.dataset.weeks || "").split(",").filter(Boolean).map(Number);
-					const activeWeek = week >= 1 && week <= total && weeks.includes(week);
-					card.classList.toggle("not-this-week", !activeWeek);
-				});
-				// 统计今日课程（桌面/移动各渲染了一份，去重计数）
-				const mobileCards = [...root.querySelectorAll("[data-day-card]")];
-				const todayCard = mobileCards.find((el) => Number(el.dataset.dayCard) === todayDay);
-				if (todayCard) {
-					todayCount = [...todayCard.querySelectorAll(".course-card")].filter((c) => !c.classList.contains("not-this-week")).length;
-				}
-				root.querySelectorAll("[data-today-summary]").forEach((el) => {
-					if (week < 1) el.textContent = "假期中，还没开学。";
-					else if (week > total) el.textContent = "本学期已结束。";
-					else el.textContent = todayCount > 0 ? `今天是第 ${week} 周，有 ${todayCount} 门课。` : `今天是第 ${week} 周，今天没课 🎉`;
-				});
-
-				// 高亮今天列 / 卡片
-				root.querySelectorAll("[data-day-col],[data-day-cell],[data-day-card]").forEach((el) => {
-					const d = Number(el.dataset.dayCol ?? el.dataset.dayCell ?? el.dataset.dayCard);
-					el.classList.toggle("is-today", d === todayDay && week >= 1 && week <= total);
-				});
-
-				// 每个工作日的日期标注
-				root.querySelectorAll("[data-day-date]").forEach((el) => {
-					const d = Number(el.dataset.dayDate);
-					const m = mondayOfWeek(clamped);
-					m.setDate(m.getDate() + d - 1);
-					el.textContent = fmt(m);
-				});
-			}
-
-			render();
-			const timer = setInterval(() => {
-				if (!document.getElementById("timetable-root")) {
-					clearInterval(timer);
-					return;
-				}
-				render();
-			}, 1000);
-		})();
-	</script>
 </MainGridLayout>
