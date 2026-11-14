@@ -306,11 +306,14 @@
 <li><code>{ start: 1, end: 21 }</code> — 全部周次</li>
 <li><code>{ start: 1, end: 21, parity: "odd" }</code> — 单周</li>
 <li><code>{ start: 1, end: 21, parity: "even" }</code> — 双周</li>
-</ul><p>这周五下午就是靠 <code>parity</code> 实现的：单周第一节化学，双周第一节体育，其余课程不变。</p></section>
+</ul><p>这周五下午就是靠 <code>parity</code> 实现的：单周第一节化学，双周第一节体育，其余课程不变。</p><p>另外，单双周只负责描述常规教学周，不直接承担节假日判断。<code>semester.dateOverrides</code> 单独保存日期覆盖规则：</p><ul>
+<li><code>{ type: "holiday", start: "2026-10-01", end: "2026-10-07", name: "国庆节" }</code> — 假期内不上课</li>
+<li><code>{ type: "makeup", date: "2026-10-10", scheduleDay: 5, scheduleWeek: 5 }</code> — 指定日期按星期五第 5 周课表补课</li>
+</ul><p>调休规则优先于假期规则，所以落在假期区间内的补课日仍会正常显示对应课程。假期按具体日期生效，只会压制对应星期的课程，不会影响同一周其他日期；调休的 <code>scheduleWeek</code> 只用于匹配单双周，不会改变页面按自然教学周显示的当前周次。</p></section>
 <section><h2>排课过程<a href="#排课过程"><span>#</span></a></h2><p>按时间表逐天录入，<code>day: 1-5</code> 对应周一到周五，<code>slot</code> 对应 <code>periods</code> 的下标。13 个时段分别是：</p>
 
 <table><thead><tr><th>早读1</th><th>早读2</th><th>上午1-4</th><th>中午1-2</th><th>下午1-4</th><th>晚自习</th></tr></thead><tbody><tr><td>07:00-07&lt;25&gt;</td><td>07:25-07&lt;50&gt;</td><td>08:00-11&lt;41&gt;</td><td>12:00-13&lt;30&gt;</td><td>13:40-17&lt;20&gt;</td><td>17:45-20&lt;30&gt;</td></tr></tbody></table><p>周二到周五的课程顺序和周一不同，逐一核对后填入对应 slot。地点和教师目前留空，后续补上。</p></section>
-<section><h2>学期信息<a href="#学期信息"><span>#</span></a></h2><p><code>semester</code> 配置了学期的基本信息，<code>startDate</code> 设成 2026-09-01，<code>totalWeeks</code> 设为 21 周。组件会根据当前日期和开学第一天自动计算现在是第几周，高亮当前周的课程。</p></section>
+<section><h2>学期信息<a href="#学期信息"><span>#</span></a></h2><p><code>semester</code> 配置了学期的基本信息：<code>startDate</code> 是实际开学日 2026-09-01（周二），<code>firstWeekMonday</code> 是学校规定的第一周周一 2026-08-31，<code>totalWeeks</code> 为 21 周。</p><p>周次只以 <code>firstWeekMonday</code> 为锚点计算，因此每周一 00&lt;00&gt; 切换到下一周，不会因为开学日是周二而延迟到周二切换。<code>startDate</code> 仅用于判断“是否已经开学”，两者职责分开。</p><p>边界计算已覆盖跨月、周日到周一、开学前、学期结束后、假期区间和调休补课，可运行 <code>pnpm test:timetable</code> 验证。</p></section>
 <section><h2>效果预览<a href="#效果预览"><span>#</span></a></h2><p>课表页面在 <code>/timetable</code> 路由下，桌面端是表格形式展示，手机端切换为按天列表。课程卡片会自动分配颜色，不同科目不同颜色，一眼就能分辨。</p></section>
 <section><h2>后续<a href="#后续"><span>#</span></a></h2><ul>
 <li>补上教室和教师信息</li>
