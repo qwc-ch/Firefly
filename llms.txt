@@ -13,6 +13,7 @@
 - [番组计划](https://blog.amamo.top/bangumi/): 记录我的二次元之旅
 
 ## Recent Posts
+- [koffi 在 Alpine 上直接 abort：一次 musl 预编译排查](https://blog.amamo.top/posts/koffi-musl-alpine-abort/): dsh 在 Alpine aarch64 上一调用工具就整个进程 abort。根因是 koffi 3.1.1 优先加载 glibc 预编译二进制，在 musl 上进入 C++ 初始化后直接终止，musl 回退逻辑根本没机会执行。本文记录排查过程、修复思路和修复仓库。
 - [机房装 Node.js 记](https://blog.amamo.top/posts/life/%E6%9C%BA%E6%88%BF%E8%A3%85nodejs%E8%AE%B0/): 4 核 4G 的机房电脑、一份奇怪的问卷，和一个从 Gitee 下载的项目
 - [评论图片直传图床：Waline + EdgeOne 边缘函数踩坑记](https://blog.amamo.top/posts/waline-image-upload-edgeone/): Waline 评论默认把图片转成 base64 塞进评论数据，又慢又胀。本文记录给评论加上图片直传的全过程：用 EdgeOne 边缘函数做鉴权代理把密钥留在服务端，以及 545、401、404 三层报错的排错实录，还有一次被主动放弃的"点发送才上传"设计。
 - [这套全新的博客风格：纸底、墨线、一种黄](https://blog.amamo.top/posts/2026-10-30-%E8%BF%99%E5%A5%97%E5%85%A8%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E9%A3%8E%E6%A0%BC/): 博客从 Firefly 换皮成了现在这套工业手册的味道，这套风格从《明日方舟：终末地》的界面学的。聊聊规则怎么定的：颜色怎么用、什么形状表示什么、编号从哪来。
@@ -32,4 +33,3 @@
 - [headless Chrome 截图 WebGL 黑块问题排查](https://blog.amamo.top/posts/headless-chrome-webgl-black-block/): 友链截图工具在 headless Chrome 下遇到 Spline/Live2D 站点渲染失败、出现带报错信息的黑块，通过启用 swiftshader 软件渲染解决。
 - [vercel优化冷知识](https://blog.amamo.top/posts/vercel%E4%BC%98%E5%8C%96%E5%86%B7%E7%9F%A5%E8%AF%86/): vercel优化冷知识
 - [Vercel 部署后全站 404 排查记](https://blog.amamo.top/posts/vercel-deploy-404/): 博客部署到 Vercel 后所有 HTML 页面都返回 404，静态资源却正常。本文记录了从现象、链路分析到定位根因（Vercel CLI cleanUrls 冲突与 l2s 上传 bug）的全过程，以及最终通过固定 CLI 版本解决的方案。
-- [怎么用Netlify反代你的源站](https://blog.amamo.top/posts/%E6%80%8E%E4%B9%88%E7%94%A8netlify%E5%8F%8D%E4%BB%A3/): 怎么用Netlify反代你的源站
