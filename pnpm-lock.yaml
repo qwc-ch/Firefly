@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  katex: ^0.19.1
+
 importers:
 
   .:
@@ -71,9 +74,12 @@ importers:
       '@iconify/utils':
         specifier: ^3.1.7
         version: 3.1.7
+      '@mermanjs/node':
+        specifier: 0.10.0
+        version: 0.10.0
       '@mermanjs/web':
-        specifier: 0.8.0-alpha.3
-        version: 0.8.0-alpha.3
+        specifier: 0.10.0
+        version: 0.10.0
       '@napi-rs/wasm-runtime':
         specifier: ^1.2.6
         version: 1.2.6(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
@@ -2235,8 +2241,58 @@ packages:
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
 
-  '@mermanjs/web@0.8.0-alpha.3':
-    resolution: {integrity: sha512-nuZcWWc/I85RWuFraiJp9LbUIC7zEB+hdWic6TSjV26iRgD9tOE+o/MMH48/h5R10lr4uLz5ec7mhFUOgFARjQ==}
+  '@mermanjs/node-darwin-arm64@0.10.0':
+    resolution: {integrity: sha512-J5v3Ptfki/Emj1l0jtsbai6mEn5uCcw/f3qL+uEPylETnTUuMXSq/GtbP9cvpfaX6Psetd8kqXjmE8CISXwXYw==}
+    engines: {node: '>=22.0.0'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@mermanjs/node-darwin-x64@0.10.0':
+    resolution: {integrity: sha512-kFOSuDmedG/3Uh8CZP5dGfotazmAvvEWPeK/fIP6/JekF0kFwJ7w3Ac0ispf2g41z8H7W9IbAsziXxomY+D/7A==}
+    engines: {node: '>=22.0.0'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@mermanjs/node-linux-arm64-gnu@0.10.0':
+    resolution: {integrity: sha512-Oau1/s7RNogHzAnmFj/AB+IRg2f+1NNaRcK3vZVVx/X/rXhVy4yzRxje6dPzKL4FVejugC+0WaWe5wU8iddE7Q==}
+    engines: {node: '>=22.0.0'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@mermanjs/node-linux-arm64-musl@0.10.0':
+    resolution: {integrity: sha512-UuXk1dW6M/tZgPnysL8mKOXFItLCXuy/KardIENQ/wbboBLG3ES5US6enN90Ndx2aOFjRc1OIDnNx/zFfnsi8Q==}
+    engines: {node: '>=22.0.0'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@mermanjs/node-linux-x64-gnu@0.10.0':
+    resolution: {integrity: sha512-oc3du2G4sxuF3uPhAl3egRUIcJ4/4wD1a4K700fCWC7qpSImqinnhapSRz3vJC/qSHuVVfvRpaaTHEGJCBqnMQ==}
+    engines: {node: '>=22.0.0'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@mermanjs/node-linux-x64-musl@0.10.0':
+    resolution: {integrity: sha512-+4NBaFVwbNp9AfWKXxx6w/wTKLAy6YKH9L6id/hp/YD+yMtWc1nTd5cwshdmF4NkMWykcdmQM7YWTiL1xH7KwQ==}
+    engines: {node: '>=22.0.0'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@mermanjs/node-win32-x64-msvc@0.10.0':
+    resolution: {integrity: sha512-y8ZKYCj3Jmwo5bD7dFMS0JFuCVBEAccosfRCmF4whqldHBDUteIyibpb6DbbjGHq1VXSmPljqC6yvYFqHCLA6w==}
+    engines: {node: '>=22.0.0'}
+    cpu: [x64]
+    os: [win32]
+
+  '@mermanjs/node@0.10.0':
+    resolution: {integrity: sha512-jGv/7YevzoH9kL24VBjH3BgQ2pkBF667yekAo9ri+y1q/HacSpE65Vu8YEzXCUCxj202alK5SLYfHxoXMjz69g==}
+    engines: {node: '>=22.0.0'}
+
+  '@mermanjs/web@0.10.0':
+    resolution: {integrity: sha512-bVPIPmcR3ONGt3fO8nrDPT0WotEszxhTHG1yIj1DlSJ6s6ekx1+CyAv+vDvEYFaSJjmXUOxmHXF+AX00hK+Org==}
 
   '@napi-rs/wasm-runtime@1.2.4':
     resolution: {integrity: sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g==}
@@ -3365,10 +3421,6 @@ packages:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
 
-  commander@8.3.0:
-    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
-    engines: {node: '>= 12'}
-
   common-ancestor-path@2.0.0:
     resolution: {integrity: sha512-dnN3ibLeoRf2HNC+OlCiNc5d2zxbLJXOtiZUudNFSXZrNSydxcCsSpRzXwfu7BBWCIfHPw+xTayeBvJCP/D8Ng==}
     engines: {node: '>= 18'}
@@ -4389,10 +4441,6 @@ packages:
 
   jsonfile@6.2.1:
     resolution: {integrity: sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==}
-
-  katex@0.16.47:
-    resolution: {integrity: sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==}
-    hasBin: true
 
   katex@0.19.1:
     resolution: {integrity: sha512-jG8uKntjSEcm2EpQOh0XturpPuuC9r3Sq5HLHdsFdWZT27E672SF19QEi+of0/YeOy15lDgRhKvr5614uRrEfA==}
@@ -8668,7 +8716,38 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mermanjs/web@0.8.0-alpha.3': {}
+  '@mermanjs/node-darwin-arm64@0.10.0':
+    optional: true
+
+  '@mermanjs/node-darwin-x64@0.10.0':
+    optional: true
+
+  '@mermanjs/node-linux-arm64-gnu@0.10.0':
+    optional: true
+
+  '@mermanjs/node-linux-arm64-musl@0.10.0':
+    optional: true
+
+  '@mermanjs/node-linux-x64-gnu@0.10.0':
+    optional: true
+
+  '@mermanjs/node-linux-x64-musl@0.10.0':
+    optional: true
+
+  '@mermanjs/node-win32-x64-msvc@0.10.0':
+    optional: true
+
+  '@mermanjs/node@0.10.0':
+    optionalDependencies:
+      '@mermanjs/node-darwin-arm64': 0.10.0
+      '@mermanjs/node-darwin-x64': 0.10.0
+      '@mermanjs/node-linux-arm64-gnu': 0.10.0
+      '@mermanjs/node-linux-arm64-musl': 0.10.0
+      '@mermanjs/node-linux-x64-gnu': 0.10.0
+      '@mermanjs/node-linux-x64-musl': 0.10.0
+      '@mermanjs/node-win32-x64-msvc': 0.10.0
+
+  '@mermanjs/web@0.10.0': {}
 
   '@napi-rs/wasm-runtime@1.2.4(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
     dependencies:
@@ -9775,8 +9854,6 @@ snapshots:
   commander@2.20.3: {}
 
   commander@7.2.0: {}
-
-  commander@8.3.0: {}
 
   common-ancestor-path@2.0.0: {}
 
@@ -11065,10 +11142,6 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  katex@0.16.47:
-    dependencies:
-      commander: 8.3.0
-
   katex@0.19.1:
     dependencies:
       commander: 15.0.0
@@ -11651,7 +11724,7 @@ snapshots:
     dependencies:
       '@types/katex': 0.16.8
       devlop: 1.1.0
-      katex: 0.16.47
+      katex: 0.19.1
       micromark-factory-space: 2.0.1
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
@@ -12558,7 +12631,7 @@ snapshots:
       '@types/katex': 0.16.8
       hast-util-from-html-isomorphic: 2.0.0
       hast-util-to-text: 4.0.2
-      katex: 0.16.47
+      katex: 0.19.1
       unist-util-visit-parents: 6.0.2
       vfile: 6.0.3
 
