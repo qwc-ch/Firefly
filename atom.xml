@@ -7,7 +7,7 @@
   <author><name>年华</name></author>
   <link rel="alternate" href="https://blog.amamo.top/"/>
   <link rel="self" href="https://blog.amamo.top/atom.xml"/>
-  <generator uri="https://github.com/CuteLeaf/Firefly">Firefly v6.16.9</generator>
+  <generator uri="https://github.com/CuteLeaf/Firefly">Firefly v6.17.0</generator>
     <entry>
       <id>https://blog.amamo.top/posts/koffi-musl-alpine-abort/</id>
       <title type="text">koffi 在 Alpine 上直接 abort：一次 musl 预编译排查</title>
