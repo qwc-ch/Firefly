@@ -1,5 +1,7 @@
 # build output
 dist/
+playwright-report/
+test-results/
 
 # generated vndb covers
 public/vndb-covers/
@@ -50,5 +52,6 @@ public/posts-index.json
 # vibe coding
 .codex*
 .claude
-	.mimocode
-	.env*
+.mimocode
+.env*
+.workbuddy

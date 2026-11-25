@@ -109,7 +109,16 @@ body.wallpaper-transparent .expressive-code .ec-collapse__gradient {
  */
 
 .rehype-code-group {
+  --rcg-accent: var(--primary);
+  --rcg-border-color: var(--line-divider);
+  --rcg-focus-color: var(--primary);
+  --rcg-tab-color: var(--btn-content);
+  --rcg-tab-background: transparent;
+  --rcg-tab-background-active: transparent;
   margin: 1rem 0;
+  /* 标签栏与代码面板之间留出间距，避免标签下划线与代码框贴在一起。
+   * 纵向布局下标签在侧边（同一行），列间距仍是 0，这里的 row-gap 不影响它。 */
+  row-gap: var(--spacing-md);
 }
 
 .rehype-code-group .rcg-tab-container {
@@ -143,9 +152,20 @@ body.wallpaper-transparent .expressive-code .ec-collapse__gradient {
   border-radius: 0.25rem;
 }
 
-/* 面板内的代码块贴合标签栏，去掉 markdown 默认的上下外边距 */
+/* 面板内的代码块去掉 markdown 默认的上下外边距，
+ * 与标签栏之间的间距统一由 .rehype-code-group 的 row-gap 控制。 */
 .rehype-code-group .rcg-block > .expressive-code {
   margin: 0 !important;
+}
+
+/* Tailwind Preflight hides [hidden] with !important in its base layer.
+ * Keep the package's print fallback in that layer so every panel is printable. */
+@layer base {
+  @media print {
+    .rehype-code-group .rcg-block[hidden] {
+      display: block !important;
+    }
+  }
 }
 
 
