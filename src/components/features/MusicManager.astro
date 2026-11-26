@@ -308,6 +308,8 @@ const managerConfigStr = JSON.stringify({
     }
 
     // ── Lyrics ───────────────────────────────────────────────
+    var lyricsLoadingFor = null; // 正在拉取歌词的曲目 URL（防重复请求）
+
     function loadLyrics(track) {
         // 记录本次歌词请求对应的加载版本；切歌后旧请求才返回时必须丢弃，
         // 否则上一首的歌词会覆盖当前曲目（并广播到所有视图）。
@@ -316,6 +318,7 @@ const managerConfigStr = JSON.stringify({
         state.currentLrcIndex = -1;
 
         if (!track.lrc) {
+            lyricsLoadingFor = null;
             emit('fm:lyrics', { lyrics: [], status: 'none' });
             return;
         }
@@ -325,24 +328,47 @@ const managerConfigStr = JSON.stringify({
             || /\.(lrc|txt)(\?|#|$)/i.test(track.lrc);
 
         if (isLrcUrl) {
+            lyricsLoadingFor = track.lrc;
             emit('fm:lyrics', { lyrics: [], status: 'loading' });
             fetch(track.lrc)
                 .then(function (r) { return r.text(); })
                 .then(function (text) {
                     if (ver !== loadVersion) return; // 已切歌，丢弃过期响应
+                    lyricsLoadingFor = null;
                     state.lyrics = parseLRC(text);
                     emit('fm:lyrics', { lyrics: state.lyrics, status: 'loaded' });
                 })
                 .catch(function () {
                     if (ver !== loadVersion) return;
+                    lyricsLoadingFor = null;
                     state.lyrics = [];
                     emit('fm:lyrics', { lyrics: [], status: 'failed' });
                 });
         } else {
+            lyricsLoadingFor = null;
             state.lyrics = parseLRC(track.lrc);
             emit('fm:lyrics', { lyrics: state.lyrics, status: state.lyrics.length > 0 ? 'loaded' : 'none' });
         }
     }
+
+    // 关闭歌词 UI 时切歌只重置状态，不拉取歌词（省一次串行的 meting lrc 请求）
+    function resetLyrics() {
+        lyricsLoadingFor = null;
+        state.lyrics = [];
+        state.currentLrcIndex = -1;
+        emit('fm:lyrics', { lyrics: [], status: 'none' });
+    }
+
+    // 按需加载当前曲目的歌词：开始播放（悬浮歌词需要）或打开歌词面板时触发
+    function ensureLyrics() {
+        if (config.showLyrics) return; // 歌词 UI 开启时已随 loadTrack 拉取
+        var track = state.playlist[state.currentIndex];
+        if (!track || !track.lrc) return;
+        if (state.lyrics.length > 0 || lyricsLoadingFor === track.lrc) return;
+        loadLyrics(track);
+    }
+
+    window.addEventListener('fm:lyrics-request', ensureLyrics);
 
     var currentTrackUrls = [];
     var currentTrackUrlIndex = 0;
@@ -397,7 +423,13 @@ const managerConfigStr = JSON.stringify({
             });
         }
 
-        loadLyrics(track);
+        // 歌词按需加载：未开启歌词 UI 时不首屏拉取 lrc（PageSpeed 实测该请求串行 5~10s），
+        // 等开始播放（悬浮歌词需要）或用户打开歌词面板时再加载
+        if (config.showLyrics) {
+            loadLyrics(track);
+        } else {
+            resetLyrics();
+        }
 
         updateMediaSessionMetadata(track);
 
@@ -499,6 +531,7 @@ const managerConfigStr = JSON.stringify({
 
     // ── Audio events → broadcast ─────────────────────────────
     audio.addEventListener('play', function () {
+        ensureLyrics(); // 悬浮歌词需要，播放开始时按需拉取
         emitPlayState(true, true);
     });
 

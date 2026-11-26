@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "npx tsx scripts/generate-github-card-data.ts && npx tsx scripts/generate-lqips.ts && npx tsx scripts/generate-random-covers.ts && npx tsx scripts/generate-vndb-covers.ts && astro build --force && npx tsx scripts/prune-pio-assets.ts && npx tsx scripts/subset-fonts.ts && npx tsx scripts/minify-inline-scripts.ts && npx tsx scripts/run-pagefind.ts && node scripts/indexnow.mjs",
+    "build": "npx tsx scripts/generate-github-card-data.ts && npx tsx scripts/generate-lqips.ts && npx tsx scripts/generate-random-covers.ts && npx tsx scripts/generate-vndb-covers.ts && npx tsx scripts/fetch-greeting-wallpaper.ts && astro build --force && npx tsx scripts/prune-pio-assets.ts && npx tsx scripts/subset-fonts.ts && npx tsx scripts/minify-inline-scripts.ts && npx tsx scripts/run-pagefind.ts && node scripts/indexnow.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",
@@ -23,6 +23,7 @@
     "preinstall": "npx only-allow pnpm",
     "lqips": "npx tsx scripts/generate-lqips.ts",
     "covers": "npx tsx scripts/generate-random-covers.ts",
+    "greeting": "npx tsx scripts/fetch-greeting-wallpaper.ts",
     "github-cards": "npx tsx scripts/generate-github-card-data.ts",
     "test:code-groups": "playwright test"
   },

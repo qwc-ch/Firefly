@@ -36,6 +36,7 @@ let { apiUrl, limit, memos }: Props = $props();
 
 let entries: DynamicEntry[] = $state([]);
 let totalCount = $state(0);
+let countCapped = $state(false);
 let loading = $state(true);
 let error = $state(false);
 
@@ -43,7 +44,14 @@ onMount(async () => {
 	try {
 		let data: DynamicEntry[];
 		if (memos?.enable) {
-			data = await fetchMemos(memos.apiUrl, { parent: memos.parent });
+			// 只取侧栏需要的这一页（此前默认 pageSize=10000 全量拉取，
+			// PageSpeed 实测该请求 7s+ 且拖慢关键链）；达到上限时总数未知，徽标显示 N+
+			data = await fetchMemos(memos.apiUrl, {
+				parent: memos.parent,
+				pageSize: limit,
+				maxPages: 1,
+			});
+			countCapped = data.length >= limit;
 		} else {
 			data = await fetchWithDedup(apiUrl);
 		}
@@ -61,7 +69,7 @@ onMount(async () => {
 function updateCountBadge() {
 	const badge = document.querySelector("[data-dynamic-count]");
 	if (badge && totalCount > 0) {
-		badge.textContent = `(${totalCount})`;
+		badge.textContent = countCapped ? `(${totalCount}+)` : `(${totalCount})`;
 	}
 }
 

@@ -48,6 +48,8 @@ git.sh
 
 # generated at build time
 public/posts-index.json
+src/constants/random-covers.json
+src/assets/greeting-wallpapers/greeting-api.*
 
 # vibe coding
 .codex*

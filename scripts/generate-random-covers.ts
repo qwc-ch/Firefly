@@ -9,8 +9,9 @@
  * 渲染端直接使用该映射，列表页和文章页必然显示同一张图（每次构建整体换一批新封面）。
  *
  * - 图片池足够大，撞车的概率很小；重复时最多重取 MAX_UNIQUE_ATTEMPTS 次
- * - 单篇请求失败自动重试 3 次；仍失败则跳过该篇（运行时回退随机 API 行为）
- * - 每次构建都会产生新的封面组合，git diff 记录每一次变化
+ * - 单篇请求失败自动重试 3 次；仍失败则沿用上一次构建的本地产物（若有），
+ *   避免网络抖动导致该篇封面消失
+ * - 输出文件是 gitignore 的构建产物，不入库：新增/删除图片后下次构建自动生效
  *
  * 手动触发：pnpm covers
  */
@@ -144,6 +145,17 @@ async function main() {
 	console.log(
 		`[random-covers] Found ${apiPosts.size} posts with image: "api", refetching all covers.`,
 	);
+	// 读取上一次构建的本地产物（文件不入库，可能存在也可能不存在），
+	// 仅在本次某篇拉取失败时回退使用，保证封面不因网络抖动而消失
+	let previousCovers: CoverMap = {};
+	try {
+		previousCovers = JSON.parse(
+			await fs.readFile(OUTPUT_FILE, "utf-8"),
+		) as CoverMap;
+	} catch {
+		// 文件不存在或损坏：视为无历史映射
+	}
+
 	const covers: CoverMap = {};
 	const api = randomCoverImage.apis[0];
 	const usedUrls = new Set<string>();
@@ -163,6 +175,11 @@ async function main() {
 			covers[id] = imageUrl;
 			usedUrls.add(imageUrl);
 			console.log(`[random-covers] ${id} -> ${imageUrl}`);
+		} else if (previousCovers[id]) {
+			covers[id] = previousCovers[id];
+			console.warn(
+				`[random-covers] ${id}: fetch failed, keeping previous cover.`,
+			);
 		} else {
 			console.warn(`[random-covers] Skipping ${id}: could not fetch an image.`);
 		}

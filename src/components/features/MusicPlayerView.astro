@@ -643,6 +643,8 @@ const viewConfigStr = JSON.stringify({
         // ── Drawer helpers ──────────────────────────────────────
         function openLyricsDrawer() {
             if (!ui.lrcDrawer) return;
+            // 歌词按需加载：面板打开时向管理器请求当前曲目歌词
+            window.dispatchEvent(new CustomEvent('fm:lyrics-request'));
             // Close playlist if open
             if (ui.playlistDrawer) {
                 ui.playlistDrawer.style.gridTemplateRows = '0fr';

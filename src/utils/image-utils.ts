@@ -1,4 +1,3 @@
-import randomCoversData from "@constants/random-covers.json";
 import { coverImageConfig } from "../config/coverImageConfig";
 import { siteConfig } from "../config/siteConfig";
 import type { ImageFormat } from "../types/config";
@@ -9,11 +8,17 @@ const { randomCoverImage } = coverImageConfig;
  * 构建期由 scripts/generate-random-covers.ts 固定的随机封面映射（entry.id -> 图片URL）。
  * 随机图 API 不支持按 seed 稳定返回：列表页和详情页各自请求会得到两张不同的图。
  * 因此渲染时优先查这张表，保证同一篇文章在任意位置显示同一张封面。
+ *
+ * 该文件是 gitignore 的构建产物（每次构建为每篇 image: "api" 的文章现场抽取封面），
+ * 用 import.meta.glob 而非静态 import，文件尚不存在时（全新克隆直接 pnpm dev）不报错，
+ * 渲染端自动回退到运行时随机 API 行为。
  */
-const randomCovers: Record<string, string> = randomCoversData as Record<
-	string,
-	string
->;
+const randomCoverModules = import.meta.glob<Record<string, string>>(
+	"../constants/random-covers.json",
+	{ eager: true, import: "default" },
+);
+const randomCovers: Record<string, string> =
+	Object.values(randomCoverModules)[0] ?? {};
 
 /** 查询文章已固定的随机封面（seed 为 entry.id） */
 function getPinnedCover(seed?: string): string | undefined {

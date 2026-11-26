@@ -1,11 +1,45 @@
 ---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import { Icon } from "astro-icon/components";
+import { getFallbackFormat, getImageQuality } from "@/utils/image-utils";
 
 interface Props {
 	class?: string;
 	style?: string;
 }
 const { class: className, style } = Astro.props;
+
+// 问候卡壁纸：src/assets/greeting-wallpapers/ 下的图片经 Astro 图片管线压缩后
+// 随机选用。其中 greeting-api.* 由 scripts/fetch-greeting-wallpaper.ts 在每次
+// 构建时从随机图 API（random-api.czl.net，单张 3MB+，大陆访问慢且不支持 URL
+// 压缩参数）现场抽取下载，构建产物不入库；目录里也可以手动放自己的图。
+// 目录为空时回退到运行时随机图 API。
+// 用懒加载 glob（import: "default"，不带 eager），await 后得到带 width/height
+// 的 ImageMetadata，传给 getImage 才不会当作远程图而报缺尺寸。
+const greetingImageLoaders = import.meta.glob<ImageMetadata>(
+	"/src/assets/greeting-wallpapers/*.{webp,avif,jpg,jpeg,png}",
+	{ import: "default" },
+);
+
+// 卡片实际显示约 400×144，2x 屏 1280px 足够；小图不放大
+const GREETING_MAX_WIDTH = 1280;
+const format = getFallbackFormat();
+const quality = getImageQuality();
+const greetingWallpapers = await Promise.all(
+	Object.values(greetingImageLoaders).map(async (loader) => {
+		const img = await loader();
+		const width =
+			img.width > GREETING_MAX_WIDTH ? GREETING_MAX_WIDTH : undefined;
+		const optimized = await getImage({
+			src: img,
+			...(width ? { width } : {}),
+			format,
+			quality,
+		});
+		return optimized.src;
+	}),
+);
 ---
 
 <div
@@ -52,7 +86,7 @@ const { class: className, style } = Astro.props;
 	</div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ greetingWallpapers }}>
 	(() => {
 		const weekDays = [
 			"Sunday",
@@ -64,7 +98,13 @@ const { class: className, style } = Astro.props;
 			"Saturday",
 		];
 		if (!window.timeGreetingImage) {
-			window.timeGreetingImage = `https://random-api.czl.net/pic/fj?t=${new Date().getTime()}`;
+			if (greetingWallpapers && greetingWallpapers.length) {
+				// 本地壁纸池：每次整页加载随机一张（同源小图，浏览器可缓存，Swup 换页复用同一张）
+				window.timeGreetingImage =
+					greetingWallpapers[Math.floor(Math.random() * greetingWallpapers.length)];
+			} else {
+				window.timeGreetingImage = `https://random-api.czl.net/pic/fj?t=${new Date().getTime()}`;
+			}
 		}
 		function updateTimeGreeting() {
 			const now = new Date();

@@ -581,19 +581,42 @@ const COLLAPSED_HEIGHT = "8rem";
 	(function () {
 		const API_URL = "https://uapis.cn/api/v1/misc/weather?";
 
-		// 缓存管理
-		const cacheManager = {
-			set: function (key, data) {
-				try {
-					localStorage.setItem(key, JSON.stringify({
-						data,
-						timestamp: Date.now()
-					}));
-				} catch {
-					// 忽略存储错误
+		// 跨实例共享存储：同页可能有多个天气组件（左右侧栏/移动端底部），
+		// 共用同一份 in-flight 请求，避免同一 URL 并发请求多次（PageSpeed 实测同一时刻发了 3 次）
+		const shared = (window.__fireflyWeather = window.__fireflyWeather || {
+			inflight: new Map(),
+		});
+
+		function cacheKeyFor() {
+			return adcode ? `adcode_${adcode}` : city ? `city_${city}` : "ip_location";
+		}
+
+		// 读取缓存（此前只写不读，缓存从未生效）
+		function readCache() {
+			try {
+				const raw = localStorage.getItem(CACHE_KEY + cacheKeyFor());
+				if (!raw) return null;
+				const parsed = JSON.parse(raw);
+				if (parsed && parsed.data && Date.now() - parsed.timestamp < CACHE_DURATION) {
+					return parsed.data;
 				}
+				localStorage.removeItem(CACHE_KEY + cacheKeyFor());
+			} catch {
+				// 忽略存储/解析错误
 			}
-		};
+			return null;
+		}
+
+		function writeCache(data) {
+			try {
+				localStorage.setItem(
+					CACHE_KEY + cacheKeyFor(),
+					JSON.stringify({ data, timestamp: Date.now() })
+				);
+			} catch {
+				// 忽略存储错误
+			}
+		}
 
 		// 获取天气数据 - 支持 IP 自动定位
 		async function fetchWeather() {
@@ -611,22 +634,28 @@ const COLLAPSED_HEIGHT = "8rem";
 			params.set("forecast", "true");
 
 			const url = API_URL + params.toString();
-			const response = await fetch(url);
 
-			if (!response.ok) {
-				throw new Error(`请求失败: ${response.status}`);
-			}
+			// 相同 URL 的请求进行中去重
+			const existing = shared.inflight.get(url);
+			if (existing) return existing;
 
-			const data = await response.json();
-			
-			// 只有指定了城市或adcode时才缓存，IP自动定位不缓存
-			// 因为IP可能会变化（切换网络、VPN等）
-			if (adcode || city) {
-				const cacheKey = adcode ? `adcode_${adcode}` : `city_${city}`;
-				cacheManager.set(CACHE_KEY + cacheKey, data);
+			const request = (async () => {
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error(`请求失败: ${response.status}`);
+				}
+				return response.json();
+			})();
+
+			shared.inflight.set(url, request);
+			try {
+				const data = await request;
+				// 写入缓存，TTL 由 CACHE_DURATION 控制；IP 定位同样缓存（重试按钮可强制刷新）
+				writeCache(data);
+				return data;
+			} finally {
+				shared.inflight.delete(url);
 			}
-			
-			return data;
 		}
 
 		// 天气图标映射
@@ -777,14 +806,35 @@ const COLLAPSED_HEIGHT = "8rem";
 			if (retryBtn) {
 				retryBtn.addEventListener("click", () => {
 					// 清除缓存，强制重新请求
-					const cacheKey = adcode ? `adcode_${adcode}` : (city ? `city_${city}` : 'ip_location');
-					localStorage.removeItem(CACHE_KEY + cacheKey);
+					localStorage.removeItem(CACHE_KEY + cacheKeyFor());
 					loadWeather();
 				});
 			}
 
+			// 有新鲜缓存时直接渲染，不发网络请求
+			function loadWeatherFromCache() {
+				const cached = readCache();
+				if (cached) {
+					loading.classList.add("weather-hidden");
+					updateUI(container, cached);
+					return true;
+				}
+				return false;
+			}
+
+			// 首次加载延迟到浏览器空闲，避免占用首屏带宽与关键路径
+			// （第三方天气接口较慢，PageSpeed 实测关键链最长 7~12s）
+			function scheduleLoadWeather() {
+				if (loadWeatherFromCache()) return;
+				if (window.requestIdleCallback) {
+					window.requestIdleCallback(() => loadWeather(), { timeout: 3000 });
+				} else {
+					setTimeout(loadWeather, 1200);
+				}
+			}
+
 			// 自动加载天气数据（基于用户浏览器IP定位）
-			loadWeather();
+			scheduleLoadWeather();
 		}
 
 		// 启动

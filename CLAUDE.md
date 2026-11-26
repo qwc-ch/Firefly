@@ -83,9 +83,9 @@ Defined in `src/content.config.ts`:
 
 ## Build Pipeline
 
-Multi-step: `scripts/generate-lqips.ts` → `scripts/generate-random-covers.ts` → `scripts/generate-vndb-covers.ts` → `astro build` → `scripts/prune-pio-assets.ts` → `scripts/subset-fonts.ts` → `scripts/minify-inline-scripts.ts` → `pagefind --site dist`
+Multi-step: `scripts/generate-lqips.ts` → `scripts/generate-random-covers.ts` → `scripts/generate-vndb-covers.ts` → `scripts/fetch-greeting-wallpaper.ts` → `astro build` → `scripts/prune-pio-assets.ts` → `scripts/subset-fonts.ts` → `scripts/minify-inline-scripts.ts` → `pagefind --site dist`
 
-LQIP data is generated into `src/constants/lqips.json` and committed — regenerate with `pnpm lqips`. Random covers: the `/random` API (CloudFlare ImgBed) cannot honor a seed param, so `generate-random-covers.ts` re-rolls a fresh image URL for every `image: "api"` post on each build into committed `src/constants/random-covers.json` (consumed by `src/utils/image-utils.ts`); this keeps list-card and post-page covers identical within a build while rotating covers across builds. Icon data lives in `src/constants/icons-data.json` (committed, Biome-ignored, consumed by `src/components/common/Icon.svelte`) but has no generator script in the current build.
+LQIP data is generated into `src/constants/lqips.json` and committed — regenerate with `pnpm lqips`. Random covers: the `/random` API (CloudFlare ImgBed) cannot honor a seed param, so `generate-random-covers.ts` re-rolls a fresh image URL for every `image: "api"` post on each build into the **gitignored build artifact** `src/constants/random-covers.json` (consumed by `src/utils/image-utils.ts` via `import.meta.glob`, tolerated missing); this keeps list-card and post-page covers identical within a build while rotating covers across builds, and newly added pool images take effect on the next build automatically. Icon data lives in `src/constants/icons-data.json` (committed, Biome-ignored, consumed by `src/components/common/Icon.svelte`) but has no generator script in the current build.
 
 `generate-vndb-covers.ts` downloads VNDB cover art into `public/vndb-covers/` (gitignored, skips files that already exist). It no-ops unless `siteConfig.vndb` has a `userId`, `downloadCovers: true`, and `mode: "static"`.
 

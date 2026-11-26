@@ -50,22 +50,65 @@
         }
     }
 
-    async function fetchLocation() {
+    const LOCATION_CACHE_KEY = 'welcome_location_cache';
+    const LOCATION_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 小时
+
+    function readLocationCache(): string | null {
         try {
-            const response = await fetch('https://v2.xxapi.cn/api/ip');
-            const data = await response.json();
-            if (data.code === 200 && data.data) {
-                const locationText = `你好，来自${data.data.address}的朋友`;
-                const messageEl = document.getElementById('welcome-message');
-                if (messageEl) messageEl.textContent = locationText;
+            const raw = localStorage.getItem(LOCATION_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.address && Date.now() - parsed.ts < LOCATION_CACHE_TTL) {
+                return parsed.address;
             }
-        } catch (error) {
-            const messageEl = document.getElementById('welcome-message');
-            if (messageEl) messageEl.textContent = '你好，欢迎来到我的博客';
+            localStorage.removeItem(LOCATION_CACHE_KEY);
+        } catch {
+            // 忽略存储/解析错误
+        }
+        return null;
+    }
+
+    function writeLocationCache(address: string) {
+        try {
+            localStorage.setItem(LOCATION_CACHE_KEY, JSON.stringify({ address, ts: Date.now() }));
+        } catch {
+            // 忽略存储错误
         }
     }
 
-    async function showWelcomeToast() {
+    // 第三方 IP 归属接口较慢（PageSpeed 实测 1.5~4s），延迟到浏览器空闲再请求，
+    // 并用 localStorage 缓存 6 小时减少重复请求
+    function fetchLocation() {
+        const cached = readLocationCache();
+        if (cached) {
+            const messageEl = document.getElementById('welcome-message');
+            if (messageEl) messageEl.textContent = `你好，来自${cached}的朋友`;
+            return;
+        }
+
+        const run = async () => {
+            try {
+                const response = await fetch('https://v2.xxapi.cn/api/ip');
+                const data = await response.json();
+                if (data.code === 200 && data.data) {
+                    writeLocationCache(data.data.address);
+                    const messageEl = document.getElementById('welcome-message');
+                    if (messageEl) messageEl.textContent = `你好，来自${data.data.address}的朋友`;
+                }
+            } catch {
+                const messageEl = document.getElementById('welcome-message');
+                if (messageEl) messageEl.textContent = '你好，欢迎来到我的博客';
+            }
+        };
+
+        if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(() => run(), { timeout: 4000 });
+        } else {
+            setTimeout(run, 2000);
+        }
+    }
+
+    function showWelcomeToast() {
         if (hasShownToast) return;
         const toast = createWelcomeToast();
         setTimeout(() => {
@@ -73,8 +116,8 @@
             toast.classList.add('translate-y-0', 'opacity-100');
         }, 100);
         hasShownToast = true;
-        await fetchLocation();
-        setTimeout(() => { closeWelcomeToast(); }, 5000);
+        fetchLocation();
+        setTimeout(() => { closeWelcomeToast(); }, 8000);
     }
 
     function initWelcome() {
