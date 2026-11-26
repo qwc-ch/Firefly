@@ -3,11 +3,50 @@
   <id>https://blog.amamo.top/</id>
   <title type="text">年华</title>
   <subtitle type="text">欢迎来到我的小破站</subtitle>
-  <updated>2026-11-15T00:00:00.000Z</updated>
+  <updated>2026-11-26T00:00:00.000Z</updated>
   <author><name>年华</name></author>
   <link rel="alternate" href="https://blog.amamo.top/"/>
   <link rel="self" href="https://blog.amamo.top/atom.xml"/>
   <generator uri="https://github.com/CuteLeaf/Firefly">Firefly v6.17.0</generator>
+    <entry>
+      <id>https://blog.amamo.top/posts/firefly-mobile-sidebar-swup-fixes/</id>
+      <title type="text">一次移动端可用性排查：从点不动的底栏到 Swup 静默失败</title>
+      <published>2026-11-26T00:00:00.000Z</published>
+      <updated>2026-11-26T00:00:00.000Z</updated>
+      <author><name>Admin</name></author>
+      <link rel="alternate" href="https://blog.amamo.top/posts/firefly-mobile-sidebar-swup-fixes/"/>
+      <summary type="text">记录 Firefly 主题移动端底部侧栏整块不可点击、Swup 导航偶发静默失败的排查与修复，顺带总结上一次提交里的性能优化。</summary>
+      <content type="html"><![CDATA[<p>最近收到反馈：手机上点「更多动态」没反应，电脑上偶尔也点不动。顺着这条线往下挖，最后牵扯出两个独立的问题：一个是结构性 Bug，一个是请求层兜底缺失。这篇文章把排查过程、修复方式和验证结果完整记下来，顺带复盘上一次提交 <code>1f8588449</code> 做的性能优化。</p>
+<section><h2>一、点不动的「更多动态」：一个负 <code>z-index</code> 引发的血案<a href="#一点不动的更多动态一个负-z-index-引发的血案"><span>#</span></a></h2><section><h3>现象与定位<a href="#现象与定位"><span>#</span></a></h3><p>「最新动态」组件底部有个「更多动态」按钮，手机和电脑上都出现过点击没反应的情况。先说移动端：按钮存在、可见、位置和尺寸都正常，但点击就像打在了空气上。</p><p>用 Playwright 把视口设成 390×844，滚到按钮附近后在按钮中心做 <code>elementFromPoint()</code>，命中的是 <code>div#content-column</code>，而不是 <code>&lt;a&gt;</code> 或它的子元素。<code>locator.click()</code> 也一直报 <code>waiting for element to receive events</code>。结论很明确：<strong>按钮被上层内容截获，事件根本没到它手里</strong>。</p><p>查到 <code>src/styles/layout-base.css</code> 里有这么一段：</p><div><figure><figcaption></figcaption><pre><code><div><div><div>1</div></div><div><span>#</span><span>mobile-bottom-sidebar</span><span> {</span></div></div><div><div><div>2</div></div><div><span>  </span><span>position</span><span>: </span><span>relative</span><span>;</span></div></div><div><div><div>3</div></div><div><span>  </span><span>z-index</span><span>: </span><span>-1</span><span>;</span></div></div><div><div><div>4</div></div><div><span>}</span></div></div></code></pre><div><div></div><div></div></div></figure></div><p>负层级把整个移动端底部侧栏压到了内容层之下。受影响的远不止「更多动态」一个按钮——<code>sidebarConfig.mobileBottomComponents</code> 里配置的全部组件都失去了交互：资料卡、公告、时段问候、分类、标签、最新动态、站点统计、天气、站点信息。</p></section><section><h3>为什么当初要加它<a href="#为什么当初要加它"><span>#</span></a></h3><p>注释写得很清楚：这是为了修 Waline 表情弹层被底部资料卡盖住的问题。</p><p>底部组件带 <code>.onload-animation</code>，原来的样式是：</p><div><figure><figcaption></figcaption><pre><code><div><div><div>1</div></div><div><span>.</span><span>onload-animation</span><span> {</span></div></div><div><div><div>2</div></div><div><span>  </span><span>opacity</span><span>: </span><span>0</span><span>;</span></div></div><div><div><div>3</div></div><div><span>  </span><span>animation</span><span>: </span><span>fade-in-up </span><span>120</span><span>ms</span><span><span> </span><span>ease-out</span><span> </span><span>forwards</span></span><span>;</span></div></div><div><div><div>4</div></div><div><span>}</span></div></div></code></pre><div><div></div><div></div></div></figure></div><p><code>forwards</code> 会在动画结束后永久保留 <code>transform: translateY(0)</code>。哪怕位移量是 0，<code>transform</code> 依然存在，于是每个组件都变成了层叠上下文。底部组件又因为 DOM 顺序排在评论区之后，就从视觉上盖住了从评论卡底部溢出的 Waline 表情弹层——表情看得见却点不到，壁纸模式下两侧都是半透明底，尤其明显。</p><p>当时的修法是用负 <code>z-index</code> 把整块沉底。确实解决了遮挡，但代价是整块不可点击，属于用一个新 Bug 修旧 Bug。</p></section><section><h3>修复<a href="#修复"><span>#</span></a></h3><p>思路是「谁造成的问题就修谁」，而不是动整个侧栏的绘制顺序：</p><ol>
+<li>删除 <code>#mobile-bottom-sidebar { z-index: -1 }</code>，并在原处留下警告注释，防止后续再被加回来。</li>
+<li><code>.onload-animation</code> 从 <code>forwards</code> 改成 <code>backwards</code>：</li>
+</ol><div><figure><figcaption></figcaption><pre><code><div><div><div>1</div></div><div><span>.</span><span>onload-animation</span><span> {</span></div></div><div><div><div>2</div></div><div><span>  </span><span>animation</span><span>: </span><span>fade-in-up </span><span>120</span><span>ms</span><span><span> </span><span>ease-out</span><span> </span><span>backwards</span></span><span>;</span></div></div><div><div><div>3</div></div><div><span>}</span></div></div></code></pre><div><div></div><div></div></div></figure></div><p><code>backwards</code> 表示延迟期间保持首帧状态，动画结束后回到元素默认样式。这样既保留了入场淡入上移的观感，又不会残留 <code>transform</code>，自然也就不再产生长期层叠上下文。
+3. 再给 Waline 弹层显式抬一层，兜住溢出场景：</p><div><figure><figcaption></figcaption><pre><code><div><div><div>1</div></div><div><span>.</span><span>wl-emoji-popup</span><span>,</span></div></div><div><div><div>2</div></div><div><span>.</span><span>wl-gif-popup</span><span> {</span></div></div><div><div><div>3</div></div><div><span>  </span><span>z-index</span><span>: </span><span>50</span><span>;</span></div></div><div><div><div>4</div></div><div><span>}</span></div></div></code></pre><div><div></div><div></div></div></figure></div><p>三层改动合起来，底部侧栏恢复可点，评论弹层也不再被遮挡。</p></section></section>
+<section><h2>二、电脑上也点不动：Swup 的静默回退<a href="#二电脑上也点不动swup-的静默回退"><span>#</span></a></h2><p>移动端修好后，桌面端偶发的「点了没反应」就凸显出来了。桌面端按钮命中测试是正常的，问题出在 Swup 切页。</p><p>Swup 会拦截链接点击，用 <code>fetch()</code> 拉取目标页再替换 DOM。拉取失败时，它默认的失败处理是执行 <code>window.history.back()</code>。如果用户是直接打开首页，history 里没有可回退的 SPA 记录，<code>history.back()</code> 什么也做不了——URL 不变、内容不变，看起来就是「点了完全没反应」。</p><p>实测 4 次点击里有 1 次失败，伴随 <code>Failed to fetch</code>；请求日志显示目标页本身返回 200，路径、容器、服务端都正常，纯粹是请求层面的偶发失败。</p><p>在 <code>src/utils/swup-transitions.ts</code> 里加了请求层兜底：</p><ul>
+<li>运行时把 <code>swup.options.timeout</code> 设为 15 秒。<code>@swup/astro</code> 1.8 不会把 <code>astro.config.mjs</code> 里的 <code>timeout</code> 透传给 Swup 构造函数，所以必须在运行时直接改。默认的 0 是无限等待，极端情况下用户会一直卡着。</li>
+<li>在 <code>fetch:request</code> 钩子里包裹默认 handler：网络失败或 5xx 时短暂等待后重试一次；仍失败则用 <code>window.location.assign(target)</code> 走原生整页跳转。这样「点了必有反应」。</li>
+</ul><p>这里踩了一个坑，值得单独说：<strong><code>@swup/preload-plugin</code> 的预加载请求也会走 <code>fetch:request</code>，但它有自己独立的 visit</strong>。如果兜底不区分是不是当前导航，失败的预加载请求就会触发原生跳转，把用户莫名其妙带到预加载目标——我们实测中就被带到了 <code>/archive/</code>。所以兜底必须加活动判断：</p><div><figure><figcaption></figcaption><pre><code><div><div><div>1</div></div><div><span>const</span><span> </span><span>isActiveVisit</span><span> </span><span>=</span><span> </span><span>()</span><span> </span><span>=&gt;</span><span> swup</span><span>.</span><span>visit </span><span>===</span><span> visit</span><span>;</span></div></div><div><div><div>2</div></div><div><span>if</span><span> </span><span><span>(</span><span>!</span></span><span>isActiveVisit</span><span>())</span><span> </span><span>{</span></div></div><div><div><div>3</div></div><div><span>  </span><span>return</span><span> </span><span>defaultHandler</span><span>(</span><span>requestUrl</span><span>,</span><span> options</span><span>);</span></div></div><div><div><div>4</div></div><div><span>}</span></div></div></code></pre><div><div></div><div></div></div></figure></div><p>预加载失败只安静丢弃，绝不导航。这个判断加上后，<code>pnpm check</code> 通过，连续点击测试也稳定了。</p></section>
+<section><h2>验证结果<a href="#验证结果"><span>#</span></a></h2><p>用 Playwright 在 390×844 移动视口下逐项回归：</p><ul>
+<li><code>#content-wrapper</code> 计算后 <code>transform: none</code>、<code>animation-fill-mode: backwards</code>；<code>#mobile-bottom-sidebar</code> 的 <code>z-index</code> 为 <code>auto</code>。</li>
+<li>按钮中心命中测试落在链接自身（<code>contains: true</code>），点击后成功跳转到 <code>/dynamic/</code>。</li>
+<li><code>pnpm check</code>：0 errors、0 warnings、0 hints。</li>
+</ul></section>
+<section><h2>上一笔提交：把首屏的活儿往后挪<a href="#上一笔提交把首屏的活儿往后挪"><span>#</span></a></h2><p>这次修复之外，上一次提交 <code>1f8588449 优化性能</code> 也做了不少工作，一并记在这里，免得时间久了说不清。核心思路都是：<strong>慢的第三方请求和重初始化，能懒就懒、能缓存就缓存、能放到浏览器空闲时就别阻塞首屏。</strong></p><ul>
+<li><strong>歌词按需加载</strong>（<code>MusicManager.astro</code>）：以前切歌就拉一遍 lrc，PageSpeed 实测这个 meting 请求串行要 5～10 秒。现在歌词 UI 没开时切歌只重置状态，等开始播放（悬浮歌词需要）或用户打开歌词面板时才 <code>ensureLyrics()</code>，并用 <code>lyricsLoadingFor</code> 防止同一曲目重复请求。</li>
+<li><strong>Spine 模型</strong>（<code>SpineModel.astro</code>）：CSS 和运行时都改成「本地优先、CDN 兜底」，不再先打 unpkg（大陆访问慢且不稳定）；播放器初始化改到 <code>requestIdleCallback</code>（超时 4 秒，降级 <code>setTimeout</code> 2500ms），避免每帧读布局的长任务拖慢首屏。</li>
+<li><strong>动态侧栏</strong>（<code>DynamicSidebar.svelte</code>）：Memos 接口此前默认 <code>pageSize=10000</code> 全量拉取，实测 7 秒以上。现在只取侧栏需要的那一页（<code>pageSize: limit, maxPages: 1</code>），数量达到上限时徽标显示 <code>N+</code>。</li>
+<li><strong>天气组件</strong>（<code>Weather.astro</code>）：补上了此前「只写不读」的 localStorage 缓存；同页多个天气组件共用一份 in-flight Promise，避免同一 URL 并发请求三次；首次加载改到 <code>requestIdleCallback</code>，有新鲜缓存时直接渲染。</li>
+<li><strong>时段问候卡</strong>（<code>TimeGreeting.astro</code>）：从运行时请求第三方随机图 API，改为构建期用 Astro 图片管线压缩本地壁纸池，随机选一张同源小图，浏览器可缓存、Swup 换页可复用；目录为空时才回退到运行时 API。</li>
+<li><strong>欢迎提示</strong>（<code>WelcomeToast.astro</code>）：IP 归属接口结果缓存 6 小时，请求延迟到浏览器空闲；Toast 展示时间从 5 秒调到 8 秒，给异步文案留出填充时间。</li>
+<li><strong>随机封面与图片工具</strong>：<code>random-covers.json</code> 变成 gitignore 的构建产物，单篇拉取失败时沿用上一次构建的封面，不再让封面消失；<code>image-utils.ts</code> 改用 <code>import.meta.glob</code> 读取，全新克隆还没生成文件时也不会报错。</li>
+</ul></section>
+<section><h2>写给上游<a href="#写给上游"><span>#</span></a></h2><p>上面这些改动都在我自己的 fork 里。底栏负 <code>z-index</code> 的问题属于主题代码，根因清晰、影响面也不小，后续可以考虑向 <code>CuteLeaf/Firefly</code> 反馈。Swup 兜底是我自己代码里的改动，不需要提到上游。</p></section>
+<section><h2>一点感受<a href="#一点感受"><span>#</span></a></h2><p>这次排查最值得记住的是三条：</p><ol>
+<li><strong>不要用负 <code>z-index</code> 修遮挡</strong>。它会把整块交互一起沉下去，问题从「弹层点不到」变成「整块都点不到」。</li>
+<li><strong>动画的 <code>fill-mode</code> 会改变层叠结构</strong>。<code>forwards</code> 留下的 <code>transform</code>，哪怕位移是 0，也是一个层叠上下文；视觉上看不出来，交互上却会出问题。</li>
+<li><strong>兜底逻辑要分清「当前导航」和「预加载」</strong>。带预加载插件的 Swup 里，这条区分不做，兜底本身就会变成新的 Bug。</li>
+</ol><p>代码改完了，测试也过了。希望这篇记录能帮到遇到类似问题的朋友。</p></section>]]></content>
+    </entry>
     <entry>
       <id>https://blog.amamo.top/posts/koffi-musl-alpine-abort/</id>
       <title type="text">koffi 在 Alpine 上直接 abort：一次 musl 预编译排查</title>
