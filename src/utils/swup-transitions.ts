@@ -18,6 +18,122 @@ import {
 } from "@/utils/setting-utils";
 import { pathsEqual, url } from "@/utils/url-utils";
 
+const SWUP_FETCH_TIMEOUT_MS = 15_000;
+const SWUP_FETCH_RETRY_DELAY_MS = 150;
+
+interface SwupVisit {
+	to: { url: string; hash?: string };
+}
+
+interface SwupFetchRequestArgs {
+	url: string;
+	options: RequestInit & { timeout?: number };
+}
+
+type SwupFetchHandler = (
+	url: string,
+	options: RequestInit & { timeout?: number },
+) => Promise<Response>;
+
+let swupResilienceInitialized = false;
+
+function getVisitTarget(visit: SwupVisit): string {
+	return new URL(visit.to.url + (visit.to.hash ?? ""), window.location.href)
+		.href;
+}
+
+function navigateToVisitTarget(visit: SwupVisit): void {
+	const target = new URL(getVisitTarget(visit));
+	if (
+		target.pathname === window.location.pathname &&
+		target.search === window.location.search
+	) {
+		return;
+	}
+	window.location.assign(target.href);
+}
+
+function scheduleNativeFallback(visit: SwupVisit): void {
+	// Swup 的失败处理会先尝试 history.back()；把原生跳转放到下一轮事件循环，
+	// 保证最终一定落到目标页，而不是在没有可回退记录时静默停在原地。
+	window.setTimeout(() => navigateToVisitTarget(visit), 0);
+}
+
+/**
+ * Swup 请求层兜底：
+ * - 设置请求超时，避免默认 0（无限等待）让用户卡死；
+ * - 网络抖动 / 5xx 自动重试一次；
+ * - 仍失败时走原生 location.assign，绝不静默停在原地。
+ */
+function setupSwupResilience(): void {
+	if (swupResilienceInitialized) return;
+
+	const swup = window.swup;
+	if (!swup?.hooks || !swup.options) return;
+
+	// @swup/astro 1.8 的初始化代码不会把 astro.config 里的 timeout 透传给
+	// Swup 构造函数，因此这里直接改运行时配置。
+	swup.options.timeout = SWUP_FETCH_TIMEOUT_MS;
+
+	swup.hooks.on(
+		"fetch:request",
+		async (
+			visit: SwupVisit,
+			{ url: requestUrl, options }: SwupFetchRequestArgs,
+			defaultHandler: SwupFetchHandler,
+		) => {
+			// @swup/preload-plugin 的预加载请求也会走 fetch:request，但它有独立的
+			// visit，不是当前导航。预加载失败只能静默丢弃，绝不能触发原生跳转，
+			// 否则用户还没点击就可能被带到预加载的页面（例如归档页）。
+			const isActiveVisit = () => swup.visit === visit;
+			if (!isActiveVisit()) {
+				return defaultHandler(requestUrl, options);
+			}
+
+			const request = async (): Promise<Response> => {
+				const response = await defaultHandler(requestUrl, options);
+				// Swup 只对 500 主动抛错；502/503 等同样视为失败，
+				// 避免把错误页当成正常页面换入。
+				if (response.status >= 500) {
+					throw new Error(`[swup] HTTP ${response.status}: ${requestUrl}`);
+				}
+				return response;
+			};
+
+			try {
+				return await request();
+			} catch (error) {
+				// 超时或用户已发起新的导航时，当前请求会被 abort。
+				// 只有它仍是活动 visit 时才兜底，避免把已放弃的旧目标强行打开。
+				if (options.signal?.aborted) {
+					if (isActiveVisit()) scheduleNativeFallback(visit);
+					throw error;
+				}
+
+				// 网络抖动或 5xx：短暂等待后重试一次。
+				await new Promise<void>((resolve) => {
+					window.setTimeout(resolve, SWUP_FETCH_RETRY_DELAY_MS);
+				});
+
+				if (options.signal?.aborted) {
+					if (isActiveVisit()) scheduleNativeFallback(visit);
+					throw error;
+				}
+
+				try {
+					return await request();
+				} catch (retryError) {
+					// 重试期间用户又点了别的链接：旧目标已被放弃，不要再强行跳转。
+					if (isActiveVisit()) scheduleNativeFallback(visit);
+					throw retryError;
+				}
+			}
+		},
+	);
+
+	swupResilienceInitialized = true;
+}
+
 /**
  * 进度条：WAAPI 驱动 transform/opacity（合成线程动画）。
  * 替代原 width 关键帧 + `void offsetWidth` 强制回流方案——后者在大型文章 DOM 上
@@ -62,6 +178,8 @@ function finishProgressBar(): void {
  * 注册 link:click / content:replace / visit:start / page:view / visit:end 钩子。
  */
 function registerSwupHooks(): void {
+	setupSwupResilience();
+
 	// 非首页全屏模式与 overlay 一致（内容在最上面），首页 hero 结构回顶即可，
 	// 均无需自定义 swup 回顶行为，保留默认滚动到顶部
 	// TODO: temp solution to change the height of the banner

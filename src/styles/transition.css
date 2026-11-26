@@ -81,9 +81,13 @@ html.is-animating .transition-swup-fade {
    3. Onload Animations
    -------------------------------------------------------------------------- */
 
+/* 只做入场动画，不使用 forwards：
+   forwards 会在动画结束后永久保留 transform: translateY(0)，让每个组件都成为
+   层叠上下文。移动端底部资料卡因此会盖住评论区的 Waline 表情弹层（弹层可见但
+   点不到）。改用 backwards：延迟期间保持首帧透明，动画结束即回到元素默认样式，
+   不残留 transform，也不会产生长期层叠上下文。 */
 .onload-animation {
-    opacity: 0;
-    animation: fade-in-up 120ms ease-out forwards;
+    animation: fade-in-up 120ms ease-out backwards;
 }
 
 /* 渐进式动画延迟 */

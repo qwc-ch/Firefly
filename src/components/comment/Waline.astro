@@ -75,6 +75,14 @@ const config = {
 </div>
 
 <style is:global>
+  /* 表情 / GIF 弹层：明确抬到内容层同级之上。
+     移动端底部侧栏组件不再使用负 z-index 后，评论卡下方溢出的弹层需要高于
+     后续渲染的资料卡等组件，避免"看得见却点不到"。 */
+  .wl-emoji-popup,
+  .wl-gif-popup {
+    z-index: 50;
+  }
+
   /* 各分类表情数量不同，切换时面板布局会跟着变，下面逐项消除 */
 
   .wl-tab-wrapper {
