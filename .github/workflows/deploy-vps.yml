@@ -74,12 +74,17 @@ jobs:
 
       # 直接把 dist/ 同步到站点根目录（宝塔的 root 就指向这里）。
       # --delete 会清掉上一次构建的残留文件，保证目录内容与 dist/ 完全一致。
+      # 注意：宝塔会在站点根目录放 .user.ini / .htaccess 等文件并用 chattr +i 锁死，
+      # rsync --delete 删不掉会报 code 23，所以必须 --exclude 排除这些面板托管文件。
       - name: Upload dist/ to site root
         run: |
           rsync -avz --delete \
             --exclude='releases/' \
             --exclude='current' \
             --exclude='current.tmp' \
+            --exclude='.user.ini' \
+            --exclude='.htaccess' \
+            --exclude='.well-known/' \
             -e "ssh -p $VPS_PORT -o StrictHostKeyChecking=yes" \
             dist/ \
             "$VPS_USER@$VPS_HOST:$VPS_PATH/"
