@@ -22,7 +22,6 @@ jobs:
       VPS_USER: ${{ secrets.VPS_USER }}
       VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
       VPS_PATH: ${{ secrets.VPS_PATH }}
-      RELEASE: ${{ github.sha }}
 
     steps:
       - name: Checkout
@@ -64,32 +63,14 @@ jobs:
           ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Prepare release directory
-        run: |
-          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
-            "$VPS_USER@$VPS_HOST" \
-            "mkdir -p '$VPS_PATH/releases'"
-
-      - name: Upload dist/
+      # 直接把 dist/ 同步到站点根目录（宝塔的 root 就指向这里）。
+      # --delete 会清掉上一次构建的残留文件，保证目录内容与 dist/ 完全一致。
+      - name: Upload dist/ to site root
         run: |
           rsync -avz --delete \
             -e "ssh -p $VPS_PORT -o StrictHostKeyChecking=yes" \
             dist/ \
-            "$VPS_USER@$VPS_HOST:$VPS_PATH/releases/$RELEASE/"
-
-      # current 是 Nginx 的 root；最后一步才切软链，保证切换是原子的
-      - name: Activate release
-        run: |
-          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
-            "$VPS_USER@$VPS_HOST" \
-            "cd '$VPS_PATH' && ln -nfs 'releases/$RELEASE' current.tmp && mv -Tf current.tmp current"
-
-      # 只保留最近 5 个版本，防止磁盘被历史版本占满
-      - name: Cleanup old releases
-        run: |
-          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
-            "$VPS_USER@$VPS_HOST" \
-            "cd '$VPS_PATH/releases' && ls -1dt */ 2>/dev/null | tail -n +6 | xargs -r rm -rf --"
+            "$VPS_USER@$VPS_HOST:$VPS_PATH/"
 
       - name: Done
-        run: echo "Deployed $RELEASE to $VPS_HOST:$VPS_PATH/current"
+        run: echo "Deployed to $VPS_HOST:$VPS_PATH"
