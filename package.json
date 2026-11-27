@@ -49,8 +49,8 @@
     "@iconify/svelte": "^5.2.3",
     "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.7",
-"@mermanjs/node": "0.10.0",
-    "@mermanjs/web": "0.10.0",
+"@mermanjs/node": "0.11.0",
+    "@mermanjs/web": "0.11.0",
     "@napi-rs/wasm-runtime": "^1.2.6",
     "@swup/astro": "^1.8.0",
     "@tailwindcss/typography": "^0.5.20",
@@ -99,7 +99,7 @@
     "twikoo": "1.7.14",
     "typescript": "^6.0.3",
     "unist-util-visit": "^5.2.0",
-    "wrangler": "^4.166.0"
+    "wrangler": "^4.167.0"
   },
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.11.0",
