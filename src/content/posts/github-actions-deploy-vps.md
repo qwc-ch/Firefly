@@ -1,7 +1,7 @@
 ---
 title: "从平台托管到自建 VPS：用 GitHub Actions 构建并部署 Firefly"
 published: 2026-11-27
-description: "记录把 Firefly 静态博客从 Vercel / EdgeOne 等平台迁到自建 VPS 的完整过程：GitHub Actions 构建、SSH 密钥、rsync 上传、原子切换、宝塔面板配置、DNS 解析，以及一路踩过的坑。"
+description: "记录把 Firefly 静态博客从 Vercel / EdgeOne 等平台迁到自建 VPS 的完整过程：GitHub Actions 构建、SSH 密钥、rsync 上传、宝塔面板配置、DNS 解析，以及一路踩过的坑。"
 image: 'api'
 tags: ['部署', 'GitHub Actions', 'VPS', '宝塔', '排错']
 category: '部署'
@@ -21,10 +21,9 @@ slug: github-actions-deploy-vps
 
 1. GitHub Actions 负责安装依赖、构建站点；
 2. Actions 通过 SSH 登录 VPS；
-3. 用 `rsync` 上传 `dist/`；
-4. VPS 上用软链接原子切换版本；
-5. 宝塔面板配置站点根目录和 SSL；
-6. DNS 把 `blog.amamo.top` 指到 VPS 公网 IP。
+3. 用 `rsync` 把 `dist/` 直接同步到宝塔站点根目录；
+4. 宝塔面板配置站点根目录和 SSL；
+5. DNS 把 `blog.amamo.top` 指到 VPS 公网 IP。
 
 本文按实际顺序记录全过程，包括每一步如何验证、遇到了哪些报错、最后怎么解决。
 
@@ -32,26 +31,29 @@ slug: github-actions-deploy-vps
 
 ## 一、整体部署模型
 
-最终采用的目录结构如下：
+最终采用的方案很简单：**`dist/` 直接同步到宝塔站点根目录**。
 
 ```text
-/www/wwwroot/firefly/
-├── releases/
-│   ├── <commit-sha-1>/
-│   ├── <commit-sha-2>/
-│   └── ...
-└── current -> releases/<最新 commit-sha>/
+/www/wwwroot/firefly/          ← 宝塔站点根目录，也是 rsync 的目标
+├── index.html
+├── 404.html
+├── _astro/                    ← 哈希化的静态资源
+├── pagefind/                  ← 搜索索引
+├── posts/
+├── rss.xml
+└── sitemap-index.xml
+...
 ```
 
 GitHub Actions 每次构建完成后：
 
-1. 上传 `dist/` 到 `releases/$GITHUB_SHA/`；
-2. 上传完成后才把 `current` 软链切到新版本；
-3. 清理旧版本，只保留最近 5 个。
+1. 先清理第一次试验遗留的 `releases/` + `current` 软链；
+2. 用 `rsync --delete` 把 `dist/` 同步到 `/www/wwwroot/firefly/`；
+3. `--delete` 会删掉上一次构建残留的文件，保证目录内容和 `dist/` 完全一致。
 
-这样做的好处是：**上传过程中用户访问的仍是旧版本，不会出现半个站点。**
+> 一开始我设计过 `releases/<sha>/` + `current` 软链的"原子切换"方案，但宝塔面板不允许把站点根目录改到自定义软链路径，最后改成直接同步到固定根目录。代价是上传过程中理论上可能读到半个站点，但对个人博客几乎无感，且配置简单得多。
 
-> 注意：后来我们把部署目录从 `/var/www/firefly` 改到了 `/www/wwwroot/firefly`，因为宝塔面板禁止把网站根目录直接设到 `/var`、`/home`、`/etc` 等关键目录。
+> 部署目录从 `/var/www/firefly` 改到了 `/www/wwwroot/firefly`，因为宝塔面板禁止把网站根目录直接设到 `/var`、`/home`、`/etc` 等关键目录。
 
 ---
 
@@ -189,6 +191,7 @@ on:
 permissions:
   contents: read
 
+# 同一时间只允许一个部署任务，避免两次发布交叉覆盖
 concurrency:
   group: deploy-vps
   cancel-in-progress: false
@@ -202,7 +205,6 @@ jobs:
       VPS_USER: ${{ secrets.VPS_USER }}
       VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
       VPS_PATH: ${{ secrets.VPS_PATH }}
-      RELEASE: ${{ github.sha }}
 
     steps:
       - name: Checkout
@@ -243,42 +245,39 @@ jobs:
           ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Prepare release directory
+      # 清掉第一次部署遗留的 releases/ + current 软链结构
+      - name: Clean legacy release dirs
         run: |
           ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
             "$VPS_USER@$VPS_HOST" \
-            "mkdir -p '$VPS_PATH/releases'"
+            "rm -rf '$VPS_PATH/releases' '$VPS_PATH/current.tmp' 2>/dev/null || true; rm -f '$VPS_PATH/current' 2>/dev/null || true"
 
-      - name: Upload dist/
+      # 直接把 dist/ 同步到站点根目录（宝塔的 root 就指向这里）
+      - name: Upload dist/ to site root
         run: |
           rsync -avz --delete \
+            --exclude='releases/' \
+            --exclude='current' \
+            --exclude='current.tmp' \
+            --exclude='.user.ini' \
+            --exclude='.htaccess' \
+            --exclude='.well-known/' \
             -e "ssh -p $VPS_PORT -o StrictHostKeyChecking=yes" \
             dist/ \
-            "$VPS_USER@$VPS_HOST:$VPS_PATH/releases/$RELEASE/"
-
-      - name: Activate release
-        run: |
-          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
-            "$VPS_USER@$VPS_HOST" \
-            "cd '$VPS_PATH' && ln -nfs 'releases/$RELEASE' current.tmp && mv -Tf current.tmp current"
-
-      - name: Cleanup old releases
-        run: |
-          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
-            "$VPS_USER@$VPS_HOST" \
-            "cd '$VPS_PATH/releases' && ls -1dt */ 2>/dev/null | tail -n +6 | xargs -r rm -rf --"
+            "$VPS_USER@$VPS_HOST:$VPS_PATH/"
 
       - name: Done
-        run: echo "Deployed $RELEASE to $VPS_HOST:$VPS_PATH/current"
+        run: echo "Deployed to $VPS_HOST:$VPS_PATH"
 ```
 
 几个设计点：
 
 - `pnpm run build` 是完整构建链：图标/LQIP/随机封面/Astro 构建/Pagefind/IndexNow 等。
 - `GITHUB_TOKEN` 用来让 GitHub 卡片脚本访问 GitHub API。
-- 上传目标是 `releases/$RELEASE/`，`$RELEASE` 就是 commit SHA。
-- `current.tmp` + `mv -Tf` 用来原子替换软链。
-- 旧版本只保留最近 5 份，避免磁盘无限增长。
+- 上传目标是 `$VPS_PATH/`（即宝塔站点根目录），rsync 目标末尾的 `/` 不能省略。
+- `--delete` 清掉上一次构建的残留文件，保证目录与 `dist/` 完全一致。
+- `Clean legacy release dirs` 清掉最初试验留下的 `releases/` 和 `current`，避免它们干扰 rsync。
+- `--exclude` 排除宝塔托管文件（`.user.ini`、`.htaccess`、`.well-known/`），否则 `--delete` 删除被 `chattr +i` 锁死的 `.user.ini` 时会报 code 23（详见后文踩坑）。
 
 ---
 
@@ -319,10 +318,12 @@ Settings → Secrets and variables → Actions → New repository secret
 宝塔面板 → 网站 → 添加站点：
 
 - 域名：`blog.amamo.top`
-- 根目录：`/www/wwwroot/firefly/current`
+- 根目录：`/www/wwwroot/firefly`（和 `VPS_PATH` Secret 保持一致）
 - PHP 版本：选择 **纯静态**
 
-这里踩过坑：一开始想用 `/var/www/firefly/current`，宝塔直接拒绝：
+这里踩过两个坑：
+
+1. 一开始想用 `/var/www/firefly`，宝塔直接拒绝：
 
 ```text
 请不要将网站根目录设置到以下关键目录中:
@@ -332,7 +333,9 @@ Settings → Secrets and variables → Actions → New repository secret
 ...
 ```
 
-所以部署目录改成 `/www/wwwroot/firefly`，站点根目录自然就是 `/www/wwwroot/firefly/current`。
+所以部署目录改到了 `/www/wwwroot/firefly`。
+
+2. 后来我设计过 `releases/<sha>/` + `current` 软链，想把站点根目录设成 `/www/wwwroot/firefly/current`，但宝塔面板的"站点根目录"输入框不接受这种软链路径（改不了/不生效）。最后干脆放弃软链，让 rsync 直接同步到固定根目录 `/www/wwwroot/firefly`。
 
 ### 2. 配置伪静态
 
@@ -356,7 +359,8 @@ Astro 开启了 `trailingSlash: "always"`，生成的是 `目录/index.html` 结
 站点设置 → 配置文件，在 `server` 块里加入：
 
 ```nginx
-location /_astro/ {
+# 用 ^~ 优先匹配 _astro/ 前缀，避免被宝塔默认的 js/css 正则规则抢先
+location ^~ /_astro/ {
     expires 1y;
     add_header Cache-Control "public, immutable";
     try_files $uri =404;
@@ -366,7 +370,7 @@ add_header X-Content-Type-Options "nosniff" always;
 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 ```
 
-建议同时开启 Gzip 压缩。
+`_astro/` 里的资源都带内容哈希，改内容必然换文件名，所以可以放心设 1 年强缓存。建议同时开启 Gzip 压缩。
 
 ### 4. 申请 SSL
 
@@ -428,9 +432,13 @@ DNS 只负责把域名解析到 IP，不负责端口。只要 Nginx / 宝塔监�
 
 ---
 
-## 八、第一次部署失败的排查
+## 八、部署过程中的几个失败
 
-提交并推送工作流后，Actions 日志显示构建全部成功：
+整个调试过程 Actions 失败过好几次，原因各不相同，逐一记录。
+
+### 失败 1：VPS 没装 rsync
+
+构建全部成功：
 
 ```text
 ✓ Completed in 56.54s.
@@ -438,14 +446,14 @@ DNS 只负责把域名解析到 IP，不负责端口。只要 Nginx / 宝塔监�
 Complete!
 ```
 
-Pagefind、字体子集化、IndexNow 也都跑完了。但最后上传阶段失败：
+但上传阶段失败：
 
 ```text
 bash: rsync: command not found
 rsync error: error in rsync protocol data stream (code 12)
 ```
 
-原因是：GitHub Actions runner 自带 `rsync`，但它通过 SSH 调用远端 VPS 上的 `rsync`；VPS 没装，所以失败。
+原因：GitHub Actions runner 自带 `rsync`，但它通过 SSH 调用远端 VPS 上的 `rsync`；VPS 没装，所以失败。
 
 解决：
 
@@ -455,7 +463,47 @@ which rsync
 rsync --version | head -1
 ```
 
-然后回到 GitHub Actions 页面手动点 **Run workflow**，重新跑一次即可。
+### 失败 2：删除遗留 releases 目录
+
+改成直接同步后，第一次跑还在删除最初的 `releases/<sha>/` 遗留目录时失败。解决是在上传前主动清理，并在 rsync 里排除：
+
+```yaml
+- name: Clean legacy release dirs
+  run: |
+    ssh ... "rm -rf '$VPS_PATH/releases' ... || true; rm -f '$VPS_PATH/current' || true"
+
+# rsync 里：
+--exclude='releases/' \
+--exclude='current' \
+--exclude='current.tmp' \
+```
+
+### 失败 3：宝塔的 .user.ini 删不掉（code 23）
+
+这是最隐蔽的一个。日志里全是正常上传，但最后报：
+
+```text
+rsync: delete_file: unlink(.user.ini) failed: Operation not permitted (1)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23)
+```
+
+原因：宝塔会在站点根目录放一个 `.user.ini`，并用 `chattr +i` 锁成不可删除。rsync 的 `--delete` 想删掉它时被系统拒绝，退出码 23。文件其实都传上去了（所以线上正常），但 Actions 判定 failed。
+
+解决：在 rsync 里排除宝塔托管文件：
+
+```yaml
+--exclude='.user.ini' \
+--exclude='.htaccess' \
+--exclude='.well-known/' \
+```
+
+这些文件本来就不该由 rsync 管理。排除后 `--delete` 不会碰它们，就不会报 code 23 了。
+
+### 附：本地 push 分叉
+
+调试中我用 `git commit --amend` 改写了一个已经 push 过的提交，导致本地和远程分叉，`git push` 被拒（`non-fast-forward`）。修复方式是不改写历史，用 `git reset --soft origin/main` 保留最终文件状态后重新做一个新提交，让本地直接叠在远程 tip 之上，即可 fast-forward push。
+
+教训：**已经 push 过的提交不要用 `commit --amend`。**
 
 ---
 
@@ -481,38 +529,40 @@ rsync --version | head -1
 
 ## 十、如何确认部署成功
 
-GitHub Actions 全部绿勾后，在 VPS 上执行：
+GitHub Actions 全部绿勾后，在 VPS 上直接检查站点根目录：
 
 ```bash
-ls -la /www/wwwroot/firefly/current
-readlink -f /www/wwwroot/firefly/current
+ls -la /www/wwwroot/firefly | head -20
 ```
 
-应该看到 `current` 指向：
-
-```text
-/www/wwwroot/firefly/releases/<commit-sha>
-```
-
-目录里应该有：
+应该能看到：
 
 ```text
 index.html
 404.html
 _astro/
 pagefind/
+posts/
 rss.xml
 sitemap-index.xml
 ```
 
-再测试访问：
+然后测试访问：
 
 ```bash
 curl -I http://blog.amamo.top
 curl -I https://blog.amamo.top
 ```
 
-看到 `200` 或正常的 HTTPS 跳转，最后浏览器打开 `https://blog.amamo.top`，博客正常显示，就说明整条链路通了。
+看到 `200` 或正常的 HTTPS 跳转还不够——**一定要抓源码确认不是宝塔默认页**：
+
+```bash
+curl -s https://blog.amamo.top | grep -o '<title>[^<]*</title>'
+```
+
+这里踩过一个坑：`curl -I` 返回 200，但打开是宝塔的"恭喜，站点创建成功！"默认页。原因是当时 `dist/` 还没上传（push 失败导致 Actions 没跑）。**判断标准不是状态码，而是页面标题必须是博客的标题。**
+
+最后浏览器打开 `https://blog.amamo.top`，博客正常显示，就说明整条链路通了。
 
 ---
 
@@ -523,8 +573,13 @@ curl -I https://blog.amamo.top
 | `adduser` 打印帮助，`id deploy` 不存在 | CentOS 不适用 Ubuntu 写法 | `useradd -m -s /bin/bash deploy` |
 | `sudo: unknown user: deploy` | 用户还没创建 | 先创建用户；用 `su - deploy -c` 验证 |
 | `cannot remove .../.test: No such file or directory` | `rm` 路径手误 | 清理正确路径：`rm -f /www/wwwroot/firefly/.test` |
-| 宝塔拒绝关键目录 | 不能把站点根目录设到 `/var` 等 | 改用 `/www/wwwroot/firefly/current` |
+| 宝塔拒绝关键目录 | 不能把站点根目录设到 `/var` 等 | 改用 `/www/wwwroot/firefly` |
+| 宝塔站点根目录不接受软链 | 面板输入框改不了 `current` 软链 | 放弃软链，直接同步到固定根目录 |
 | `bash: rsync: command not found` | VPS 没装 rsync | `yum install -y rsync` |
+| rsync 删除 `releases/` 报错 | 最初软链方案的遗留目录 | 上传前清理 + `--exclude` |
+| `unlink(.user.ini) failed` / rsync code 23 | 宝塔 `chattr +i` 锁死 `.user.ini` | `--exclude='.user.ini'` 等宝塔文件 |
+| `curl -I` 200 但显示宝塔默认页 | push 失败，Actions 没跑，`dist/` 没上传 | 抓源码看 `<title>`，确认是博客标题 |
+| `non-fast-forward` push 被拒 | amend 了已 push 的提交导致分叉 | `git reset --soft origin/main` 后新建提交 |
 | 阿里云异常登录告警 | Actions 海外 IP 登录 VPS | 自己配置的部署可忽略，建议加固 SSH |
 | 构建提示 robots.txt 冲突 | `public/robots.txt` 覆盖动态路由 | 域名正确则无影响；想优化可删静态版 |
 | 域名指向旧平台 | DNS 里还有 CNAME | 改成 A 记录指向 VPS IP |
@@ -545,7 +600,7 @@ git push origin main
 剩下的事情全部交给 GitHub Actions：
 
 ```text
-push → Actions 构建 → SSH 登录 VPS → rsync 上传 → 切换 current → 宝塔/Nginx 提供访问
+push → Actions 构建 → SSH 登录 VPS → rsync 同步 dist/ 到站点根目录 → 宝塔/Nginx 提供访问
 ```
 
 平台托管适合“不想管服务器”，自建 VPS 适合“想完全掌控”。把 CI/CD 这条链路打通后，自建 VPS 的维护成本其实也可以很低：以后每次写文章，只需要 push，博客就会自动更新。
