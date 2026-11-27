@@ -13,7 +13,7 @@
 - [番组计划](https://blog.amamo.top/bangumi/): 记录我的二次元之旅
 
 ## Recent Posts
-- [从平台托管到自建 VPS：用 GitHub Actions 构建并部署 Firefly](https://blog.amamo.top/posts/github-actions-deploy-vps/): 记录把 Firefly 静态博客从 Vercel / EdgeOne 等平台迁到自建 VPS 的完整过程：GitHub Actions 构建、SSH 密钥、rsync 上传、原子切换、宝塔面板配置、DNS 解析，以及一路踩过的坑。
+- [从平台托管到自建 VPS：用 GitHub Actions 构建并部署 Firefly](https://blog.amamo.top/posts/github-actions-deploy-vps/): 记录把 Firefly 静态博客从 Vercel / EdgeOne 等平台迁到自建 VPS 的完整过程：GitHub Actions 构建、SSH 密钥、rsync 上传、宝塔面板配置、DNS 解析，以及一路踩过的坑。
 - [一次移动端可用性排查：从点不动的底栏到 Swup 静默失败](https://blog.amamo.top/posts/firefly-mobile-sidebar-swup-fixes/): 记录 Firefly 主题移动端底部侧栏整块不可点击、Swup 导航偶发静默失败的排查与修复，顺带总结上一次提交里的性能优化。
 - [koffi 在 Alpine 上直接 abort：一次 musl 预编译排查](https://blog.amamo.top/posts/koffi-musl-alpine-abort/): dsh 在 Alpine aarch64 上一调用工具就整个进程 abort。根因是 koffi 3.1.1 优先加载 glibc 预编译二进制，在 musl 上进入 C++ 初始化后直接终止，musl 回退逻辑根本没机会执行。本文记录排查过程、修复思路和修复仓库。
 - [机房装 Node.js 记](https://blog.amamo.top/posts/life/%E6%9C%BA%E6%88%BF%E8%A3%85nodejs%E8%AE%B0/): 4 核 4G 的机房电脑、一份奇怪的问卷，和一个从 Gitee 下载的项目
