@@ -63,11 +63,23 @@ jobs:
           ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      # 清掉第一次部署遗留的 releases/ + current 软链结构。
+      # 现在站点根目录直接指向 $VPS_PATH，这些旧目录/软链不该再存在；
+      # 若残留，rsync --delete 删除它们时会报错导致整个工作流失败。
+      - name: Clean legacy release dirs
+        run: |
+          ssh -p "$VPS_PORT" -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" \
+            "rm -rf '$VPS_PATH/releases' '$VPS_PATH/current.tmp' 2>/dev/null || true; rm -f '$VPS_PATH/current' 2>/dev/null || true"
+
       # 直接把 dist/ 同步到站点根目录（宝塔的 root 就指向这里）。
       # --delete 会清掉上一次构建的残留文件，保证目录内容与 dist/ 完全一致。
       - name: Upload dist/ to site root
         run: |
           rsync -avz --delete \
+            --exclude='releases/' \
+            --exclude='current' \
+            --exclude='current.tmp' \
             -e "ssh -p $VPS_PORT -o StrictHostKeyChecking=yes" \
             dist/ \
             "$VPS_USER@$VPS_HOST:$VPS_PATH/"
